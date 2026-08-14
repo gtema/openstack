@@ -17,7 +17,7 @@
 
 use derive_builder::Builder;
 use eyre::{Report, Result, WrapErr};
-use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::api::rest_endpoint::resolve_microversion;
 use openstack_sdk::api::{AsyncClient, RestEndpoint};
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -78,7 +78,7 @@ impl ExecuteApiRequest for IdentityGroupUserList {
             .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
             .await?;
         let negotiated_version =
-            match negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep) {
+            match resolve_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep, session) {
                 Ok(v) => v,
                 Err(e) => {
                     warn!("Microversion negotiation failed: {}", e);

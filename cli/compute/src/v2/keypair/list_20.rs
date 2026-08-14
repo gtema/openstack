@@ -34,7 +34,7 @@ use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::keypair::list_20;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
-use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::api::rest_endpoint::resolve_microversion;
 use openstack_sdk::api::{Pagination, paged};
 use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::keypair::response;
@@ -178,7 +178,7 @@ impl KeypairsCommand {
             .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
             .await?;
         let negotiated_version =
-            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep)?;
+            resolve_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep, client)?;
 
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
