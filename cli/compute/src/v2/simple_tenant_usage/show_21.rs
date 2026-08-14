@@ -27,8 +27,12 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use openstack_sdk::api::AsyncClient;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::simple_tenant_usage::get_21;
+use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::simple_tenant_usage::response;
 
 /// Shows usage statistics for a tenant.
@@ -124,18 +128,25 @@ impl SimpleTenantUsageCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
+        let service_endpoint = client
+            .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
+            .await?;
+        let negotiated_version =
+            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep)?;
+
         let data: serde_json::Value = ep.query_async(client).await?;
 
-        op.output_single::<response::get_21_a::SimpleTenantUsageResponse>(data.clone())
-            .or_else(|_| {
-                op.output_single::<response::get_21_b::SimpleTenantUsageResponse>(data.clone())
-            })
-            .or_else(|_| {
-                op.output_single::<response::get_240_a::SimpleTenantUsageResponse>(data.clone())
-            })
-            .or_else(|_| {
-                op.output_single::<response::get_240_b::SimpleTenantUsageResponse>(data.clone())
-            })?;
+        if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 40)) {
+            op.output_single::<response::get_240_a::SimpleTenantUsageResponse>(data.clone())
+                .or_else(|_| {
+                    op.output_single::<response::get_240_b::SimpleTenantUsageResponse>(data.clone())
+                })?;
+        } else {
+            op.output_single::<response::get_21_a::SimpleTenantUsageResponse>(data.clone())
+                .or_else(|_| {
+                    op.output_single::<response::get_21_b::SimpleTenantUsageResponse>(data.clone())
+                })?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())
