@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::keypair::find;
 use openstack_sdk::api::find;
-use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::api::rest_endpoint::resolve_microversion;
 use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::keypair::response;
 
@@ -116,8 +116,11 @@ impl KeypairCommand {
                 find_ep_versioned.api_version().as_ref(),
             )
             .await?;
-        let negotiated_version =
-            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &find_ep_versioned)?;
+        let negotiated_version = resolve_microversion::<AsyncOpenStack, _>(
+            &service_endpoint,
+            &find_ep_versioned,
+            client,
+        )?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
         if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 2)) {

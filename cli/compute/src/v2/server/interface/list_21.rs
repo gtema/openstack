@@ -31,7 +31,7 @@ use openstack_sdk::api::AsyncClient;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::server::interface::list_21;
-use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::api::rest_endpoint::resolve_microversion;
 use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::server::interface::response;
 
@@ -94,7 +94,7 @@ impl InterfacesCommand {
             .get_service_endpoint(&ep.service_type(), ep.api_version().as_ref())
             .await?;
         let negotiated_version =
-            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep)?;
+            resolve_microversion::<AsyncOpenStack, _>(&service_endpoint, &ep, client)?;
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
