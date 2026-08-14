@@ -87974,20 +87974,51 @@ components:
             additionalProperties: false
             properties:
               OS-DCF:diskConfig:
+                description: |-
+                  Disk configuration. The value is either:
+
+                  * `AUTO`. The API builds the server with a single partition the size of
+                    the target flavor disk. The API automatically adjusts the file system to
+                    fit the entire partition.
+                  * `MANUAL`. The API builds the server by using the partition scheme and
+                    file system that is in the source image. If the target flavor disk is
+                    larger, The API does not partition the remaining disk space.
                 type: string
               OS-EXT-AZ:availability_zone:
+                description: |-
+                  The availability zone name.
                 type: string
               OS-EXT-SRV-ATTR:host:
+                description: |-
+                  The name of the compute host on which this instance is running.
+                  Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:hypervisor_hostname:
+                description: |-
+                  The hypervisor host name provided by the Nova virt driver. For the Ironic driver,
+                  it is the Ironic node uuid. Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:instance_name:
+                description: |-
+                  The instance name. The Compute API generates the instance name from the instance
+                  name template. Appears in the response for administrative users only.
                 type: string
               OS-EXT-STS:power_state:
+                description: |-
+                  The power state of the instance. This is an enum value that is mapped as:
+
+                  ```
+                  0: NOSTATE
+                  1: RUNNING
+                  3: PAUSED
+                  4: SHUTDOWN
+                  6: CRASHED
+                  7: SUSPENDED
+                  ```
                 enum:
                   - 
                   - 0
@@ -88000,35 +88031,75 @@ components:
                   - integer
                   - 'null'
               OS-EXT-STS:task_state:
+                description: |-
+                  The task state of the instance.
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:vm_state:
+                description: |-
+                  The VM state.
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:launched_at:
+                description: |-
+                  The date and time when the server was launched.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+
+                  The `hh±:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:terminated_at:
+                description: |-
+                  The date and time when the server was deleted.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+                  The `±hh:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               accessIPv4:
+                description: |-
+                  IPv4 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
                 type: string
               accessIPv6:
+                description: |-
+                  IPv6 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv6
                 type: string
               addresses:
                 additionalProperties: false
+                description: |-
+                  The addresses for the server. Servers with status `BUILD` hide their
+                  addresses information.
+                  This view is not updated immediately.
+                  Please consult with OpenStack Networking API for up-to-date information.
                 patternProperties:
                   ^.*$:
                     items:
@@ -88061,6 +88132,10 @@ components:
                     type: array
                 type: object
               config_drive:
+                description: |-
+                  Indicates whether or not a config drive was used for this server.
+                  The value is `True` or an empty string. An empty string stands for
+                  `False`.
                 enum:
                   - ''
                   - 
@@ -88070,19 +88145,51 @@ components:
                   - 'null'
                   - string
               created:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               fault:
                 additionalProperties: false
+                description: |-
+                  A fault object. Only displayed when the server status is `ERROR` or
+                  `DELETED` and a fault occurred.
                 properties:
                   code:
+                    description: |-
+                      The error response code.
                     type: integer
                   created:
+                    description: |-
+                      The date and time when the exception was raised. The date and time
+                      stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                      ```
+                      CCYY-MM-DDThh:mm:ss±hh:mm
+                      ```
+
+                      For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                      value, if included, is the time zone as an offset from UTC. In
+                      the previous example, the offset value is `-05:00`.
                     format: date-time
                     type: string
                   details:
+                    description: |-
+                      The stack trace. It is available if the response code is not 500 or
+                      you have the administrator privilege
                     type: string
                   message:
+                    description: |-
+                      The error message.
                     type: string
                 required:
                   - code
@@ -88091,10 +88198,24 @@ components:
                 type: object
               flavor:
                 additionalProperties: false
+                description: |-
+                  Before microversion 2.47 this contains the ID and links for the flavor
+                  used to boot the server instance. This can be an empty object in case
+                  flavor information is no longer present in the system.
+
+                  As of microversion 2.47 this contains a subset of the actual flavor
+                  information used to create the server instance, represented as a nested
+                  dictionary.
                 properties:
                   id:
+                    description: |-
+                      The UUID of the server.
                     type: string
                   links:
+                    description: |-
+                      Links to the resources in question. See [API Guide / Links and
+                      References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                      for more info.
                     items:
                       additionalProperties: false
                       properties:
@@ -88113,11 +88234,20 @@ components:
                     type: array
                 type: object
               hostId:
+                description: |-
+                  An ID string representing the host. This is a hashed value so will not actually look like
+                  a hostname, and is hashed with data from the project_id, so the same physical host as seen
+                  by two different project_ids, will be different. It is useful when within the same project you
+                  need to determine if two instances are on the same or different physical hosts for the
+                  purposes of availability or performance.
                 type: string
               id:
                 format: uuid
                 type: string
               image:
+                description: |-
+                  The UUID and links for the image for your server instance. The `image` object
+                  will be an empty string when you boot the server from a volume.
                 oneOf:
                   - additionalProperties: false
                     properties:
@@ -88125,6 +88255,10 @@ components:
                         format: uuid
                         type: string
                       links:
+                        description: |-
+                          Links to the resources in question. See [API Guide / Links and
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
                         items:
                           additionalProperties: false
                           properties:
@@ -88145,10 +88279,16 @@ components:
                   - const: ''
                     type: string
               key_name:
+                description: |-
+                  The name of associated key pair, if any.
                 type:
                   - 'null'
                   - string
               links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
                 items:
                   additionalProperties: false
                   properties:
@@ -88167,15 +88307,22 @@ components:
                 type: array
               metadata:
                 additionalProperties: false
+                description: |-
+                  A dictionary of metadata key-and-value pairs, which is maintained for backward
+                  compatibility.
                 patternProperties:
                   ^.+$:
                     type: string
                 type: object
               name:
+                description: |-
+                  The server name.
                 type:
                   - 'null'
                   - string
               os-extended-volumes:volumes_attached:
+                description: |-
+                  The attached volumes, if any.
                 items:
                   additionalProperties: false
                   properties:
@@ -88186,10 +88333,16 @@ components:
                   type: object
                 type: array
               progress:
+                description: |-
+                  A percentage value of the operation progress.
+                  This parameter only appears when the server status is `ACTIVE`,
+                  `BUILD`, `REBUILD`, `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
                 type:
                   - 'null'
                   - number
               security_groups:
+                description: |-
+                  One or more security groups objects.
                 items:
                   additionalProperties: false
                   properties:
@@ -88200,6 +88353,8 @@ components:
                   type: object
                 type: array
               status:
+                description: |-
+                  The server status.
                 enum:
                   - ACTIVE
                   - BUILD
@@ -88223,14 +88378,29 @@ components:
                   - VERIFY_RESIZE
                 type: string
               tenant_id:
+                description: |-
+                  The UUID of the tenant in a multi-tenancy cloud.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
                 type: string
               updated:
+                description: |-
+                  The date and time when the resource was updated. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               user_id:
+                description: |-
+                  The user ID of the user who owns the server.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
@@ -88264,6 +88434,11 @@ components:
             type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -88764,6 +88939,11 @@ components:
                 type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -88794,48 +88974,124 @@ components:
             additionalProperties: false
             properties:
               OS-DCF:diskConfig:
+                description: |-
+                  Disk configuration. The value is either:
+
+                  * `AUTO`. The API builds the server with a single partition the size of
+                    the target flavor disk. The API automatically adjusts the file system to
+                    fit the entire partition.
+                  * `MANUAL`. The API builds the server by using the partition scheme and
+                    file system that is in the source image. If the target flavor disk is
+                    larger, The API does not partition the remaining disk space.
                 type: string
               OS-EXT-AZ:availability_zone:
+                description: |-
+                  The availability zone name.
                 type: string
               OS-EXT-SRV-ATTR:host:
+                description: |-
+                  The name of the compute host on which this instance is running.
+                  Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:hostname:
+                description: |-
+                  The hostname of the instance reported in the metadata service.
+                  This parameter only appears in responses for administrators until
+                  microversion 2.90, after which it is shown for all users.
+
+                  Note
+
+                  This information is published via the metadata service and requires
+                  application such as `cloud-init` to propagate it through to the
+                  instance.
+
+                  **New in version 2.3**
                 type: string
               OS-EXT-SRV-ATTR:hypervisor_hostname:
+                description: |-
+                  The hypervisor host name provided by the Nova virt driver. For the Ironic driver,
+                  it is the Ironic node uuid. Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:instance_name:
+                description: |-
+                  The instance name. The Compute API generates the instance name from the instance
+                  name template. Appears in the response for administrative users only.
                 type: string
               OS-EXT-SRV-ATTR:kernel_id:
+                description: |-
+                  The UUID of the kernel image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:launch_index:
+                description: |-
+                  When servers are launched via multiple create, this is the
+                  sequence in which the servers were launched.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - integer
                   - 'null'
               OS-EXT-SRV-ATTR:ramdisk_id:
+                description: |-
+                  The UUID of the ramdisk image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:reservation_id:
+                description: |-
+                  The reservation id for the server. This is an id that can
+                  be useful in tracking groups of servers created with multiple
+                  create, that will all have the same reservation_id.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:root_device_name:
+                description: |-
+                  The root device name for the instance
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:user_data:
+                description: |-
+                  The user_data the instance was created with.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 format: base64
                 maxLength: 65535
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:power_state:
+                description: |-
+                  The power state of the instance. This is an enum value that is mapped as:
+
+                  ```
+                  0: NOSTATE
+                  1: RUNNING
+                  3: PAUSED
+                  4: SHUTDOWN
+                  6: CRASHED
+                  7: SUSPENDED
+                  ```
                 enum:
                   - 
                   - 0
@@ -88848,35 +89104,75 @@ components:
                   - integer
                   - 'null'
               OS-EXT-STS:task_state:
+                description: |-
+                  The task state of the instance.
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:vm_state:
+                description: |-
+                  The VM state.
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:launched_at:
+                description: |-
+                  The date and time when the server was launched.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+
+                  The `hh±:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:terminated_at:
+                description: |-
+                  The date and time when the server was deleted.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+                  The `±hh:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               accessIPv4:
+                description: |-
+                  IPv4 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
                 type: string
               accessIPv6:
+                description: |-
+                  IPv6 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv6
                 type: string
               addresses:
                 additionalProperties: false
+                description: |-
+                  The addresses for the server. Servers with status `BUILD` hide their
+                  addresses information.
+                  This view is not updated immediately.
+                  Please consult with OpenStack Networking API for up-to-date information.
                 patternProperties:
                   ^.*$:
                     items:
@@ -88909,6 +89205,10 @@ components:
                     type: array
                 type: object
               config_drive:
+                description: |-
+                  Indicates whether or not a config drive was used for this server.
+                  The value is `True` or an empty string. An empty string stands for
+                  `False`.
                 enum:
                   - ''
                   - 
@@ -88918,19 +89218,51 @@ components:
                   - 'null'
                   - string
               created:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               fault:
                 additionalProperties: false
+                description: |-
+                  A fault object. Only displayed when the server status is `ERROR` or
+                  `DELETED` and a fault occurred.
                 properties:
                   code:
+                    description: |-
+                      The error response code.
                     type: integer
                   created:
+                    description: |-
+                      The date and time when the exception was raised. The date and time
+                      stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                      ```
+                      CCYY-MM-DDThh:mm:ss±hh:mm
+                      ```
+
+                      For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                      value, if included, is the time zone as an offset from UTC. In
+                      the previous example, the offset value is `-05:00`.
                     format: date-time
                     type: string
                   details:
+                    description: |-
+                      The stack trace. It is available if the response code is not 500 or
+                      you have the administrator privilege
                     type: string
                   message:
+                    description: |-
+                      The error message.
                     type: string
                 required:
                   - code
@@ -88939,10 +89271,24 @@ components:
                 type: object
               flavor:
                 additionalProperties: false
+                description: |-
+                  Before microversion 2.47 this contains the ID and links for the flavor
+                  used to boot the server instance. This can be an empty object in case
+                  flavor information is no longer present in the system.
+
+                  As of microversion 2.47 this contains a subset of the actual flavor
+                  information used to create the server instance, represented as a nested
+                  dictionary.
                 properties:
                   id:
+                    description: |-
+                      The UUID of the server.
                     type: string
                   links:
+                    description: |-
+                      Links to the resources in question. See [API Guide / Links and
+                      References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                      for more info.
                     items:
                       additionalProperties: false
                       properties:
@@ -88961,8 +89307,27 @@ components:
                     type: array
                 type: object
               hostId:
+                description: |-
+                  An ID string representing the host. This is a hashed value so will not actually look like
+                  a hostname, and is hashed with data from the project_id, so the same physical host as seen
+                  by two different project_ids, will be different. It is useful when within the same project you
+                  need to determine if two instances are on the same or different physical hosts for the
+                  purposes of availability or performance.
                 type: string
               host_status:
+                description: |-
+                  The host status. Values where next value in list can override the previous:
+
+                  * `UP` if nova-compute up.
+                  * `UNKNOWN` if nova-compute not reported by servicegroup driver.
+                  * `DOWN` if nova-compute forced down.
+                  * `MAINTENANCE` if nova-compute is disabled.
+                  * Empty string indicates there is no host for server.
+
+                  This attribute appears in the response only if the policy permits.
+                  By default, only administrators can get this parameter.
+
+                  **New in version 2.16**
                 enum:
                   - ''
                   - DOWN
@@ -88974,6 +89339,9 @@ components:
                 format: uuid
                 type: string
               image:
+                description: |-
+                  The UUID and links for the image for your server instance. The `image` object
+                  will be an empty string when you boot the server from a volume.
                 oneOf:
                   - additionalProperties: false
                     properties:
@@ -88981,6 +89349,10 @@ components:
                         format: uuid
                         type: string
                       links:
+                        description: |-
+                          Links to the resources in question. See [API Guide / Links and
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
                         items:
                           additionalProperties: false
                           properties:
@@ -89001,10 +89373,16 @@ components:
                   - const: ''
                     type: string
               key_name:
+                description: |-
+                  The name of associated key pair, if any.
                 type:
                   - 'null'
                   - string
               links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
                 items:
                   additionalProperties: false
                   properties:
@@ -89022,18 +89400,29 @@ components:
                   type: object
                 type: array
               locked:
+                description: |-
+                  True if the instance is locked otherwise False.
+
+                  **New in version 2.9**
                 type: boolean
               metadata:
                 additionalProperties: false
+                description: |-
+                  A dictionary of metadata key-and-value pairs, which is maintained for backward
+                  compatibility.
                 patternProperties:
                   ^.+$:
                     type: string
                 type: object
               name:
+                description: |-
+                  The server name.
                 type:
                   - 'null'
                   - string
               os-extended-volumes:volumes_attached:
+                description: |-
+                  The attached volumes, if any.
                 items:
                   additionalProperties: false
                   properties:
@@ -89048,10 +89437,16 @@ components:
                   type: object
                 type: array
               progress:
+                description: |-
+                  A percentage value of the operation progress.
+                  This parameter only appears when the server status is `ACTIVE`,
+                  `BUILD`, `REBUILD`, `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
                 type:
                   - 'null'
                   - number
               security_groups:
+                description: |-
+                  One or more security groups objects.
                 items:
                   additionalProperties: false
                   properties:
@@ -89062,6 +89457,8 @@ components:
                   type: object
                 type: array
               status:
+                description: |-
+                  The server status.
                 enum:
                   - ACTIVE
                   - BUILD
@@ -89085,14 +89482,29 @@ components:
                   - VERIFY_RESIZE
                 type: string
               tenant_id:
+                description: |-
+                  The UUID of the tenant in a multi-tenancy cloud.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
                 type: string
               updated:
+                description: |-
+                  The date and time when the resource was updated. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               user_id:
+                description: |-
+                  The user ID of the user who owns the server.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
@@ -89127,6 +89539,11 @@ components:
             type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -89158,48 +89575,124 @@ components:
             additionalProperties: false
             properties:
               OS-DCF:diskConfig:
+                description: |-
+                  Disk configuration. The value is either:
+
+                  * `AUTO`. The API builds the server with a single partition the size of
+                    the target flavor disk. The API automatically adjusts the file system to
+                    fit the entire partition.
+                  * `MANUAL`. The API builds the server by using the partition scheme and
+                    file system that is in the source image. If the target flavor disk is
+                    larger, The API does not partition the remaining disk space.
                 type: string
               OS-EXT-AZ:availability_zone:
+                description: |-
+                  The availability zone name.
                 type: string
               OS-EXT-SRV-ATTR:host:
+                description: |-
+                  The name of the compute host on which this instance is running.
+                  Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:hostname:
+                description: |-
+                  The hostname of the instance reported in the metadata service.
+                  This parameter only appears in responses for administrators until
+                  microversion 2.90, after which it is shown for all users.
+
+                  Note
+
+                  This information is published via the metadata service and requires
+                  application such as `cloud-init` to propagate it through to the
+                  instance.
+
+                  **New in version 2.3**
                 type: string
               OS-EXT-SRV-ATTR:hypervisor_hostname:
+                description: |-
+                  The hypervisor host name provided by the Nova virt driver. For the Ironic driver,
+                  it is the Ironic node uuid. Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:instance_name:
+                description: |-
+                  The instance name. The Compute API generates the instance name from the instance
+                  name template. Appears in the response for administrative users only.
                 type: string
               OS-EXT-SRV-ATTR:kernel_id:
+                description: |-
+                  The UUID of the kernel image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:launch_index:
+                description: |-
+                  When servers are launched via multiple create, this is the
+                  sequence in which the servers were launched.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - integer
                   - 'null'
               OS-EXT-SRV-ATTR:ramdisk_id:
+                description: |-
+                  The UUID of the ramdisk image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:reservation_id:
+                description: |-
+                  The reservation id for the server. This is an id that can
+                  be useful in tracking groups of servers created with multiple
+                  create, that will all have the same reservation_id.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:root_device_name:
+                description: |-
+                  The root device name for the instance
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:user_data:
+                description: |-
+                  The user_data the instance was created with.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 format: base64
                 maxLength: 65535
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:power_state:
+                description: |-
+                  The power state of the instance. This is an enum value that is mapped as:
+
+                  ```
+                  0: NOSTATE
+                  1: RUNNING
+                  3: PAUSED
+                  4: SHUTDOWN
+                  6: CRASHED
+                  7: SUSPENDED
+                  ```
                 enum:
                   - 
                   - 0
@@ -89212,35 +89705,75 @@ components:
                   - integer
                   - 'null'
               OS-EXT-STS:task_state:
+                description: |-
+                  The task state of the instance.
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:vm_state:
+                description: |-
+                  The VM state.
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:launched_at:
+                description: |-
+                  The date and time when the server was launched.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+
+                  The `hh±:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:terminated_at:
+                description: |-
+                  The date and time when the server was deleted.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+                  The `±hh:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               accessIPv4:
+                description: |-
+                  IPv4 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
                 type: string
               accessIPv6:
+                description: |-
+                  IPv6 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv6
                 type: string
               addresses:
                 additionalProperties: false
+                description: |-
+                  The addresses for the server. Servers with status `BUILD` hide their
+                  addresses information.
+                  This view is not updated immediately.
+                  Please consult with OpenStack Networking API for up-to-date information.
                 patternProperties:
                   ^.*$:
                     items:
@@ -89273,6 +89806,10 @@ components:
                     type: array
                 type: object
               config_drive:
+                description: |-
+                  Indicates whether or not a config drive was used for this server.
+                  The value is `True` or an empty string. An empty string stands for
+                  `False`.
                 enum:
                   - ''
                   - 
@@ -89282,23 +89819,60 @@ components:
                   - 'null'
                   - string
               created:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               description:
+                description: |-
+                  The description of the server.
+                  Before microversion 2.19 this was set to the server name.
+
+                  **New in version 2.19**
                 type:
                   - 'null'
                   - string
               fault:
                 additionalProperties: false
+                description: |-
+                  A fault object. Only displayed when the server status is `ERROR` or
+                  `DELETED` and a fault occurred.
                 properties:
                   code:
+                    description: |-
+                      The error response code.
                     type: integer
                   created:
+                    description: |-
+                      The date and time when the exception was raised. The date and time
+                      stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                      ```
+                      CCYY-MM-DDThh:mm:ss±hh:mm
+                      ```
+
+                      For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                      value, if included, is the time zone as an offset from UTC. In
+                      the previous example, the offset value is `-05:00`.
                     format: date-time
                     type: string
                   details:
+                    description: |-
+                      The stack trace. It is available if the response code is not 500 or
+                      you have the administrator privilege
                     type: string
                   message:
+                    description: |-
+                      The error message.
                     type: string
                 required:
                   - code
@@ -89307,10 +89881,24 @@ components:
                 type: object
               flavor:
                 additionalProperties: false
+                description: |-
+                  Before microversion 2.47 this contains the ID and links for the flavor
+                  used to boot the server instance. This can be an empty object in case
+                  flavor information is no longer present in the system.
+
+                  As of microversion 2.47 this contains a subset of the actual flavor
+                  information used to create the server instance, represented as a nested
+                  dictionary.
                 properties:
                   id:
+                    description: |-
+                      The UUID of the server.
                     type: string
                   links:
+                    description: |-
+                      Links to the resources in question. See [API Guide / Links and
+                      References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                      for more info.
                     items:
                       additionalProperties: false
                       properties:
@@ -89329,8 +89917,27 @@ components:
                     type: array
                 type: object
               hostId:
+                description: |-
+                  An ID string representing the host. This is a hashed value so will not actually look like
+                  a hostname, and is hashed with data from the project_id, so the same physical host as seen
+                  by two different project_ids, will be different. It is useful when within the same project you
+                  need to determine if two instances are on the same or different physical hosts for the
+                  purposes of availability or performance.
                 type: string
               host_status:
+                description: |-
+                  The host status. Values where next value in list can override the previous:
+
+                  * `UP` if nova-compute up.
+                  * `UNKNOWN` if nova-compute not reported by servicegroup driver.
+                  * `DOWN` if nova-compute forced down.
+                  * `MAINTENANCE` if nova-compute is disabled.
+                  * Empty string indicates there is no host for server.
+
+                  This attribute appears in the response only if the policy permits.
+                  By default, only administrators can get this parameter.
+
+                  **New in version 2.16**
                 enum:
                   - ''
                   - DOWN
@@ -89342,6 +89949,9 @@ components:
                 format: uuid
                 type: string
               image:
+                description: |-
+                  The UUID and links for the image for your server instance. The `image` object
+                  will be an empty string when you boot the server from a volume.
                 oneOf:
                   - additionalProperties: false
                     properties:
@@ -89349,6 +89959,10 @@ components:
                         format: uuid
                         type: string
                       links:
+                        description: |-
+                          Links to the resources in question. See [API Guide / Links and
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
                         items:
                           additionalProperties: false
                           properties:
@@ -89369,10 +89983,16 @@ components:
                   - const: ''
                     type: string
               key_name:
+                description: |-
+                  The name of associated key pair, if any.
                 type:
                   - 'null'
                   - string
               links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
                 items:
                   additionalProperties: false
                   properties:
@@ -89390,18 +90010,29 @@ components:
                   type: object
                 type: array
               locked:
+                description: |-
+                  True if the instance is locked otherwise False.
+
+                  **New in version 2.9**
                 type: boolean
               metadata:
                 additionalProperties: false
+                description: |-
+                  A dictionary of metadata key-and-value pairs, which is maintained for backward
+                  compatibility.
                 patternProperties:
                   ^.+$:
                     type: string
                 type: object
               name:
+                description: |-
+                  The server name.
                 type:
                   - 'null'
                   - string
               os-extended-volumes:volumes_attached:
+                description: |-
+                  The attached volumes, if any.
                 items:
                   additionalProperties: false
                   properties:
@@ -89416,10 +90047,16 @@ components:
                   type: object
                 type: array
               progress:
+                description: |-
+                  A percentage value of the operation progress.
+                  This parameter only appears when the server status is `ACTIVE`,
+                  `BUILD`, `REBUILD`, `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
                 type:
                   - 'null'
                   - number
               security_groups:
+                description: |-
+                  One or more security groups objects.
                 items:
                   additionalProperties: false
                   properties:
@@ -89430,6 +90067,8 @@ components:
                   type: object
                 type: array
               status:
+                description: |-
+                  The server status.
                 enum:
                   - ACTIVE
                   - BUILD
@@ -89453,14 +90092,29 @@ components:
                   - VERIFY_RESIZE
                 type: string
               tenant_id:
+                description: |-
+                  The UUID of the tenant in a multi-tenancy cloud.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
                 type: string
               updated:
+                description: |-
+                  The date and time when the resource was updated. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               user_id:
+                description: |-
+                  The user ID of the user who owns the server.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
@@ -89496,6 +90150,11 @@ components:
             type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -89527,48 +90186,124 @@ components:
             additionalProperties: false
             properties:
               OS-DCF:diskConfig:
+                description: |-
+                  Disk configuration. The value is either:
+
+                  * `AUTO`. The API builds the server with a single partition the size of
+                    the target flavor disk. The API automatically adjusts the file system to
+                    fit the entire partition.
+                  * `MANUAL`. The API builds the server by using the partition scheme and
+                    file system that is in the source image. If the target flavor disk is
+                    larger, The API does not partition the remaining disk space.
                 type: string
               OS-EXT-AZ:availability_zone:
+                description: |-
+                  The availability zone name.
                 type: string
               OS-EXT-SRV-ATTR:host:
+                description: |-
+                  The name of the compute host on which this instance is running.
+                  Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:hostname:
+                description: |-
+                  The hostname of the instance reported in the metadata service.
+                  This parameter only appears in responses for administrators until
+                  microversion 2.90, after which it is shown for all users.
+
+                  Note
+
+                  This information is published via the metadata service and requires
+                  application such as `cloud-init` to propagate it through to the
+                  instance.
+
+                  **New in version 2.3**
                 type: string
               OS-EXT-SRV-ATTR:hypervisor_hostname:
+                description: |-
+                  The hypervisor host name provided by the Nova virt driver. For the Ironic driver,
+                  it is the Ironic node uuid. Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:instance_name:
+                description: |-
+                  The instance name. The Compute API generates the instance name from the instance
+                  name template. Appears in the response for administrative users only.
                 type: string
               OS-EXT-SRV-ATTR:kernel_id:
+                description: |-
+                  The UUID of the kernel image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:launch_index:
+                description: |-
+                  When servers are launched via multiple create, this is the
+                  sequence in which the servers were launched.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - integer
                   - 'null'
               OS-EXT-SRV-ATTR:ramdisk_id:
+                description: |-
+                  The UUID of the ramdisk image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:reservation_id:
+                description: |-
+                  The reservation id for the server. This is an id that can
+                  be useful in tracking groups of servers created with multiple
+                  create, that will all have the same reservation_id.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:root_device_name:
+                description: |-
+                  The root device name for the instance
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:user_data:
+                description: |-
+                  The user_data the instance was created with.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 format: base64
                 maxLength: 65535
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:power_state:
+                description: |-
+                  The power state of the instance. This is an enum value that is mapped as:
+
+                  ```
+                  0: NOSTATE
+                  1: RUNNING
+                  3: PAUSED
+                  4: SHUTDOWN
+                  6: CRASHED
+                  7: SUSPENDED
+                  ```
                 enum:
                   - 
                   - 0
@@ -89581,19 +90316,48 @@ components:
                   - integer
                   - 'null'
               OS-EXT-STS:task_state:
+                description: |-
+                  The task state of the instance.
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:vm_state:
+                description: |-
+                  The VM state.
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:launched_at:
+                description: |-
+                  The date and time when the server was launched.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+
+                  The `hh±:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:terminated_at:
+                description: |-
+                  The date and time when the server was deleted.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+                  The `±hh:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
@@ -89607,12 +90371,20 @@ components:
                   - format: ipv4
                 type: string
               accessIPv6:
+                description: |-
+                  IPv6 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv6
                 type: string
               addresses:
                 additionalProperties: false
+                description: |-
+                  The addresses for the server. Servers with status `BUILD` hide their
+                  addresses information.
+                  This view is not updated immediately.
+                  Please consult with OpenStack Networking API for up-to-date information.
                 patternProperties:
                   ^.*$:
                     items:
@@ -89645,6 +90417,10 @@ components:
                     type: array
                 type: object
               config_drive:
+                description: |-
+                  Indicates whether or not a config drive was used for this server.
+                  The value is `True` or an empty string. An empty string stands for
+                  `False`.
                 enum:
                   - ''
                   - 
@@ -89654,23 +90430,60 @@ components:
                   - 'null'
                   - string
               created:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               description:
+                description: |-
+                  The description of the server.
+                  Before microversion 2.19 this was set to the server name.
+
+                  **New in version 2.19**
                 type:
                   - 'null'
                   - string
               fault:
                 additionalProperties: false
+                description: |-
+                  A fault object. Only displayed when the server status is `ERROR` or
+                  `DELETED` and a fault occurred.
                 properties:
                   code:
+                    description: |-
+                      The error response code.
                     type: integer
                   created:
+                    description: |-
+                      The date and time when the exception was raised. The date and time
+                      stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                      ```
+                      CCYY-MM-DDThh:mm:ss±hh:mm
+                      ```
+
+                      For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                      value, if included, is the time zone as an offset from UTC. In
+                      the previous example, the offset value is `-05:00`.
                     format: date-time
                     type: string
                   details:
+                    description: |-
+                      The stack trace. It is available if the response code is not 500 or
+                      you have the administrator privilege
                     type: string
                   message:
+                    description: |-
+                      The error message.
                     type: string
                 required:
                   - code
@@ -89679,10 +90492,24 @@ components:
                 type: object
               flavor:
                 additionalProperties: false
+                description: |-
+                  Before microversion 2.47 this contains the ID and links for the flavor
+                  used to boot the server instance. This can be an empty object in case
+                  flavor information is no longer present in the system.
+
+                  As of microversion 2.47 this contains a subset of the actual flavor
+                  information used to create the server instance, represented as a nested
+                  dictionary.
                 properties:
                   id:
+                    description: |-
+                      The UUID of the server.
                     type: string
                   links:
+                    description: |-
+                      Links to the resources in question. See [API Guide / Links and
+                      References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                      for more info.
                     items:
                       additionalProperties: false
                       properties:
@@ -89701,8 +90528,27 @@ components:
                     type: array
                 type: object
               hostId:
+                description: |-
+                  An ID string representing the host. This is a hashed value so will not actually look like
+                  a hostname, and is hashed with data from the project_id, so the same physical host as seen
+                  by two different project_ids, will be different. It is useful when within the same project you
+                  need to determine if two instances are on the same or different physical hosts for the
+                  purposes of availability or performance.
                 type: string
               host_status:
+                description: |-
+                  The host status. Values where next value in list can override the previous:
+
+                  * `UP` if nova-compute up.
+                  * `UNKNOWN` if nova-compute not reported by servicegroup driver.
+                  * `DOWN` if nova-compute forced down.
+                  * `MAINTENANCE` if nova-compute is disabled.
+                  * Empty string indicates there is no host for server.
+
+                  This attribute appears in the response only if the policy permits.
+                  By default, only administrators can get this parameter.
+
+                  **New in version 2.16**
                 enum:
                   - ''
                   - DOWN
@@ -89714,6 +90560,9 @@ components:
                 format: uuid
                 type: string
               image:
+                description: |-
+                  The UUID and links for the image for your server instance. The `image` object
+                  will be an empty string when you boot the server from a volume.
                 oneOf:
                   - additionalProperties: false
                     properties:
@@ -89721,6 +90570,10 @@ components:
                         format: uuid
                         type: string
                       links:
+                        description: |-
+                          Links to the resources in question. See [API Guide / Links and
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
                         items:
                           additionalProperties: false
                           properties:
@@ -89741,10 +90594,16 @@ components:
                   - const: ''
                     type: string
               key_name:
+                description: |-
+                  The name of associated key pair, if any.
                 type:
                   - 'null'
                   - string
               links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
                 items:
                   additionalProperties: false
                   properties:
@@ -89762,18 +90621,29 @@ components:
                   type: object
                 type: array
               locked:
+                description: |-
+                  True if the instance is locked otherwise False.
+
+                  **New in version 2.9**
                 type: boolean
               metadata:
                 additionalProperties: false
+                description: |-
+                  A dictionary of metadata key-and-value pairs, which is maintained for backward
+                  compatibility.
                 patternProperties:
                   ^.+$:
                     type: string
                 type: object
               name:
+                description: |-
+                  The server name.
                 type:
                   - 'null'
                   - string
               os-extended-volumes:volumes_attached:
+                description: |-
+                  The attached volumes, if any.
                 items:
                   additionalProperties: false
                   properties:
@@ -89788,10 +90658,16 @@ components:
                   type: object
                 type: array
               progress:
+                description: |-
+                  A percentage value of the operation progress.
+                  This parameter only appears when the server status is `ACTIVE`,
+                  `BUILD`, `REBUILD`, `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
                 type:
                   - 'null'
                   - number
               security_groups:
+                description: |-
+                  One or more security groups objects.
                 items:
                   additionalProperties: false
                   properties:
@@ -89802,6 +90678,8 @@ components:
                   type: object
                 type: array
               status:
+                description: |-
+                  The server status.
                 enum:
                   - ACTIVE
                   - BUILD
@@ -89825,19 +90703,38 @@ components:
                   - VERIFY_RESIZE
                 type: string
               tags:
+                description: |-
+                  A list of tags. The maximum count of tags in this list is 50.
+
+                  **New in version 2.26**
                 items:
                   type: string
                 maxItems: 50
                 type: array
               tenant_id:
+                description: |-
+                  The UUID of the tenant in a multi-tenancy cloud.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
                 type: string
               updated:
+                description: |-
+                  The date and time when the resource was updated. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               user_id:
+                description: |-
+                  The user ID of the user who owns the server.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
@@ -89874,6 +90771,11 @@ components:
             type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -89905,48 +90807,124 @@ components:
             additionalProperties: false
             properties:
               OS-DCF:diskConfig:
+                description: |-
+                  Disk configuration. The value is either:
+
+                  * `AUTO`. The API builds the server with a single partition the size of
+                    the target flavor disk. The API automatically adjusts the file system to
+                    fit the entire partition.
+                  * `MANUAL`. The API builds the server by using the partition scheme and
+                    file system that is in the source image. If the target flavor disk is
+                    larger, The API does not partition the remaining disk space.
                 type: string
               OS-EXT-AZ:availability_zone:
+                description: |-
+                  The availability zone name.
                 type: string
               OS-EXT-SRV-ATTR:host:
+                description: |-
+                  The name of the compute host on which this instance is running.
+                  Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:hostname:
+                description: |-
+                  The hostname of the instance reported in the metadata service.
+                  This parameter only appears in responses for administrators until
+                  microversion 2.90, after which it is shown for all users.
+
+                  Note
+
+                  This information is published via the metadata service and requires
+                  application such as `cloud-init` to propagate it through to the
+                  instance.
+
+                  **New in version 2.3**
                 type: string
               OS-EXT-SRV-ATTR:hypervisor_hostname:
+                description: |-
+                  The hypervisor host name provided by the Nova virt driver. For the Ironic driver,
+                  it is the Ironic node uuid. Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:instance_name:
+                description: |-
+                  The instance name. The Compute API generates the instance name from the instance
+                  name template. Appears in the response for administrative users only.
                 type: string
               OS-EXT-SRV-ATTR:kernel_id:
+                description: |-
+                  The UUID of the kernel image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:launch_index:
+                description: |-
+                  When servers are launched via multiple create, this is the
+                  sequence in which the servers were launched.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - integer
                   - 'null'
               OS-EXT-SRV-ATTR:ramdisk_id:
+                description: |-
+                  The UUID of the ramdisk image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:reservation_id:
+                description: |-
+                  The reservation id for the server. This is an id that can
+                  be useful in tracking groups of servers created with multiple
+                  create, that will all have the same reservation_id.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:root_device_name:
+                description: |-
+                  The root device name for the instance
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:user_data:
+                description: |-
+                  The user_data the instance was created with.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 format: base64
                 maxLength: 65535
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:power_state:
+                description: |-
+                  The power state of the instance. This is an enum value that is mapped as:
+
+                  ```
+                  0: NOSTATE
+                  1: RUNNING
+                  3: PAUSED
+                  4: SHUTDOWN
+                  6: CRASHED
+                  7: SUSPENDED
+                  ```
                 enum:
                   - 
                   - 0
@@ -89959,35 +90937,75 @@ components:
                   - integer
                   - 'null'
               OS-EXT-STS:task_state:
+                description: |-
+                  The task state of the instance.
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:vm_state:
+                description: |-
+                  The VM state.
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:launched_at:
+                description: |-
+                  The date and time when the server was launched.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+
+                  The `hh±:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:terminated_at:
+                description: |-
+                  The date and time when the server was deleted.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+                  The `±hh:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               accessIPv4:
+                description: |-
+                  IPv4 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
                 type: string
               accessIPv6:
+                description: |-
+                  IPv6 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv6
                 type: string
               addresses:
                 additionalProperties: false
+                description: |-
+                  The addresses for the server. Servers with status `BUILD` hide their
+                  addresses information.
+                  This view is not updated immediately.
+                  Please consult with OpenStack Networking API for up-to-date information.
                 patternProperties:
                   ^.*$:
                     items:
@@ -90020,6 +91038,10 @@ components:
                     type: array
                 type: object
               config_drive:
+                description: |-
+                  Indicates whether or not a config drive was used for this server.
+                  The value is `True` or an empty string. An empty string stands for
+                  `False`.
                 enum:
                   - ''
                   - 
@@ -90029,19 +91051,51 @@ components:
                   - 'null'
                   - string
               created:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               fault:
                 additionalProperties: false
+                description: |-
+                  A fault object. Only displayed when the server status is `ERROR` or
+                  `DELETED` and a fault occurred.
                 properties:
                   code:
+                    description: |-
+                      The error response code.
                     type: integer
                   created:
+                    description: |-
+                      The date and time when the exception was raised. The date and time
+                      stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                      ```
+                      CCYY-MM-DDThh:mm:ss±hh:mm
+                      ```
+
+                      For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                      value, if included, is the time zone as an offset from UTC. In
+                      the previous example, the offset value is `-05:00`.
                     format: date-time
                     type: string
                   details:
+                    description: |-
+                      The stack trace. It is available if the response code is not 500 or
+                      you have the administrator privilege
                     type: string
                   message:
+                    description: |-
+                      The error message.
                     type: string
                 required:
                   - code
@@ -90050,10 +91104,24 @@ components:
                 type: object
               flavor:
                 additionalProperties: false
+                description: |-
+                  Before microversion 2.47 this contains the ID and links for the flavor
+                  used to boot the server instance. This can be an empty object in case
+                  flavor information is no longer present in the system.
+
+                  As of microversion 2.47 this contains a subset of the actual flavor
+                  information used to create the server instance, represented as a nested
+                  dictionary.
                 properties:
                   id:
+                    description: |-
+                      The UUID of the server.
                     type: string
                   links:
+                    description: |-
+                      Links to the resources in question. See [API Guide / Links and
+                      References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                      for more info.
                     items:
                       additionalProperties: false
                       properties:
@@ -90072,11 +91140,20 @@ components:
                     type: array
                 type: object
               hostId:
+                description: |-
+                  An ID string representing the host. This is a hashed value so will not actually look like
+                  a hostname, and is hashed with data from the project_id, so the same physical host as seen
+                  by two different project_ids, will be different. It is useful when within the same project you
+                  need to determine if two instances are on the same or different physical hosts for the
+                  purposes of availability or performance.
                 type: string
               id:
                 format: uuid
                 type: string
               image:
+                description: |-
+                  The UUID and links for the image for your server instance. The `image` object
+                  will be an empty string when you boot the server from a volume.
                 oneOf:
                   - additionalProperties: false
                     properties:
@@ -90084,6 +91161,10 @@ components:
                         format: uuid
                         type: string
                       links:
+                        description: |-
+                          Links to the resources in question. See [API Guide / Links and
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
                         items:
                           additionalProperties: false
                           properties:
@@ -90104,10 +91185,16 @@ components:
                   - const: ''
                     type: string
               key_name:
+                description: |-
+                  The name of associated key pair, if any.
                 type:
                   - 'null'
                   - string
               links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
                 items:
                   additionalProperties: false
                   properties:
@@ -90126,15 +91213,22 @@ components:
                 type: array
               metadata:
                 additionalProperties: false
+                description: |-
+                  A dictionary of metadata key-and-value pairs, which is maintained for backward
+                  compatibility.
                 patternProperties:
                   ^.+$:
                     type: string
                 type: object
               name:
+                description: |-
+                  The server name.
                 type:
                   - 'null'
                   - string
               os-extended-volumes:volumes_attached:
+                description: |-
+                  The attached volumes, if any.
                 items:
                   additionalProperties: false
                   properties:
@@ -90149,10 +91243,16 @@ components:
                   type: object
                 type: array
               progress:
+                description: |-
+                  A percentage value of the operation progress.
+                  This parameter only appears when the server status is `ACTIVE`,
+                  `BUILD`, `REBUILD`, `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
                 type:
                   - 'null'
                   - number
               security_groups:
+                description: |-
+                  One or more security groups objects.
                 items:
                   additionalProperties: false
                   properties:
@@ -90163,6 +91263,8 @@ components:
                   type: object
                 type: array
               status:
+                description: |-
+                  The server status.
                 enum:
                   - ACTIVE
                   - BUILD
@@ -90186,14 +91288,29 @@ components:
                   - VERIFY_RESIZE
                 type: string
               tenant_id:
+                description: |-
+                  The UUID of the tenant in a multi-tenancy cloud.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
                 type: string
               updated:
+                description: |-
+                  The date and time when the resource was updated. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               user_id:
+                description: |-
+                  The user ID of the user who owns the server.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
@@ -90227,6 +91344,11 @@ components:
             type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -90258,48 +91380,124 @@ components:
             additionalProperties: false
             properties:
               OS-DCF:diskConfig:
+                description: |-
+                  Disk configuration. The value is either:
+
+                  * `AUTO`. The API builds the server with a single partition the size of
+                    the target flavor disk. The API automatically adjusts the file system to
+                    fit the entire partition.
+                  * `MANUAL`. The API builds the server by using the partition scheme and
+                    file system that is in the source image. If the target flavor disk is
+                    larger, The API does not partition the remaining disk space.
                 type: string
               OS-EXT-AZ:availability_zone:
+                description: |-
+                  The availability zone name.
                 type: string
               OS-EXT-SRV-ATTR:host:
+                description: |-
+                  The name of the compute host on which this instance is running.
+                  Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:hostname:
+                description: |-
+                  The hostname of the instance reported in the metadata service.
+                  This parameter only appears in responses for administrators until
+                  microversion 2.90, after which it is shown for all users.
+
+                  Note
+
+                  This information is published via the metadata service and requires
+                  application such as `cloud-init` to propagate it through to the
+                  instance.
+
+                  **New in version 2.3**
                 type: string
               OS-EXT-SRV-ATTR:hypervisor_hostname:
+                description: |-
+                  The hypervisor host name provided by the Nova virt driver. For the Ironic driver,
+                  it is the Ironic node uuid. Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:instance_name:
+                description: |-
+                  The instance name. The Compute API generates the instance name from the instance
+                  name template. Appears in the response for administrative users only.
                 type: string
               OS-EXT-SRV-ATTR:kernel_id:
+                description: |-
+                  The UUID of the kernel image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:launch_index:
+                description: |-
+                  When servers are launched via multiple create, this is the
+                  sequence in which the servers were launched.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - integer
                   - 'null'
               OS-EXT-SRV-ATTR:ramdisk_id:
+                description: |-
+                  The UUID of the ramdisk image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:reservation_id:
+                description: |-
+                  The reservation id for the server. This is an id that can
+                  be useful in tracking groups of servers created with multiple
+                  create, that will all have the same reservation_id.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:root_device_name:
+                description: |-
+                  The root device name for the instance
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:user_data:
+                description: |-
+                  The user_data the instance was created with.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 format: base64
                 maxLength: 65535
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:power_state:
+                description: |-
+                  The power state of the instance. This is an enum value that is mapped as:
+
+                  ```
+                  0: NOSTATE
+                  1: RUNNING
+                  3: PAUSED
+                  4: SHUTDOWN
+                  6: CRASHED
+                  7: SUSPENDED
+                  ```
                 enum:
                   - 
                   - 0
@@ -90312,35 +91510,75 @@ components:
                   - integer
                   - 'null'
               OS-EXT-STS:task_state:
+                description: |-
+                  The task state of the instance.
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:vm_state:
+                description: |-
+                  The VM state.
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:launched_at:
+                description: |-
+                  The date and time when the server was launched.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+
+                  The `hh±:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:terminated_at:
+                description: |-
+                  The date and time when the server was deleted.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+                  The `±hh:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               accessIPv4:
+                description: |-
+                  IPv4 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
                 type: string
               accessIPv6:
+                description: |-
+                  IPv6 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv6
                 type: string
               addresses:
                 additionalProperties: false
+                description: |-
+                  The addresses for the server. Servers with status `BUILD` hide their
+                  addresses information.
+                  This view is not updated immediately.
+                  Please consult with OpenStack Networking API for up-to-date information.
                 patternProperties:
                   ^.*$:
                     items:
@@ -90373,6 +91611,10 @@ components:
                     type: array
                 type: object
               config_drive:
+                description: |-
+                  Indicates whether or not a config drive was used for this server.
+                  The value is `True` or an empty string. An empty string stands for
+                  `False`.
                 enum:
                   - ''
                   - 
@@ -90382,23 +91624,60 @@ components:
                   - 'null'
                   - string
               created:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               description:
+                description: |-
+                  The description of the server.
+                  Before microversion 2.19 this was set to the server name.
+
+                  **New in version 2.19**
                 type:
                   - 'null'
                   - string
               fault:
                 additionalProperties: false
+                description: |-
+                  A fault object. Only displayed when the server status is `ERROR` or
+                  `DELETED` and a fault occurred.
                 properties:
                   code:
+                    description: |-
+                      The error response code.
                     type: integer
                   created:
+                    description: |-
+                      The date and time when the exception was raised. The date and time
+                      stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                      ```
+                      CCYY-MM-DDThh:mm:ss±hh:mm
+                      ```
+
+                      For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                      value, if included, is the time zone as an offset from UTC. In
+                      the previous example, the offset value is `-05:00`.
                     format: date-time
                     type: string
                   details:
+                    description: |-
+                      The stack trace. It is available if the response code is not 500 or
+                      you have the administrator privilege
                     type: string
                   message:
+                    description: |-
+                      The error message.
                     type: string
                 required:
                   - code
@@ -90407,24 +91686,62 @@ components:
                 type: object
               flavor:
                 additionalProperties: false
+                description: |-
+                  Before microversion 2.47 this contains the ID and links for the flavor
+                  used to boot the server instance. This can be an empty object in case
+                  flavor information is no longer present in the system.
+
+                  As of microversion 2.47 this contains a subset of the actual flavor
+                  information used to create the server instance, represented as a nested
+                  dictionary.
                 properties:
                   disk:
+                    description: |-
+                      The size of the root disk that was created in GiB.
+
+                      **New in version 2.47**
                     type: integer
                   ephemeral:
+                    description: |-
+                      The size of the ephemeral disk that was created, in GiB.
+
+                      **New in version 2.47**
                     type: integer
                   extra_specs:
                     additionalProperties: false
+                    description: |-
+                      A dictionary of the flavor’s extra-specs key-and-value pairs. This will
+                      only be included if the user is allowed by policy to index flavor
+                      extra_specs.
+
+                      **New in version 2.47**
                     patternProperties:
                       ^.+$:
                         type: string
                     type: object
                   original_name:
+                    description: |-
+                      The display name of a flavor.
+
+                      **New in version 2.47**
                     type: string
                   ram:
+                    description: |-
+                      The amount of RAM a flavor has, in MiB.
+
+                      **New in version 2.47**
                     type: integer
                   swap:
+                    description: |-
+                      The size of a dedicated swap disk that was allocated, in MiB.
+
+                      **New in version 2.47**
                     type: integer
                   vcpus:
+                    description: |-
+                      The number of virtual CPUs that were allocated to the server.
+
+                      **New in version 2.47**
                     type: integer
                 required:
                   - disk
@@ -90435,8 +91752,27 @@ components:
                   - vcpus
                 type: object
               hostId:
+                description: |-
+                  An ID string representing the host. This is a hashed value so will not actually look like
+                  a hostname, and is hashed with data from the project_id, so the same physical host as seen
+                  by two different project_ids, will be different. It is useful when within the same project you
+                  need to determine if two instances are on the same or different physical hosts for the
+                  purposes of availability or performance.
                 type: string
               host_status:
+                description: |-
+                  The host status. Values where next value in list can override the previous:
+
+                  * `UP` if nova-compute up.
+                  * `UNKNOWN` if nova-compute not reported by servicegroup driver.
+                  * `DOWN` if nova-compute forced down.
+                  * `MAINTENANCE` if nova-compute is disabled.
+                  * Empty string indicates there is no host for server.
+
+                  This attribute appears in the response only if the policy permits.
+                  By default, only administrators can get this parameter.
+
+                  **New in version 2.16**
                 enum:
                   - ''
                   - DOWN
@@ -90445,9 +91781,14 @@ components:
                   - UP
                 type: string
               id:
+                description: |-
+                  The UUID of the server.
                 format: uuid
                 type: string
               image:
+                description: |-
+                  The UUID and links for the image for your server instance. The `image` object
+                  will be an empty string when you boot the server from a volume.
                 oneOf:
                   - additionalProperties: false
                     properties:
@@ -90455,6 +91796,10 @@ components:
                         format: uuid
                         type: string
                       links:
+                        description: |-
+                          Links to the resources in question. See [API Guide / Links and
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
                         items:
                           additionalProperties: false
                           properties:
@@ -90475,10 +91820,16 @@ components:
                   - const: ''
                     type: string
               key_name:
+                description: |-
+                  The name of associated key pair, if any.
                 type:
                   - 'null'
                   - string
               links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
                 items:
                   additionalProperties: false
                   properties:
@@ -90496,18 +91847,29 @@ components:
                   type: object
                 type: array
               locked:
+                description: |-
+                  True if the instance is locked otherwise False.
+
+                  **New in version 2.9**
                 type: boolean
               metadata:
                 additionalProperties: false
+                description: |-
+                  A dictionary of metadata key-and-value pairs, which is maintained for backward
+                  compatibility.
                 patternProperties:
                   ^.+$:
                     type: string
                 type: object
               name:
+                description: |-
+                  The server name.
                 type:
                   - 'null'
                   - string
               os-extended-volumes:volumes_attached:
+                description: |-
+                  The attached volumes, if any.
                 items:
                   additionalProperties: false
                   properties:
@@ -90522,10 +91884,16 @@ components:
                   type: object
                 type: array
               progress:
+                description: |-
+                  A percentage value of the operation progress.
+                  This parameter only appears when the server status is `ACTIVE`,
+                  `BUILD`, `REBUILD`, `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
                 type:
                   - 'null'
                   - number
               security_groups:
+                description: |-
+                  One or more security groups objects.
                 items:
                   additionalProperties: false
                   properties:
@@ -90536,6 +91904,8 @@ components:
                   type: object
                 type: array
               status:
+                description: |-
+                  The server status.
                 enum:
                   - ACTIVE
                   - BUILD
@@ -90559,19 +91929,38 @@ components:
                   - VERIFY_RESIZE
                 type: string
               tags:
+                description: |-
+                  A list of tags. The maximum count of tags in this list is 50.
+
+                  **New in version 2.26**
                 items:
                   type: string
                 maxItems: 50
                 type: array
               tenant_id:
+                description: |-
+                  The UUID of the tenant in a multi-tenancy cloud.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
                 type: string
               updated:
+                description: |-
+                  The date and time when the resource was updated. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               user_id:
+                description: |-
+                  The user ID of the user who owns the server.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
@@ -90608,6 +91997,11 @@ components:
             type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -90639,48 +92033,124 @@ components:
             additionalProperties: false
             properties:
               OS-DCF:diskConfig:
+                description: |-
+                  Disk configuration. The value is either:
+
+                  * `AUTO`. The API builds the server with a single partition the size of
+                    the target flavor disk. The API automatically adjusts the file system to
+                    fit the entire partition.
+                  * `MANUAL`. The API builds the server by using the partition scheme and
+                    file system that is in the source image. If the target flavor disk is
+                    larger, The API does not partition the remaining disk space.
                 type: string
               OS-EXT-AZ:availability_zone:
+                description: |-
+                  The availability zone name.
                 type: string
               OS-EXT-SRV-ATTR:host:
+                description: |-
+                  The name of the compute host on which this instance is running.
+                  Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:hostname:
+                description: |-
+                  The hostname of the instance reported in the metadata service.
+                  This parameter only appears in responses for administrators until
+                  microversion 2.90, after which it is shown for all users.
+
+                  Note
+
+                  This information is published via the metadata service and requires
+                  application such as `cloud-init` to propagate it through to the
+                  instance.
+
+                  **New in version 2.3**
                 type: string
               OS-EXT-SRV-ATTR:hypervisor_hostname:
+                description: |-
+                  The hypervisor host name provided by the Nova virt driver. For the Ironic driver,
+                  it is the Ironic node uuid. Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:instance_name:
+                description: |-
+                  The instance name. The Compute API generates the instance name from the instance
+                  name template. Appears in the response for administrative users only.
                 type: string
               OS-EXT-SRV-ATTR:kernel_id:
+                description: |-
+                  The UUID of the kernel image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:launch_index:
+                description: |-
+                  When servers are launched via multiple create, this is the
+                  sequence in which the servers were launched.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - integer
                   - 'null'
               OS-EXT-SRV-ATTR:ramdisk_id:
+                description: |-
+                  The UUID of the ramdisk image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:reservation_id:
+                description: |-
+                  The reservation id for the server. This is an id that can
+                  be useful in tracking groups of servers created with multiple
+                  create, that will all have the same reservation_id.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:root_device_name:
+                description: |-
+                  The root device name for the instance
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:user_data:
+                description: |-
+                  The user_data the instance was created with.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 format: base64
                 maxLength: 65535
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:power_state:
+                description: |-
+                  The power state of the instance. This is an enum value that is mapped as:
+
+                  ```
+                  0: NOSTATE
+                  1: RUNNING
+                  3: PAUSED
+                  4: SHUTDOWN
+                  6: CRASHED
+                  7: SUSPENDED
+                  ```
                 enum:
                   - 
                   - 0
@@ -90693,35 +92163,75 @@ components:
                   - integer
                   - 'null'
               OS-EXT-STS:task_state:
+                description: |-
+                  The task state of the instance.
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:vm_state:
+                description: |-
+                  The VM state.
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:launched_at:
+                description: |-
+                  The date and time when the server was launched.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+
+                  The `hh±:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:terminated_at:
+                description: |-
+                  The date and time when the server was deleted.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+                  The `±hh:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               accessIPv4:
+                description: |-
+                  IPv4 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv4
                 type: string
               accessIPv6:
+                description: |-
+                  IPv6 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv6
                 type: string
               addresses:
                 additionalProperties: false
+                description: |-
+                  The addresses for the server. Servers with status `BUILD` hide their
+                  addresses information.
+                  This view is not updated immediately.
+                  Please consult with OpenStack Networking API for up-to-date information.
                 patternProperties:
                   ^.*$:
                     items:
@@ -90754,6 +92264,10 @@ components:
                     type: array
                 type: object
               config_drive:
+                description: |-
+                  Indicates whether or not a config drive was used for this server.
+                  The value is `True` or an empty string. An empty string stands for
+                  `False`.
                 enum:
                   - ''
                   - 
@@ -90763,23 +92277,60 @@ components:
                   - 'null'
                   - string
               created:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               description:
+                description: |-
+                  The description of the server.
+                  Before microversion 2.19 this was set to the server name.
+
+                  **New in version 2.19**
                 type:
                   - 'null'
                   - string
               fault:
                 additionalProperties: false
+                description: |-
+                  A fault object. Only displayed when the server status is `ERROR` or
+                  `DELETED` and a fault occurred.
                 properties:
                   code:
+                    description: |-
+                      The error response code.
                     type: integer
                   created:
+                    description: |-
+                      The date and time when the exception was raised. The date and time
+                      stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                      ```
+                      CCYY-MM-DDThh:mm:ss±hh:mm
+                      ```
+
+                      For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                      value, if included, is the time zone as an offset from UTC. In
+                      the previous example, the offset value is `-05:00`.
                     format: date-time
                     type: string
                   details:
+                    description: |-
+                      The stack trace. It is available if the response code is not 500 or
+                      you have the administrator privilege
                     type: string
                   message:
+                    description: |-
+                      The error message.
                     type: string
                 required:
                   - code
@@ -90788,24 +92339,62 @@ components:
                 type: object
               flavor:
                 additionalProperties: false
+                description: |-
+                  Before microversion 2.47 this contains the ID and links for the flavor
+                  used to boot the server instance. This can be an empty object in case
+                  flavor information is no longer present in the system.
+
+                  As of microversion 2.47 this contains a subset of the actual flavor
+                  information used to create the server instance, represented as a nested
+                  dictionary.
                 properties:
                   disk:
+                    description: |-
+                      The size of the root disk that was created in GiB.
+
+                      **New in version 2.47**
                     type: integer
                   ephemeral:
+                    description: |-
+                      The size of the ephemeral disk that was created, in GiB.
+
+                      **New in version 2.47**
                     type: integer
                   extra_specs:
                     additionalProperties: false
+                    description: |-
+                      A dictionary of the flavor’s extra-specs key-and-value pairs. This will
+                      only be included if the user is allowed by policy to index flavor
+                      extra_specs.
+
+                      **New in version 2.47**
                     patternProperties:
                       ^.+$:
                         type: string
                     type: object
                   original_name:
+                    description: |-
+                      The display name of a flavor.
+
+                      **New in version 2.47**
                     type: string
                   ram:
+                    description: |-
+                      The amount of RAM a flavor has, in MiB.
+
+                      **New in version 2.47**
                     type: integer
                   swap:
+                    description: |-
+                      The size of a dedicated swap disk that was allocated, in MiB.
+
+                      **New in version 2.47**
                     type: integer
                   vcpus:
+                    description: |-
+                      The number of virtual CPUs that were allocated to the server.
+
+                      **New in version 2.47**
                     type: integer
                 required:
                   - disk
@@ -90816,8 +92405,27 @@ components:
                   - vcpus
                 type: object
               hostId:
+                description: |-
+                  An ID string representing the host. This is a hashed value so will not actually look like
+                  a hostname, and is hashed with data from the project_id, so the same physical host as seen
+                  by two different project_ids, will be different. It is useful when within the same project you
+                  need to determine if two instances are on the same or different physical hosts for the
+                  purposes of availability or performance.
                 type: string
               host_status:
+                description: |-
+                  The host status. Values where next value in list can override the previous:
+
+                  * `UP` if nova-compute up.
+                  * `UNKNOWN` if nova-compute not reported by servicegroup driver.
+                  * `DOWN` if nova-compute forced down.
+                  * `MAINTENANCE` if nova-compute is disabled.
+                  * Empty string indicates there is no host for server.
+
+                  This attribute appears in the response only if the policy permits.
+                  By default, only administrators can get this parameter.
+
+                  **New in version 2.16**
                 enum:
                   - ''
                   - DOWN
@@ -90826,9 +92434,14 @@ components:
                   - UP
                 type: string
               id:
+                description: |-
+                  The UUID of the server.
                 format: uuid
                 type: string
               image:
+                description: |-
+                  The UUID and links for the image for your server instance. The `image` object
+                  will be an empty string when you boot the server from a volume.
                 oneOf:
                   - additionalProperties: false
                     properties:
@@ -90836,6 +92449,10 @@ components:
                         format: uuid
                         type: string
                       links:
+                        description: |-
+                          Links to the resources in question. See [API Guide / Links and
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
                         items:
                           additionalProperties: false
                           properties:
@@ -90856,10 +92473,16 @@ components:
                   - const: ''
                     type: string
               key_name:
+                description: |-
+                  The name of associated key pair, if any.
                 type:
                   - 'null'
                   - string
               links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
                 items:
                   additionalProperties: false
                   properties:
@@ -90877,18 +92500,29 @@ components:
                   type: object
                 type: array
               locked:
+                description: |-
+                  True if the instance is locked otherwise False.
+
+                  **New in version 2.9**
                 type: boolean
               metadata:
                 additionalProperties: false
+                description: |-
+                  A dictionary of metadata key-and-value pairs, which is maintained for backward
+                  compatibility.
                 patternProperties:
                   ^.+$:
                     type: string
                 type: object
               name:
+                description: |-
+                  The server name.
                 type:
                   - 'null'
                   - string
               os-extended-volumes:volumes_attached:
+                description: |-
+                  The attached volumes, if any.
                 items:
                   additionalProperties: false
                   properties:
@@ -90903,10 +92537,16 @@ components:
                   type: object
                 type: array
               progress:
+                description: |-
+                  A percentage value of the operation progress.
+                  This parameter only appears when the server status is `ACTIVE`,
+                  `BUILD`, `REBUILD`, `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
                 type:
                   - 'null'
                   - number
               security_groups:
+                description: |-
+                  One or more security groups objects.
                 items:
                   additionalProperties: false
                   properties:
@@ -90917,6 +92557,8 @@ components:
                   type: object
                 type: array
               status:
+                description: |-
+                  The server status.
                 enum:
                   - ACTIVE
                   - BUILD
@@ -90940,25 +92582,51 @@ components:
                   - VERIFY_RESIZE
                 type: string
               tags:
+                description: |-
+                  A list of tags. The maximum count of tags in this list is 50.
+
+                  **New in version 2.26**
                 items:
                   type: string
                 maxItems: 50
                 type: array
               tenant_id:
+                description: |-
+                  The UUID of the tenant in a multi-tenancy cloud.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
                 type: string
               trusted_image_certificates:
+                description: |-
+                  A list of trusted certificate IDs, that were used during image signature
+                  verification to verify the signing certificate. The list is restricted
+                  to a maximum of 50 IDs. The value is `null` if trusted certificate IDs
+                  are not set.
+
+                  **New in version 2.63**
                 items:
                   type: string
                 type:
                   - array
                   - 'null'
               updated:
+                description: |-
+                  The date and time when the resource was updated. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               user_id:
+                description: |-
+                  The user ID of the user who owns the server.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
@@ -90996,6 +92664,11 @@ components:
             type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -91425,6 +93098,11 @@ components:
                 type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -91859,6 +93537,11 @@ components:
                 type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -91890,48 +93573,124 @@ components:
             additionalProperties: false
             properties:
               OS-DCF:diskConfig:
+                description: |-
+                  Disk configuration. The value is either:
+
+                  * `AUTO`. The API builds the server with a single partition the size of
+                    the target flavor disk. The API automatically adjusts the file system to
+                    fit the entire partition.
+                  * `MANUAL`. The API builds the server by using the partition scheme and
+                    file system that is in the source image. If the target flavor disk is
+                    larger, The API does not partition the remaining disk space.
                 type: string
               OS-EXT-AZ:availability_zone:
+                description: |-
+                  The availability zone name.
                 type: string
               OS-EXT-SRV-ATTR:host:
+                description: |-
+                  The name of the compute host on which this instance is running.
+                  Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:hostname:
+                description: |-
+                  The hostname of the instance reported in the metadata service.
+                  This parameter only appears in responses for administrators until
+                  microversion 2.90, after which it is shown for all users.
+
+                  Note
+
+                  This information is published via the metadata service and requires
+                  application such as `cloud-init` to propagate it through to the
+                  instance.
+
+                  **New in version 2.3**
                 type: string
               OS-EXT-SRV-ATTR:hypervisor_hostname:
+                description: |-
+                  The hypervisor host name provided by the Nova virt driver. For the Ironic driver,
+                  it is the Ironic node uuid. Appears in the response for administrative users only.
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:instance_name:
+                description: |-
+                  The instance name. The Compute API generates the instance name from the instance
+                  name template. Appears in the response for administrative users only.
                 type: string
               OS-EXT-SRV-ATTR:kernel_id:
+                description: |-
+                  The UUID of the kernel image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:launch_index:
+                description: |-
+                  When servers are launched via multiple create, this is the
+                  sequence in which the servers were launched.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - integer
                   - 'null'
               OS-EXT-SRV-ATTR:ramdisk_id:
+                description: |-
+                  The UUID of the ramdisk image when using an AMI. Will be null if not.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:reservation_id:
+                description: |-
+                  The reservation id for the server. This is an id that can
+                  be useful in tracking groups of servers created with multiple
+                  create, that will all have the same reservation_id.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:root_device_name:
+                description: |-
+                  The root device name for the instance
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 type:
                   - 'null'
                   - string
               OS-EXT-SRV-ATTR:user_data:
+                description: |-
+                  The user_data the instance was created with.
+                  By default, it appears in the response for administrative users only.
+
+                  **New in version 2.3**
                 format: base64
                 maxLength: 65535
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:power_state:
+                description: |-
+                  The power state of the instance. This is an enum value that is mapped as:
+
+                  ```
+                  0: NOSTATE
+                  1: RUNNING
+                  3: PAUSED
+                  4: SHUTDOWN
+                  6: CRASHED
+                  7: SUSPENDED
+                  ```
                 enum:
                   - 
                   - 0
@@ -91944,19 +93703,48 @@ components:
                   - integer
                   - 'null'
               OS-EXT-STS:task_state:
+                description: |-
+                  The task state of the instance.
                 type:
                   - 'null'
                   - string
               OS-EXT-STS:vm_state:
+                description: |-
+                  The VM state.
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:launched_at:
+                description: |-
+                  The date and time when the server was launched.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+
+                  The `hh±:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
                   - string
               OS-SRV-USG:terminated_at:
+                description: |-
+                  The date and time when the server was deleted.
+
+                  The date and time stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`.
+                  The `±hh:mm` value, if included, is the time zone as an offset from UTC.
+                  If the `deleted_at` date and time stamp is not set, its value is `null`.
                 format: date-time
                 type:
                   - 'null'
@@ -91970,12 +93758,20 @@ components:
                   - format: ipv4
                 type: string
               accessIPv6:
+                description: |-
+                  IPv6 address that should be used to access this server. May be
+                  automatically set by the provider.
                 oneOf:
                   - const: ''
                   - format: ipv6
                 type: string
               addresses:
                 additionalProperties: false
+                description: |-
+                  The addresses for the server. Servers with status `BUILD` hide their
+                  addresses information.
+                  This view is not updated immediately.
+                  Please consult with OpenStack Networking API for up-to-date information.
                 patternProperties:
                   ^.*$:
                     items:
@@ -92008,6 +93804,10 @@ components:
                     type: array
                 type: object
               config_drive:
+                description: |-
+                  Indicates whether or not a config drive was used for this server.
+                  The value is `True` or an empty string. An empty string stands for
+                  `False`.
                 enum:
                   - ''
                   - 
@@ -92017,19 +93817,51 @@ components:
                   - 'null'
                   - string
               created:
+                description: |-
+                  The date and time when the resource was created. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               fault:
                 additionalProperties: false
+                description: |-
+                  A fault object. Only displayed when the server status is `ERROR` or
+                  `DELETED` and a fault occurred.
                 properties:
                   code:
+                    description: |-
+                      The error response code.
                     type: integer
                   created:
+                    description: |-
+                      The date and time when the exception was raised. The date and time
+                      stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                      ```
+                      CCYY-MM-DDThh:mm:ss±hh:mm
+                      ```
+
+                      For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                      value, if included, is the time zone as an offset from UTC. In
+                      the previous example, the offset value is `-05:00`.
                     format: date-time
                     type: string
                   details:
+                    description: |-
+                      The stack trace. It is available if the response code is not 500 or
+                      you have the administrator privilege
                     type: string
                   message:
+                    description: |-
+                      The error message.
                     type: string
                 required:
                   - code
@@ -92038,10 +93870,24 @@ components:
                 type: object
               flavor:
                 additionalProperties: false
+                description: |-
+                  Before microversion 2.47 this contains the ID and links for the flavor
+                  used to boot the server instance. This can be an empty object in case
+                  flavor information is no longer present in the system.
+
+                  As of microversion 2.47 this contains a subset of the actual flavor
+                  information used to create the server instance, represented as a nested
+                  dictionary.
                 properties:
                   id:
+                    description: |-
+                      The UUID of the server.
                     type: string
                   links:
+                    description: |-
+                      Links to the resources in question. See [API Guide / Links and
+                      References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                      for more info.
                     items:
                       additionalProperties: false
                       properties:
@@ -92060,11 +93906,20 @@ components:
                     type: array
                 type: object
               hostId:
+                description: |-
+                  An ID string representing the host. This is a hashed value so will not actually look like
+                  a hostname, and is hashed with data from the project_id, so the same physical host as seen
+                  by two different project_ids, will be different. It is useful when within the same project you
+                  need to determine if two instances are on the same or different physical hosts for the
+                  purposes of availability or performance.
                 type: string
               id:
                 format: uuid
                 type: string
               image:
+                description: |-
+                  The UUID and links for the image for your server instance. The `image` object
+                  will be an empty string when you boot the server from a volume.
                 oneOf:
                   - additionalProperties: false
                     properties:
@@ -92072,6 +93927,10 @@ components:
                         format: uuid
                         type: string
                       links:
+                        description: |-
+                          Links to the resources in question. See [API Guide / Links and
+                          References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                          for more info.
                         items:
                           additionalProperties: false
                           properties:
@@ -92092,10 +93951,16 @@ components:
                   - const: ''
                     type: string
               key_name:
+                description: |-
+                  The name of associated key pair, if any.
                 type:
                   - 'null'
                   - string
               links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
                 items:
                   additionalProperties: false
                   properties:
@@ -92113,18 +93978,29 @@ components:
                   type: object
                 type: array
               locked:
+                description: |-
+                  True if the instance is locked otherwise False.
+
+                  **New in version 2.9**
                 type: boolean
               metadata:
                 additionalProperties: false
+                description: |-
+                  A dictionary of metadata key-and-value pairs, which is maintained for backward
+                  compatibility.
                 patternProperties:
                   ^.+$:
                     type: string
                 type: object
               name:
+                description: |-
+                  The server name.
                 type:
                   - 'null'
                   - string
               os-extended-volumes:volumes_attached:
+                description: |-
+                  The attached volumes, if any.
                 items:
                   additionalProperties: false
                   properties:
@@ -92139,10 +94015,16 @@ components:
                   type: object
                 type: array
               progress:
+                description: |-
+                  A percentage value of the operation progress.
+                  This parameter only appears when the server status is `ACTIVE`,
+                  `BUILD`, `REBUILD`, `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
                 type:
                   - 'null'
                   - number
               security_groups:
+                description: |-
+                  One or more security groups objects.
                 items:
                   additionalProperties: false
                   properties:
@@ -92153,6 +94035,8 @@ components:
                   type: object
                 type: array
               status:
+                description: |-
+                  The server status.
                 enum:
                   - ACTIVE
                   - BUILD
@@ -92176,14 +94060,29 @@ components:
                   - VERIFY_RESIZE
                 type: string
               tenant_id:
+                description: |-
+                  The UUID of the tenant in a multi-tenancy cloud.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
                 type: string
               updated:
+                description: |-
+                  The date and time when the resource was updated. The date and time
+                  stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+
+                  ```
+                  CCYY-MM-DDThh:mm:ss±hh:mm
+                  ```
+
+                  For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+                  value, if included, is the time zone as an offset from UTC. In
+                  the previous example, the offset value is `-05:00`.
                 format: date-time
                 type: string
               user_id:
+                description: |-
+                  The user ID of the user who owns the server.
                 maxLength: 255
                 minLength: 1
                 pattern: ^[a-zA-Z0-9-]*$
@@ -92218,6 +94117,11 @@ components:
             type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -92653,6 +94557,11 @@ components:
                 type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -93093,6 +95002,11 @@ components:
                 type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -93542,6 +95456,11 @@ components:
                 type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -93874,6 +95793,10 @@ components:
                 format: uuid
                 type: string
               links:
+                description: |-
+                  Links to the resources in question. See [API Guide / Links and
+                  References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+                  for more info.
                 items:
                   additionalProperties: false
                   properties:
@@ -93891,6 +95814,8 @@ components:
                   type: object
                 type: array
               name:
+                description: |-
+                  The server name.
                 type: string
             required:
               - id
@@ -93899,6 +95824,11 @@ components:
             type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:
@@ -93989,6 +95919,11 @@ components:
                 type: object
           type: array
         servers_links:
+          description: |-
+            Links to the next server. It is available when the number of servers exceeds
+            `limit` parameter or `[api]/max_limit` in the configuration file.
+            See [Paginated collections](https://docs.openstack.org/api-guide/compute/paginated_collections.html)
+            for more info.
           items:
             additionalProperties: false
             properties:

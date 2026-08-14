@@ -26,6 +26,7 @@ pub struct ServerResponse {
     #[structable()]
     pub id: String,
 
+    /// The server name.
     #[structable()]
     pub name: String,
 }
