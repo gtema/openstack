@@ -27,9 +27,14 @@ use openstack_cli_core::error::OpenStackCliError;
 use openstack_cli_core::output::OutputProcessor;
 use openstack_sdk::AsyncOpenStack;
 
+use openstack_sdk::api::AsyncClient;
+use openstack_sdk::api::Findable;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RestEndpoint;
 use openstack_sdk::api::compute::v2::server::find;
 use openstack_sdk::api::find;
+use openstack_sdk::api::rest_endpoint::negotiate_microversion;
+use openstack_sdk::types::ApiVersion;
 use openstack_types::compute::v2::server::response;
 
 /// Shows details for a server.
@@ -99,36 +104,70 @@ impl ServerCommand {
         let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        let find_ep_versioned = find_ep.get_ep::<AsyncOpenStack>()?;
+
+        let service_endpoint = client
+            .get_service_endpoint(
+                &find_ep_versioned.service_type(),
+                find_ep_versioned.api_version().as_ref(),
+            )
+            .await?;
+        let negotiated_version =
+            negotiate_microversion::<AsyncOpenStack, _>(&service_endpoint, &find_ep_versioned)?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<response::get_20::ServerResponse>(find_data.clone())
-            .or_else(|_| {
-                op.output_single::<response::get_2100_a::ServerResponse>(find_data.clone())
-            })
-            .or_else(|_| {
-                op.output_single::<response::get_2100_b::ServerResponse>(find_data.clone())
-            })
-            .or_else(|_| op.output_single::<response::get_216::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_219::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_226::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_23::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_247::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_263::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_269_a::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_269_b::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_271_a::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_271_b::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_273_a::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_273_b::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_29::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_290_a::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_290_b::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_296_a::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_296_b::ServerResponse>(find_data.clone()))
-            .or_else(|_| op.output_single::<response::get_298_a::ServerResponse>(find_data.clone()))
-            .or_else(|_| {
-                op.output_single::<response::get_298_b::ServerResponse>(find_data.clone())
-            })?;
+        if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 100)) {
+            op.output_single::<response::get_2100_a::ServerResponse>(find_data.clone())
+                .or_else(|_| {
+                    op.output_single::<response::get_2100_b::ServerResponse>(find_data.clone())
+                })?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 98)) {
+            op.output_single::<response::get_298_a::ServerResponse>(find_data.clone())
+                .or_else(|_| {
+                    op.output_single::<response::get_298_b::ServerResponse>(find_data.clone())
+                })?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 96)) {
+            op.output_single::<response::get_296_a::ServerResponse>(find_data.clone())
+                .or_else(|_| {
+                    op.output_single::<response::get_296_b::ServerResponse>(find_data.clone())
+                })?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 90)) {
+            op.output_single::<response::get_290_a::ServerResponse>(find_data.clone())
+                .or_else(|_| {
+                    op.output_single::<response::get_290_b::ServerResponse>(find_data.clone())
+                })?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 73)) {
+            op.output_single::<response::get_273_a::ServerResponse>(find_data.clone())
+                .or_else(|_| {
+                    op.output_single::<response::get_273_b::ServerResponse>(find_data.clone())
+                })?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 71)) {
+            op.output_single::<response::get_271_a::ServerResponse>(find_data.clone())
+                .or_else(|_| {
+                    op.output_single::<response::get_271_b::ServerResponse>(find_data.clone())
+                })?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 69)) {
+            op.output_single::<response::get_269_a::ServerResponse>(find_data.clone())
+                .or_else(|_| {
+                    op.output_single::<response::get_269_b::ServerResponse>(find_data.clone())
+                })?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 63)) {
+            op.output_single::<response::get_263::ServerResponse>(find_data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 47)) {
+            op.output_single::<response::get_247::ServerResponse>(find_data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 26)) {
+            op.output_single::<response::get_226::ServerResponse>(find_data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 19)) {
+            op.output_single::<response::get_219::ServerResponse>(find_data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 16)) {
+            op.output_single::<response::get_216::ServerResponse>(find_data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 9)) {
+            op.output_single::<response::get_29::ServerResponse>(find_data.clone())?;
+        } else if negotiated_version.is_some_and(|v| v >= ApiVersion::new(2, 3)) {
+            op.output_single::<response::get_23::ServerResponse>(find_data.clone())?;
+        } else {
+            op.output_single::<response::get_20::ServerResponse>(find_data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())
