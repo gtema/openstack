@@ -12,26 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::cloud_worker::ConfirmableRequest;
-
 pub mod v2;
 
 pub use v2::*;
-
-impl ConfirmableRequest for ComputeApiRequest {
-    fn get_confirm_message(&self) -> Option<String> {
-        match &self {
-            ComputeApiRequest::Server(req) => req.get_confirm_message(),
-            _ => None,
-        }
-    }
-}
-
-impl ConfirmableRequest for ComputeServerApiRequest {
-    fn get_confirm_message(&self) -> Option<String> {
-        match &self {
-            ComputeServerApiRequest::Delete(x) => x.get_confirm_message(),
-            _ => None,
-        }
-    }
-}

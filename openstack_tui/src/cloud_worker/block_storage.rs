@@ -12,26 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::cloud_worker::ConfirmableRequest;
-
 pub mod v3;
 
 pub use v3::*;
-
-impl ConfirmableRequest for BlockStorageApiRequest {
-    fn get_confirm_message(&self) -> Option<String> {
-        match &self {
-            BlockStorageApiRequest::Volume(req) => req.get_confirm_message(),
-            _ => None,
-        }
-    }
-}
-
-impl ConfirmableRequest for BlockStorageVolumeApiRequest {
-    fn get_confirm_message(&self) -> Option<String> {
-        match &self {
-            BlockStorageVolumeApiRequest::Delete(req) => req.get_confirm_message(),
-            _ => None,
-        }
-    }
-}

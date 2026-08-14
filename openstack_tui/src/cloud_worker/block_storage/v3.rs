@@ -25,7 +25,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod backup;
 pub mod snapshot;
@@ -69,6 +69,17 @@ impl From<BlockStorageVolumeApiRequest> for BlockStorageApiRequest {
     }
 }
 
+impl ConfirmableRequest for BlockStorageApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            BlockStorageApiRequest::Backup(req) => req.get_confirm_message(),
+
+            BlockStorageApiRequest::Snapshot(req) => req.get_confirm_message(),
+
+            BlockStorageApiRequest::Volume(req) => req.get_confirm_message(),
+        }
+    }
+}
 impl ExecuteApiRequest for BlockStorageApiRequest {
     async fn execute_request(
         &self,

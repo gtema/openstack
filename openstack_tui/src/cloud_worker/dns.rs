@@ -12,26 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::cloud_worker::ConfirmableRequest;
-
 pub mod v2;
 
 pub use v2::*;
-
-impl ConfirmableRequest for DnsApiRequest {
-    fn get_confirm_message(&self) -> Option<String> {
-        match &self {
-            DnsApiRequest::Zone(req) => req.get_confirm_message(),
-            _ => None,
-        }
-    }
-}
-
-impl ConfirmableRequest for DnsZoneApiRequest {
-    fn get_confirm_message(&self) -> Option<String> {
-        match &self {
-            DnsZoneApiRequest::Delete(req) => req.get_confirm_message(),
-            _ => None,
-        }
-    }
-}

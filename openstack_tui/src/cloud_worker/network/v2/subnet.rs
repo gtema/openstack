@@ -52,11 +52,11 @@ impl ConfirmableRequest for NetworkSubnetApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
         match &self {
             NetworkSubnetApiRequest::Delete(req) => req.get_confirm_message(),
+
             _ => None,
         }
     }
 }
-
 impl ExecuteApiRequest for NetworkSubnetApiRequest {
     async fn execute_request(
         &self,

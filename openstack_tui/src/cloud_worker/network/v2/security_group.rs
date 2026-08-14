@@ -60,11 +60,11 @@ impl ConfirmableRequest for NetworkSecurityGroupApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
         match &self {
             NetworkSecurityGroupApiRequest::Delete(req) => req.get_confirm_message(),
+
             _ => None,
         }
     }
 }
-
 impl ExecuteApiRequest for NetworkSecurityGroupApiRequest {
     async fn execute_request(
         &self,

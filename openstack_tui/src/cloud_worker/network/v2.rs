@@ -103,15 +103,19 @@ impl ConfirmableRequest for NetworkApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
         match &self {
             NetworkApiRequest::Network(req) => req.get_confirm_message(),
+
+            NetworkApiRequest::Quota(req) => req.get_confirm_message(),
+
             NetworkApiRequest::Router(req) => req.get_confirm_message(),
+
             NetworkApiRequest::SecurityGroup(req) => req.get_confirm_message(),
+
             NetworkApiRequest::SecurityGroupRule(req) => req.get_confirm_message(),
+
             NetworkApiRequest::Subnet(req) => req.get_confirm_message(),
-            _ => None,
         }
     }
 }
-
 impl ExecuteApiRequest for NetworkApiRequest {
     async fn execute_request(
         &self,

@@ -26,7 +26,7 @@ use openstack_sdk::AsyncOpenStack;
 use crate::action::Action;
 use crate::cloud_worker::ComputeApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod get;
 pub mod list_detailed;
@@ -60,6 +60,11 @@ impl From<ComputeHypervisorList> for ComputeApiRequest {
     }
 }
 
+impl ConfirmableRequest for ComputeHypervisorApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        None
+    }
+}
 impl ExecuteApiRequest for ComputeHypervisorApiRequest {
     async fn execute_request(
         &self,
