@@ -3516,6 +3516,8 @@ components:
     ImagesListResponse:
       properties:
         first:
+          description: |-
+            The URI for the first page of response.
           type: string
         images:
           description: |-
@@ -3730,8 +3732,13 @@ components:
                 type: string
           type: array
         next:
+          description: |-
+            The URI for the next page of response. Will not be present on the last
+            page of the response.
           type: string
         schema:
+          description: |-
+            The URL for the schema describing a list of images.
           type: string
       type: object
     ImagesLocationsAdd_LocationRequest:
@@ -4071,6 +4078,8 @@ components:
         next:
           type: string
         schema:
+          description: |-
+            The URL for the schema describing an image member list.
           type: string
       type: object
     ImagesStageStageRequest:
