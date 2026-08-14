@@ -1551,8 +1551,7 @@ mod tests {
             )
             .unwrap();
             let floor_resolved =
-                resolve_microversion::<FakeOpenStackClient, _>(&sep, &ep, &floor_client())
-                    .unwrap();
+                resolve_microversion::<FakeOpenStackClient, _>(&sep, &ep, &floor_client()).unwrap();
             assert_eq!(
                 header(&floor_req),
                 Some(format!("compute {}", floor_resolved.unwrap()))

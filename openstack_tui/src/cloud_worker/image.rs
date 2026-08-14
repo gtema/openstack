@@ -13,25 +13,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #![allow(clippy::module_inception)]
 
-use crate::cloud_worker::ConfirmableRequest;
-
 pub mod v2;
 
 pub use v2::*;
-
-impl ConfirmableRequest for ImageApiRequest {
-    fn get_confirm_message(&self) -> Option<String> {
-        match &self {
-            ImageApiRequest::Image(req) => req.get_confirm_message(),
-        }
-    }
-}
-
-impl ConfirmableRequest for ImageImageApiRequest {
-    fn get_confirm_message(&self) -> Option<String> {
-        match &self {
-            ImageImageApiRequest::Delete(req) => req.get_confirm_message(),
-            _ => None,
-        }
-    }
-}

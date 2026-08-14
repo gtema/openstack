@@ -25,7 +25,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod image;
 
@@ -49,6 +49,13 @@ impl From<ImageImageApiRequest> for ImageApiRequest {
     }
 }
 
+impl ConfirmableRequest for ImageApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            ImageApiRequest::Image(req) => req.get_confirm_message(),
+        }
+    }
+}
 impl ExecuteApiRequest for ImageApiRequest {
     async fn execute_request(
         &self,

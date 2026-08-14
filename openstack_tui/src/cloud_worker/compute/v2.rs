@@ -25,7 +25,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod aggregate;
 pub mod flavor;
@@ -89,6 +89,21 @@ impl From<ComputeServerApiRequest> for ComputeApiRequest {
     }
 }
 
+impl ConfirmableRequest for ComputeApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            ComputeApiRequest::Aggregate(req) => req.get_confirm_message(),
+
+            ComputeApiRequest::Flavor(req) => req.get_confirm_message(),
+
+            ComputeApiRequest::Hypervisor(req) => req.get_confirm_message(),
+
+            ComputeApiRequest::QuotaSet(req) => req.get_confirm_message(),
+
+            ComputeApiRequest::Server(req) => req.get_confirm_message(),
+        }
+    }
+}
 impl ExecuteApiRequest for ComputeApiRequest {
     async fn execute_request(
         &self,

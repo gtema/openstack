@@ -26,7 +26,7 @@ use openstack_sdk::AsyncOpenStack;
 use crate::action::Action;
 use crate::cloud_worker::IdentityApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod project;
 
@@ -56,6 +56,13 @@ impl From<IdentityAuthProjectApiRequest> for IdentityApiRequest {
     }
 }
 
+impl ConfirmableRequest for IdentityAuthApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            IdentityAuthApiRequest::Project(req) => req.get_confirm_message(),
+        }
+    }
+}
 impl ExecuteApiRequest for IdentityAuthApiRequest {
     async fn execute_request(
         &self,

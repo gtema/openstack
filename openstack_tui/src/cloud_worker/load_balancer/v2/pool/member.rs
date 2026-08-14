@@ -26,7 +26,7 @@ use openstack_sdk::AsyncOpenStack;
 use crate::action::Action;
 use crate::cloud_worker::LoadBalancerApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod delete;
 pub mod get;
@@ -52,6 +52,15 @@ impl From<LoadBalancerPoolMemberApiRequest> for ApiRequest {
     }
 }
 
+impl ConfirmableRequest for LoadBalancerPoolMemberApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            LoadBalancerPoolMemberApiRequest::Delete(req) => req.get_confirm_message(),
+
+            _ => None,
+        }
+    }
+}
 impl ExecuteApiRequest for LoadBalancerPoolMemberApiRequest {
     async fn execute_request(
         &self,

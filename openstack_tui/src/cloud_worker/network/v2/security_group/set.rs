@@ -35,6 +35,7 @@ pub struct NetworkSecurityGroupSet {
     #[builder(default)]
     pub name: Option<String>,
 
+    /// A `security_group` object.
     security_group: SecurityGroup,
 }
 
@@ -43,21 +44,23 @@ impl NetworkSecurityGroupSet {
     /// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
     /// constraints, `enum`, ranges and descriptions that the generated
     /// struct's `Option<T>` fields alone do not express).
-    pub const BODY_SCHEMA: &'static str = "{\"description\": \"Request of the security-groups/id:put operation\", \"properties\": {\"security_group\": {\"properties\": {\"description\": {\"maxLength\": 255, \"type\": \"string\"}, \"name\": {\"maxLength\": 255, \"type\": \"string\"}, \"stateful\": {\"type\": [\"boolean\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+    pub const BODY_SCHEMA: &'static str = "{\"description\": \"Request of the security-groups/id:put operation\", \"properties\": {\"security_group\": {\"description\": \"A `security_group` object.\", \"properties\": {\"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"name\": {\"description\": \"Human-readable name of the resource.\", \"maxLength\": 255, \"type\": \"string\"}, \"stateful\": {\"type\": [\"boolean\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
     /// Commented YAML template for the create/edit-via-external-editor flow,
     /// derived from the same raw OpenAPI request-body schema as
     /// `BODY_SCHEMA` -- required fields uncommented, optional fields
     /// commented out, enum values and descriptions inline as comments.
-    pub const EDITOR_TEMPLATE: &'static str =
-        "security_group:\n  # description:\n  # name:\n  # stateful:\n";
+    pub const EDITOR_TEMPLATE: &'static str = "security_group:\n  # A human-readable description for the resource.\n  # Default is an empty string.\n  # description:\n  # Human-readable name of the resource.\n  # name:\n  # stateful:\n";
 }
 /// SecurityGroup data
 #[derive(Builder, Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct SecurityGroup {
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
     #[builder(default, setter(into))]
     pub description: Option<String>,
 
+    /// Human-readable name of the resource.
     #[builder(default, setter(into))]
     pub name: Option<String>,
 

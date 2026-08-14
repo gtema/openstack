@@ -26,7 +26,7 @@ use openstack_sdk::AsyncOpenStack;
 use crate::action::Action;
 use crate::cloud_worker::ComputeApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod details;
 
@@ -44,6 +44,11 @@ impl From<ComputeQuotaSetApiRequest> for ApiRequest {
     }
 }
 
+impl ConfirmableRequest for ComputeQuotaSetApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        None
+    }
+}
 impl ExecuteApiRequest for ComputeQuotaSetApiRequest {
     async fn execute_request(
         &self,
