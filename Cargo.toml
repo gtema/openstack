@@ -130,7 +130,7 @@ url = { version = "^2.5", features = ["serde"] }
 webauthn-authenticator-rs = { version = "^0.5", features = ["ctap2", "mozilla", "ui-cli"]}
 webauthn-rs-proto = { version = "^0.5" }
 uuid = { version = "^1.24" }
-x509-parser = { version = "^0.16" }
+x509-parser = { version = "^0.18" }
 zeroize = { version = "^1.9" }
 
 [profile.dev]
