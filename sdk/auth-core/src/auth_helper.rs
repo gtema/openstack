@@ -226,15 +226,16 @@ impl AuthHelper for ExternalCmd {
     }
 }
 
-/// Virtual clone pattern for trait objects.
-/// The `#[allow(unconditional_recursion)]` is intentional: `self.clone_box()`
-/// dispatches to the concrete impl of the boxed type, not this blanket impl.
+/// Forward the blanket impl to the wrapped trait object.
+///
+/// The calls must explicitly deref through the smart pointer (`&**self`): a bare
+/// `self.method()` resolves back to this very impl (`Box<dyn AuthHelper>: AuthHelper`)
+/// and recurses forever. `&**self` is a `&dyn AuthHelper` and dispatches via the vtable
+/// to the concrete implementation.
 #[async_trait]
 impl AuthHelper for Box<dyn AuthHelper + 'static> {
-    #[allow(unconditional_recursion)]
     fn clone_box(&self) -> Box<dyn AuthHelper> {
-        #[allow(unconditional_recursion)]
-        self.clone_box()
+        (**self).clone_box()
     }
 
     async fn get(
@@ -242,7 +243,7 @@ impl AuthHelper for Box<dyn AuthHelper + 'static> {
         key: String,
         connection_name: Option<String>,
     ) -> Result<String, AuthHelperError> {
-        self.get(key, connection_name).await
+        (**self).get(key, connection_name).await
     }
 
     async fn get_secret(
@@ -250,15 +251,14 @@ impl AuthHelper for Box<dyn AuthHelper + 'static> {
         key: String,
         connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError> {
-        self.get_secret(key, connection_name).await
+        (**self).get_secret(key, connection_name).await
     }
 }
 
 #[async_trait]
 impl AuthHelper for Arc<dyn AuthHelper + 'static> {
-    #[allow(unconditional_recursion)]
     fn clone_box(&self) -> Box<dyn AuthHelper> {
-        self.clone_box()
+        (**self).clone_box()
     }
 
     async fn get(
@@ -266,7 +266,7 @@ impl AuthHelper for Arc<dyn AuthHelper + 'static> {
         key: String,
         connection_name: Option<String>,
     ) -> Result<String, AuthHelperError> {
-        self.get(key, connection_name).await
+        (**self).get(key, connection_name).await
     }
 
     async fn get_secret(
@@ -274,6 +274,71 @@ impl AuthHelper for Arc<dyn AuthHelper + 'static> {
         key: String,
         connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError> {
-        self.get_secret(key, connection_name).await
+        (**self).get_secret(key, connection_name).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use secrecy::ExposeSecret;
+
+    #[derive(Clone)]
+    struct Fixed(String);
+
+    #[async_trait]
+    impl AuthHelper for Fixed {
+        fn clone_box(&self) -> Box<dyn AuthHelper> {
+            Box::new(self.clone())
+        }
+
+        async fn get(
+            &self,
+            _key: String,
+            _connection_name: Option<String>,
+        ) -> Result<String, AuthHelperError> {
+            Ok(self.0.clone())
+        }
+
+        async fn get_secret(
+            &self,
+            _key: String,
+            _connection_name: Option<String>,
+        ) -> Result<SecretString, AuthHelperError> {
+            Ok(SecretString::from(self.0.clone()))
+        }
+    }
+
+    // Regression: the `Box`/`Arc<dyn AuthHelper>` blanket impls used to call
+    // `self.method()`, which resolved back to themselves and recursed until the
+    // stack overflowed. They must forward to the wrapped concrete impl instead.
+    #[tokio::test]
+    async fn arc_blanket_impl_forwards_without_recursion() {
+        let helper: Arc<dyn AuthHelper> = Arc::new(Fixed("secret".into()));
+        assert_eq!(helper.get("k".into(), None).await.unwrap(), "secret");
+        assert_eq!(
+            helper
+                .get_secret("k".into(), None)
+                .await
+                .unwrap()
+                .expose_secret(),
+            "secret"
+        );
+        let _ = helper.clone_box();
+    }
+
+    #[tokio::test]
+    async fn box_blanket_impl_forwards_without_recursion() {
+        let helper: Box<dyn AuthHelper> = Box::new(Fixed("secret".into()));
+        assert_eq!(helper.get("k".into(), None).await.unwrap(), "secret");
+        assert_eq!(
+            helper
+                .get_secret("k".into(), None)
+                .await
+                .unwrap()
+                .expose_secret(),
+            "secret"
+        );
+        let _ = helper.clone_box();
     }
 }
