@@ -23,7 +23,7 @@ indicatif = "^0.18"
 itertools = { workspace = true }
 openstack-sdk-auth-core.workspace = true
 openstack_sdk_core.workspace = true
-owo-colors = { version = "^4.3", features = ["supports-colors"] }
+owo-colors = { version = "^4.4", features = ["supports-colors"] }
 rand = { version = "^0.10" }
 reqwest = { workspace = true }
 serde = { workspace = true, features = ["derive"] }

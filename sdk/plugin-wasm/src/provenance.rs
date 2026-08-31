@@ -515,8 +515,9 @@ mod tests {
         source_repo: &str,
         workflow_ref: &str,
     ) -> SyntheticChain {
+        use rcgen::string::Ia5String;
         use rcgen::{
-            BasicConstraints, CertificateParams, CustomExtension, Ia5String, IsCa, KeyPair, SanType,
+            BasicConstraints, CertificateParams, CustomExtension, IsCa, Issuer, KeyPair, SanType,
         };
 
         let mut root_params =
@@ -524,14 +525,16 @@ mod tests {
         root_params.is_ca = IsCa::Ca(BasicConstraints::Unconstrained);
         let root_key = KeyPair::generate().expect("key generation");
         let root_cert = root_params.self_signed(&root_key).expect("self-sign root");
+        let root_issuer = Issuer::from_params(&root_params, &root_key);
 
         let mut inter_params =
             CertificateParams::new(Vec::<String>::new()).expect("empty SAN list is always valid");
         inter_params.is_ca = IsCa::Ca(BasicConstraints::Constrained(0));
         let inter_key = KeyPair::generate().expect("key generation");
         let inter_cert = inter_params
-            .signed_by(&inter_key, &root_cert, &root_key)
+            .signed_by(&inter_key, &root_issuer)
             .expect("sign intermediate with root");
+        let inter_issuer = Issuer::from_params(&inter_params, &inter_key);
 
         let mut leaf_params =
             CertificateParams::new(Vec::<String>::new()).expect("empty SAN list is always valid");
@@ -553,7 +556,7 @@ mod tests {
             ));
         let leaf_key = KeyPair::generate().expect("key generation");
         let leaf_cert = leaf_params
-            .signed_by(&leaf_key, &inter_cert, &inter_key)
+            .signed_by(&leaf_key, &inter_issuer)
             .expect("sign leaf with intermediate");
 
         let leaf_signing_key = ring::signature::EcdsaKeyPair::from_pkcs8(
