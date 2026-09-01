@@ -138,6 +138,11 @@ pub struct FieldConfig {
     /// field
     #[serde(default)]
     pub json_pointer: Option<String>,
+    /// Fallback [JSON pointer](https://datatracker.ietf.org/doc/html/rfc6901) used when
+    /// `json_pointer` does not resolve to a value (e.g. the field is not present at the
+    /// currently negotiated microversion).
+    #[serde(default)]
+    pub json_pointer_fallback: Option<String>,
 }
 
 const fn _default_true() -> bool {
