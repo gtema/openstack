@@ -77,7 +77,8 @@ views:
       - name: status
         width: 8
       - name: flavor
-        json_pointer: "/original_name"
+        json_pointer: "/id"
+        json_pointer_fallback: "/original_name"
       - name: image
         json_pointer: "/id"
   # dns

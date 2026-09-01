@@ -126,6 +126,20 @@ impl StructTableOptions for OutputProcessor {
             None
         }
     }
+
+    fn field_data_json_pointer_fallback<S: AsRef<str>>(&self, field: S) -> Option<String> {
+        if !self.wide_mode() {
+            self.config.as_ref().and_then(|config| {
+                config
+                    .fields
+                    .iter()
+                    .find(|x| x.name.to_lowercase() == field.as_ref().to_lowercase())
+                    .and_then(|field_config| field_config.json_pointer_fallback.clone())
+            })
+        } else {
+            None
+        }
+    }
 }
 
 impl OutputProcessor {
