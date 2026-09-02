@@ -148,6 +148,12 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         cloud_config.region_name = Some(region_name.clone());
     }
 
+    // `osc config` commands edit local configuration files of the selected
+    // cloud and must not trigger authentication.
+    if let TopLevelCommands::Config(args) = &cli.command {
+        return args.take_action(&cli, &cloud_config);
+    }
+
     // Certain commands (e.g. `auth login --renew`, `auth status`) need different
     // pre-connect behavior than the default "connect with a live authenticated
     // session". See `ConnectionRequirementsProvider`.
