@@ -69,6 +69,26 @@ pub struct IkepoliciesCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// auth_algorithm query parameter for /v2.0/vpn/ikepolicies API
+    #[arg(help_heading = "Query parameters", long, value_parser = ["aes-cmac","aes-xcbc","sha1","sha256","sha384","sha512"])]
+    auth_algorithm: Option<String>,
+
+    /// description query parameter for /v2.0/vpn/ikepolicies API
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    /// encryption_algorithm query parameter for /v2.0/vpn/ikepolicies API
+    #[arg(help_heading = "Query parameters", long, value_parser = ["3des","aes-128","aes-128-ccm-12","aes-128-ccm-16","aes-128-ccm-8","aes-128-ctr","aes-128-gcm-12","aes-128-gcm-16","aes-128-gcm-8","aes-192","aes-192-ccm-12","aes-192-ccm-16","aes-192-ccm-8","aes-192-ctr","aes-192-gcm-12","aes-192-gcm-16","aes-192-gcm-8","aes-256","aes-256-ccm-12","aes-256-ccm-16","aes-256-ccm-8","aes-256-ctr","aes-256-gcm-12","aes-256-gcm-16","aes-256-gcm-8"])]
+    encryption_algorithm: Option<String>,
+
+    /// id query parameter for /v2.0/vpn/ikepolicies API
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
+    /// ike_version query parameter for /v2.0/vpn/ikepolicies API
+    #[arg(help_heading = "Query parameters", long, value_parser = ["v1","v2"])]
+    ike_version: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -86,9 +106,21 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
+    /// name query parameter for /v2.0/vpn/ikepolicies API
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
     /// Reverse the page direction
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
+
+    /// pfs query parameter for /v2.0/vpn/ikepolicies API
+    #[arg(help_heading = "Query parameters", long, value_parser = ["group14","group15","group16","group17","group18","group19","group2","group20","group21","group22","group23","group24","group25","group26","group27","group28","group29","group30","group31","group5"])]
+    pfs: Option<String>,
+
+    /// phase1_negotiation_mode query parameter for /v2.0/vpn/ikepolicies API
+    #[arg(help_heading = "Query parameters", long, value_parser = ["aggressive","main"])]
+    phase1_negotiation_mode: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -99,6 +131,10 @@ struct QueryParameters {
     /// silently ignored by the server.
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
+
+    /// tenant_id query parameter for /v2.0/vpn/ikepolicies API
+    #[arg(help_heading = "Query parameters", long)]
+    tenant_id: Option<String>,
 }
 
 /// Path parameters
@@ -121,6 +157,33 @@ impl IkepoliciesCommand {
         let mut ep_builder = list::Request::builder();
 
         // Set query parameters
+        if let Some(val) = &self.query.auth_algorithm {
+            ep_builder.auth_algorithm(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.encryption_algorithm {
+            ep_builder.encryption_algorithm(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.ike_version {
+            ep_builder.ike_version(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.pfs {
+            ep_builder.pfs(val);
+        }
+        if let Some(val) = &self.query.phase1_negotiation_mode {
+            ep_builder.phase1_negotiation_mode(val);
+        }
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
+        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }

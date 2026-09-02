@@ -69,6 +69,18 @@ pub struct EndpointGroupsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// type query parameter for /v2.0/vpn/endpoint-groups API
+    #[arg(help_heading = "Query parameters", long, value_parser = ["cidr","network","router","subnet","vlan"])]
+    _type: Option<String>,
+
+    /// description query parameter for /v2.0/vpn/endpoint-groups API
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    /// id query parameter for /v2.0/vpn/endpoint-groups API
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -86,6 +98,10 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
+    /// name query parameter for /v2.0/vpn/endpoint-groups API
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
     /// Reverse the page direction
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
@@ -99,6 +115,10 @@ struct QueryParameters {
     /// silently ignored by the server.
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
+
+    /// tenant_id query parameter for /v2.0/vpn/endpoint-groups API
+    #[arg(help_heading = "Query parameters", long)]
+    tenant_id: Option<String>,
 }
 
 /// Path parameters
@@ -124,6 +144,21 @@ impl EndpointGroupsCommand {
         let mut ep_builder = list::Request::builder();
 
         // Set query parameters
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
+        }
+        if let Some(val) = &self.query._type {
+            ep_builder._type(val);
+        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }

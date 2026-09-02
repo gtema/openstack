@@ -47,6 +47,30 @@ use openstack_sdk_core::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// admin_state_up query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default)]
+    admin_state_up: Option<bool>,
+
+    /// description query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// external_v4_ip query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    external_v4_ip: Option<Cow<'a, str>>,
+
+    /// external_v6_ip query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    external_v6_ip: Option<Cow<'a, str>>,
+
+    /// flavor_id query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    flavor_id: Option<Cow<'a, str>>,
+
+    /// id query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -60,9 +84,17 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
+    /// name query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
     /// Reverse the page direction
     #[builder(default)]
     page_reverse: Option<bool>,
+
+    /// router_id query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    router_id: Option<Cow<'a, str>>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -73,6 +105,18 @@ pub struct Request<'a> {
     /// silently ignored by the server.
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
+
+    /// status query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    status: Option<Cow<'a, str>>,
+
+    /// subnet_id query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    subnet_id: Option<Cow<'a, str>>,
+
+    /// tenant_id query parameter for /v2.0/vpn/vpnservices API
+    #[builder(default, setter(into))]
+    tenant_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -160,6 +204,17 @@ impl RestEndpoint for Request<'_> {
         if let Some(val) = &self.sort_key {
             params.extend(val.iter().map(|value| ("sort_key", value)));
         }
+        params.push_opt("admin_state_up", self.admin_state_up);
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("external_v4_ip", self.external_v4_ip.as_ref());
+        params.push_opt("external_v6_ip", self.external_v6_ip.as_ref());
+        params.push_opt("flavor_id", self.flavor_id.as_ref());
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("router_id", self.router_id.as_ref());
+        params.push_opt("status", self.status.as_ref());
+        params.push_opt("subnet_id", self.subnet_id.as_ref());
+        params.push_opt("tenant_id", self.tenant_id.as_ref());
 
         params
     }
