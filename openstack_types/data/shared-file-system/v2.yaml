@@ -4067,6 +4067,13 @@ components:
       required: true
       schema:
         type: string
+    shares_migration_progress_id:
+      description: id parameter for /shares/{id}/migration-progress API
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
     snapshot_instances_action_id:
       description: id parameter for /snapshot-instances/{id}/action API
       in: path

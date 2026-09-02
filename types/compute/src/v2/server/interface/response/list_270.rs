@@ -38,7 +38,7 @@ pub struct FixedIps {
 /// `InterfaceAttachments` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InterfaceAttachments {
-    pub fixed_ips: Vec<FixedIps>,
+    pub fixed_ips: Option<Vec<FixedIps>>,
     pub mac_addr: String,
     pub net_id: String,
     pub port_id: String,

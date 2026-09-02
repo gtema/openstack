@@ -168,8 +168,8 @@ pub struct ServerResponse {
     #[structable()]
     pub tenant_id: String,
 
-    #[structable(serialize)]
-    pub trusted_image_certificates: Vec<String>,
+    #[structable(optional, serialize)]
+    pub trusted_image_certificates: Option<Vec<String>>,
 
     #[structable()]
     pub updated: String,

@@ -61,8 +61,8 @@ pub struct AggregateResponse {
     pub deleted_at: Option<String>,
 
     /// An array of host information.
-    #[structable(serialize)]
-    pub hosts: Vec<String>,
+    #[structable(optional, serialize)]
+    pub hosts: Option<Vec<String>>,
 
     /// The ID of the host aggregate.
     #[structable()]

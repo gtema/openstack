@@ -23,8 +23,8 @@ use structable::{StructTable, StructTableOptions};
 #[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InterfaceResponse {
     /// Fixed IP addresses with subnet IDs.
-    #[structable(serialize)]
-    pub fixed_ips: Vec<FixedIps>,
+    #[structable(optional, serialize)]
+    pub fixed_ips: Option<Vec<FixedIps>>,
 
     /// The MAC address.
     #[structable()]
