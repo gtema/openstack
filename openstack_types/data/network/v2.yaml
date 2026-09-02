@@ -7326,6 +7326,11 @@ paths:
         Error response codes: 401, 403
       operationId: vpn/endpoint-groups:get
       parameters:
+        - $ref: '#/components/parameters/endpoint_groups_description'
+        - $ref: '#/components/parameters/endpoint_groups_id'
+        - $ref: '#/components/parameters/endpoint_groups_name'
+        - $ref: '#/components/parameters/endpoint_groups_tenant_id'
+        - $ref: '#/components/parameters/endpoint_groups_type'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
         - $ref: '#/components/parameters/page_reverse'
@@ -7454,6 +7459,15 @@ paths:
         Error response codes: 401, 403
       operationId: vpn/ikepolicies:get
       parameters:
+        - $ref: '#/components/parameters/ikepolicies_auth_algorithm'
+        - $ref: '#/components/parameters/ikepolicies_description'
+        - $ref: '#/components/parameters/ikepolicies_encryption_algorithm'
+        - $ref: '#/components/parameters/ikepolicies_id'
+        - $ref: '#/components/parameters/ikepolicies_ike_version'
+        - $ref: '#/components/parameters/ikepolicies_name'
+        - $ref: '#/components/parameters/ikepolicies_pfs'
+        - $ref: '#/components/parameters/ikepolicies_phase1_negotiation_mode'
+        - $ref: '#/components/parameters/ikepolicies_tenant_id'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
         - $ref: '#/components/parameters/page_reverse'
@@ -7583,6 +7597,25 @@ paths:
         Error response codes: 401, 403
       operationId: vpn/ipsec-site-connections:get
       parameters:
+        - $ref: '#/components/parameters/ipsec_site_connections_admin_state_up'
+        - $ref: '#/components/parameters/ipsec_site_connections_auth_mode'
+        - $ref: '#/components/parameters/ipsec_site_connections_description'
+        - $ref: '#/components/parameters/ipsec_site_connections_id'
+        - $ref: '#/components/parameters/ipsec_site_connections_ikepolicy_id'
+        - $ref: '#/components/parameters/ipsec_site_connections_initiator'
+        - $ref: '#/components/parameters/ipsec_site_connections_ipsecpolicy_id'
+        - $ref: '#/components/parameters/ipsec_site_connections_local_ep_group_id'
+        - $ref: '#/components/parameters/ipsec_site_connections_local_id'
+        - $ref: '#/components/parameters/ipsec_site_connections_mtu'
+        - $ref: '#/components/parameters/ipsec_site_connections_name'
+        - $ref: '#/components/parameters/ipsec_site_connections_peer_address'
+        - $ref: '#/components/parameters/ipsec_site_connections_peer_ep_group_id'
+        - $ref: '#/components/parameters/ipsec_site_connections_peer_id'
+        - $ref: '#/components/parameters/ipsec_site_connections_psk'
+        - $ref: '#/components/parameters/ipsec_site_connections_route_mode'
+        - $ref: '#/components/parameters/ipsec_site_connections_status'
+        - $ref: '#/components/parameters/ipsec_site_connections_tenant_id'
+        - $ref: '#/components/parameters/ipsec_site_connections_vpnservice_id'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
         - $ref: '#/components/parameters/page_reverse'
@@ -7708,6 +7741,15 @@ paths:
         Error response codes: 401, 403
       operationId: vpn/ipsecpolicies:get
       parameters:
+        - $ref: '#/components/parameters/ipsecpolicies_auth_algorithm'
+        - $ref: '#/components/parameters/ipsecpolicies_description'
+        - $ref: '#/components/parameters/ipsecpolicies_encapsulation_mode'
+        - $ref: '#/components/parameters/ipsecpolicies_encryption_algorithm'
+        - $ref: '#/components/parameters/ipsecpolicies_id'
+        - $ref: '#/components/parameters/ipsecpolicies_name'
+        - $ref: '#/components/parameters/ipsecpolicies_pfs'
+        - $ref: '#/components/parameters/ipsecpolicies_tenant_id'
+        - $ref: '#/components/parameters/ipsecpolicies_transform_protocol'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
         - $ref: '#/components/parameters/page_reverse'
@@ -7844,6 +7886,17 @@ paths:
         - $ref: '#/components/parameters/page_reverse'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
+        - $ref: '#/components/parameters/vpnservices_admin_state_up'
+        - $ref: '#/components/parameters/vpnservices_description'
+        - $ref: '#/components/parameters/vpnservices_external_v4_ip'
+        - $ref: '#/components/parameters/vpnservices_external_v6_ip'
+        - $ref: '#/components/parameters/vpnservices_flavor_id'
+        - $ref: '#/components/parameters/vpnservices_id'
+        - $ref: '#/components/parameters/vpnservices_name'
+        - $ref: '#/components/parameters/vpnservices_router_id'
+        - $ref: '#/components/parameters/vpnservices_status'
+        - $ref: '#/components/parameters/vpnservices_subnet_id'
+        - $ref: '#/components/parameters/vpnservices_tenant_id'
       responses:
         '200':
           content:
@@ -8659,12 +8712,51 @@ components:
       schema:
         format: uuid
         type: string
+    endpoint_groups_description:
+      description: description query parameter for /v2.0/vpn/endpoint-groups API
+      in: query
+      name: description
+      schema:
+        maxLength: 255
+        type: string
     endpoint_groups_endpoint_group_id:
       description: id parameter for /v2.0/vpn/endpoint-groups/{id} API
       in: path
       name: id
       required: true
       schema:
+        type: string
+    endpoint_groups_id:
+      description: id query parameter for /v2.0/vpn/endpoint-groups API
+      in: query
+      name: id
+      schema:
+        format: uuid
+        type: string
+    endpoint_groups_name:
+      description: name query parameter for /v2.0/vpn/endpoint-groups API
+      in: query
+      name: name
+      schema:
+        type: string
+    endpoint_groups_tenant_id:
+      description: tenant_id query parameter for /v2.0/vpn/endpoint-groups API
+      in: query
+      name: tenant_id
+      schema:
+        maxLength: 255
+        type: string
+    endpoint_groups_type:
+      description: type query parameter for /v2.0/vpn/endpoint-groups API
+      in: query
+      name: type
+      schema:
+        enum:
+          - cidr
+          - network
+          - router
+          - subnet
+          - vlan
         type: string
     extensions_id:
       description: id parameter for /v2.0/extensions/{id} API
@@ -8861,12 +8953,182 @@ components:
       schema:
         maxLength: 255
         type: string
+    ikepolicies_auth_algorithm:
+      description: auth_algorithm query parameter for /v2.0/vpn/ikepolicies API
+      in: query
+      name: auth_algorithm
+      schema:
+        enum:
+          - aes-cmac
+          - aes-xcbc
+          - sha1
+          - sha256
+          - sha384
+          - sha512
+        type: string
+    ikepolicies_description:
+      description: description query parameter for /v2.0/vpn/ikepolicies API
+      in: query
+      name: description
+      schema:
+        maxLength: 255
+        type: string
+    ikepolicies_encryption_algorithm:
+      description: encryption_algorithm query parameter for 
+        /v2.0/vpn/ikepolicies API
+      in: query
+      name: encryption_algorithm
+      schema:
+        enum:
+          - 3des
+          - aes-128
+          - aes-128-ccm-12
+          - aes-128-ccm-16
+          - aes-128-ccm-8
+          - aes-128-ctr
+          - aes-128-gcm-12
+          - aes-128-gcm-16
+          - aes-128-gcm-8
+          - aes-192
+          - aes-192-ccm-12
+          - aes-192-ccm-16
+          - aes-192-ccm-8
+          - aes-192-ctr
+          - aes-192-gcm-12
+          - aes-192-gcm-16
+          - aes-192-gcm-8
+          - aes-256
+          - aes-256-ccm-12
+          - aes-256-ccm-16
+          - aes-256-ccm-8
+          - aes-256-ctr
+          - aes-256-gcm-12
+          - aes-256-gcm-16
+          - aes-256-gcm-8
+        type: string
+    ikepolicies_id:
+      description: id query parameter for /v2.0/vpn/ikepolicies API
+      in: query
+      name: id
+      schema:
+        format: uuid
+        type: string
+    ikepolicies_ike_version:
+      description: ike_version query parameter for /v2.0/vpn/ikepolicies API
+      in: query
+      name: ike_version
+      schema:
+        enum:
+          - v1
+          - v2
+        type: string
     ikepolicies_ikepolicy_id:
       description: id parameter for /v2.0/vpn/ikepolicies/{id} API
       in: path
       name: id
       required: true
       schema:
+        type: string
+    ikepolicies_name:
+      description: name query parameter for /v2.0/vpn/ikepolicies API
+      in: query
+      name: name
+      schema:
+        type: string
+    ikepolicies_pfs:
+      description: pfs query parameter for /v2.0/vpn/ikepolicies API
+      in: query
+      name: pfs
+      schema:
+        enum:
+          - group14
+          - group15
+          - group16
+          - group17
+          - group18
+          - group19
+          - group2
+          - group20
+          - group21
+          - group22
+          - group23
+          - group24
+          - group25
+          - group26
+          - group27
+          - group28
+          - group29
+          - group30
+          - group31
+          - group5
+        type: string
+    ikepolicies_phase1_negotiation_mode:
+      description: phase1_negotiation_mode query parameter for 
+        /v2.0/vpn/ikepolicies API
+      in: query
+      name: phase1_negotiation_mode
+      schema:
+        enum:
+          - aggressive
+          - main
+        type: string
+    ikepolicies_tenant_id:
+      description: tenant_id query parameter for /v2.0/vpn/ikepolicies API
+      in: query
+      name: tenant_id
+      schema:
+        maxLength: 255
+        type: string
+    ipsec_site_connections_admin_state_up:
+      description: admin_state_up query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: admin_state_up
+      schema:
+        type:
+          - boolean
+          - string
+    ipsec_site_connections_auth_mode:
+      description: auth_mode query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: auth_mode
+      schema:
+        enum:
+          - psk
+        type: string
+    ipsec_site_connections_description:
+      description: description query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: description
+      schema:
+        maxLength: 255
+        type: string
+    ipsec_site_connections_id:
+      description: id query parameter for /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: id
+      schema:
+        format: uuid
+        type: string
+    ipsec_site_connections_ikepolicy_id:
+      description: ikepolicy_id query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: ikepolicy_id
+      schema:
+        format: uuid
+        type: string
+    ipsec_site_connections_initiator:
+      description: initiator query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: initiator
+      schema:
+        enum:
+          - bi-directional
+          - response-only
         type: string
     ipsec_site_connections_ipsec_site_connection_id:
       description: id parameter for /v2.0/vpn/ipsec-site-connections/{id} API
@@ -8875,12 +9137,234 @@ components:
       required: true
       schema:
         type: string
+    ipsec_site_connections_ipsecpolicy_id:
+      description: ipsecpolicy_id query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: ipsecpolicy_id
+      schema:
+        format: uuid
+        type: string
+    ipsec_site_connections_local_ep_group_id:
+      description: local_ep_group_id query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: local_ep_group_id
+      schema:
+        format: uuid
+        type:
+          - 'null'
+          - string
+    ipsec_site_connections_local_id:
+      description: local_id query parameter for /v2.0/vpn/ipsec-site-connections
+        API
+      in: query
+      name: local_id
+      schema:
+        type: string
+    ipsec_site_connections_mtu:
+      description: mtu query parameter for /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: mtu
+      schema:
+        minimum: 0
+        type:
+          - integer
+          - string
+    ipsec_site_connections_name:
+      description: name query parameter for /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: name
+      schema:
+        type: string
+    ipsec_site_connections_peer_address:
+      description: peer_address query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: peer_address
+      schema:
+        type: string
+    ipsec_site_connections_peer_ep_group_id:
+      description: peer_ep_group_id query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: peer_ep_group_id
+      schema:
+        format: uuid
+        type:
+          - 'null'
+          - string
+    ipsec_site_connections_peer_id:
+      description: peer_id query parameter for /v2.0/vpn/ipsec-site-connections 
+        API
+      in: query
+      name: peer_id
+      schema:
+        type: string
+    ipsec_site_connections_psk:
+      description: psk query parameter for /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: psk
+      schema:
+        type: string
+    ipsec_site_connections_route_mode:
+      description: route_mode query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: route_mode
+      schema:
+        type: string
+    ipsec_site_connections_status:
+      description: status query parameter for /v2.0/vpn/ipsec-site-connections 
+        API
+      in: query
+      name: status
+      schema:
+        type: string
+    ipsec_site_connections_tenant_id:
+      description: tenant_id query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: tenant_id
+      schema:
+        maxLength: 255
+        type: string
+    ipsec_site_connections_vpnservice_id:
+      description: vpnservice_id query parameter for 
+        /v2.0/vpn/ipsec-site-connections API
+      in: query
+      name: vpnservice_id
+      schema:
+        format: uuid
+        type: string
+    ipsecpolicies_auth_algorithm:
+      description: auth_algorithm query parameter for /v2.0/vpn/ipsecpolicies 
+        API
+      in: query
+      name: auth_algorithm
+      schema:
+        enum:
+          - aes-cmac
+          - aes-xcbc
+          - sha1
+          - sha256
+          - sha384
+          - sha512
+        type: string
+    ipsecpolicies_description:
+      description: description query parameter for /v2.0/vpn/ipsecpolicies API
+      in: query
+      name: description
+      schema:
+        maxLength: 255
+        type: string
+    ipsecpolicies_encapsulation_mode:
+      description: encapsulation_mode query parameter for 
+        /v2.0/vpn/ipsecpolicies API
+      in: query
+      name: encapsulation_mode
+      schema:
+        enum:
+          - transport
+          - tunnel
+        type: string
+    ipsecpolicies_encryption_algorithm:
+      description: encryption_algorithm query parameter for 
+        /v2.0/vpn/ipsecpolicies API
+      in: query
+      name: encryption_algorithm
+      schema:
+        enum:
+          - 3des
+          - aes-128
+          - aes-128-ccm-12
+          - aes-128-ccm-16
+          - aes-128-ccm-8
+          - aes-128-ctr
+          - aes-128-gcm-12
+          - aes-128-gcm-16
+          - aes-128-gcm-8
+          - aes-192
+          - aes-192-ccm-12
+          - aes-192-ccm-16
+          - aes-192-ccm-8
+          - aes-192-ctr
+          - aes-192-gcm-12
+          - aes-192-gcm-16
+          - aes-192-gcm-8
+          - aes-256
+          - aes-256-ccm-12
+          - aes-256-ccm-16
+          - aes-256-ccm-8
+          - aes-256-ctr
+          - aes-256-gcm-12
+          - aes-256-gcm-16
+          - aes-256-gcm-8
+        type: string
+    ipsecpolicies_id:
+      description: id query parameter for /v2.0/vpn/ipsecpolicies API
+      in: query
+      name: id
+      schema:
+        format: uuid
+        type: string
     ipsecpolicies_ipsecpolicy_id:
       description: id parameter for /v2.0/vpn/ipsecpolicies/{id} API
       in: path
       name: id
       required: true
       schema:
+        type: string
+    ipsecpolicies_name:
+      description: name query parameter for /v2.0/vpn/ipsecpolicies API
+      in: query
+      name: name
+      schema:
+        type: string
+    ipsecpolicies_pfs:
+      description: pfs query parameter for /v2.0/vpn/ipsecpolicies API
+      in: query
+      name: pfs
+      schema:
+        enum:
+          - group14
+          - group15
+          - group16
+          - group17
+          - group18
+          - group19
+          - group2
+          - group20
+          - group21
+          - group22
+          - group23
+          - group24
+          - group25
+          - group26
+          - group27
+          - group28
+          - group29
+          - group30
+          - group31
+          - group5
+        type: string
+    ipsecpolicies_tenant_id:
+      description: tenant_id query parameter for /v2.0/vpn/ipsecpolicies API
+      in: query
+      name: tenant_id
+      schema:
+        maxLength: 255
+        type: string
+    ipsecpolicies_transform_protocol:
+      description: transform_protocol query parameter for 
+        /v2.0/vpn/ipsecpolicies API
+      in: query
+      name: transform_protocol
+      schema:
+        enum:
+          - ah
+          - ah-esp
+          - esp
         type: string
     limit:
       description: Requests a page size of items. Returns a number of items up 
@@ -10976,20 +11460,26 @@ components:
       name: ipv6_address_mode
       schema:
         enum:
+          - 
           - dhcpv6-stateful
           - dhcpv6-stateless
           - slaac
-        type: string
+        type:
+          - 'null'
+          - string
     subnets_ipv6_ra_mode:
       description: ipv6_ra_mode query parameter for /v2.0/subnets API
       in: query
       name: ipv6_ra_mode
       schema:
         enum:
+          - 
           - dhcpv6-stateful
           - dhcpv6-stateless
           - slaac
-        type: string
+        type:
+          - 'null'
+          - string
     subnets_name:
       description: name query parameter for /v2.0/subnets API
       in: query
@@ -11125,6 +11615,84 @@ components:
       name: trunk_id
       required: true
       schema:
+        type: string
+    vpnservices_admin_state_up:
+      description: admin_state_up query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: admin_state_up
+      schema:
+        type:
+          - boolean
+          - string
+    vpnservices_description:
+      description: description query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: description
+      schema:
+        maxLength: 255
+        type: string
+    vpnservices_external_v4_ip:
+      description: external_v4_ip query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: external_v4_ip
+      schema:
+        type: string
+    vpnservices_external_v6_ip:
+      description: external_v6_ip query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: external_v6_ip
+      schema:
+        type: string
+    vpnservices_flavor_id:
+      description: flavor_id query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: flavor_id
+      schema:
+        format: uuid
+        type:
+          - 'null'
+          - string
+    vpnservices_id:
+      description: id query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: id
+      schema:
+        format: uuid
+        type: string
+    vpnservices_name:
+      description: name query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: name
+      schema:
+        type: string
+    vpnservices_router_id:
+      description: router_id query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: router_id
+      schema:
+        format: uuid
+        type: string
+    vpnservices_status:
+      description: status query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: status
+      schema:
+        type: string
+    vpnservices_subnet_id:
+      description: subnet_id query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: subnet_id
+      schema:
+        format: uuid
+        type:
+          - 'null'
+          - string
+    vpnservices_tenant_id:
+      description: tenant_id query parameter for /v2.0/vpn/vpnservices API
+      in: query
+      name: tenant_id
+      schema:
+        maxLength: 255
         type: string
     vpnservices_vpnservice_id:
       description: id parameter for /v2.0/vpn/vpnservices/{id} API
@@ -15939,13 +16507,17 @@ components:
                 The ID of the IPv4 address scope that the network is associated with.
                 This value is `null` if the network is not associated with any IPv4
                 address scope.
-              type: string
+              type:
+                - 'null'
+                - string
             ipv6_address_scope:
               description: |-
                 The ID of the IPv6 address scope that the network is associated with.
                 This value is `null` if the network is not associated with any IPv6
                 address scope.
-              type: string
+              type:
+                - 'null'
+                - string
             is_default:
               description: |-
                 The network is default pool or not.
@@ -16247,13 +16819,17 @@ components:
                 The ID of the IPv4 address scope that the network is associated with.
                 This value is `null` if the network is not associated with any IPv4
                 address scope.
-              type: string
+              type:
+                - 'null'
+                - string
             ipv6_address_scope:
               description: |-
                 The ID of the IPv6 address scope that the network is associated with.
                 This value is `null` if the network is not associated with any IPv6
                 address scope.
-              type: string
+              type:
+                - 'null'
+                - string
             is_default:
               description: |-
                 The network is default pool or not.
@@ -17086,13 +17662,17 @@ components:
                 The ID of the IPv4 address scope that the network is associated with.
                 This value is `null` if the network is not associated with any IPv4
                 address scope.
-              type: string
+              type:
+                - 'null'
+                - string
             ipv6_address_scope:
               description: |-
                 The ID of the IPv6 address scope that the network is associated with.
                 This value is `null` if the network is not associated with any IPv6
                 address scope.
-              type: string
+              type:
+                - 'null'
+                - string
             is_default:
               description: |-
                 The network is default pool or not.
@@ -17304,13 +17884,17 @@ components:
                   The ID of the IPv4 address scope that the network is associated with.
                   This value is `null` if the network is not associated with any IPv4
                   address scope.
-                type: string
+                type:
+                  - 'null'
+                  - string
               ipv6_address_scope:
                 description: |-
                   The ID of the IPv6 address scope that the network is associated with.
                   This value is `null` if the network is not associated with any IPv6
                   address scope.
-                type: string
+                type:
+                  - 'null'
+                  - string
               is_default:
                 description: |-
                   The network is default pool or not.
@@ -17780,7 +18364,9 @@ components:
                 - 
                 - ACTIVE
                 - DOWN
-              type: string
+              type:
+                - 'null'
+                - string
             description:
               description: |-
                 A human-readable description for the resource.
@@ -17905,7 +18491,9 @@ components:
                 - preferred
                 - required
                 - socket
-              type: string
+              type:
+                - 'null'
+                - string
             port_security_enabled:
               description: |-
                 The port security status. A valid value is
@@ -17955,7 +18543,9 @@ components:
                 `same_subtree` key contains a list of `id` values from every resource
                 group. This value is `null` if the port does not request any Placement
                 resources.
-              type: string
+              type:
+                - 'null'
+                - object
             revision_number:
               description: |-
                 The revision number of the resource.
@@ -18078,7 +18668,9 @@ components:
                 - 
                 - ACTIVE
                 - DOWN
-              type: string
+              type:
+                - 'null'
+                - string
             description:
               description: |-
                 A human-readable description for the resource.
@@ -18183,7 +18775,9 @@ components:
                 - preferred
                 - required
                 - socket
-              type: string
+              type:
+                - 'null'
+                - string
             port_security_enabled:
               description: |-
                 The port security status. A valid value is
@@ -18311,7 +18905,9 @@ components:
                 - 
                 - ACTIVE
                 - DOWN
-              type: string
+              type:
+                - 'null'
+                - string
             description:
               description: |-
                 A human-readable description for the resource.
@@ -18436,7 +19032,9 @@ components:
                 - preferred
                 - required
                 - socket
-              type: string
+              type:
+                - 'null'
+                - string
             port_security_enabled:
               description: |-
                 The port security status. A valid value is
@@ -18486,7 +19084,9 @@ components:
                 `same_subtree` key contains a list of `id` values from every resource
                 group. This value is `null` if the port does not request any Placement
                 resources.
-              type: string
+              type:
+                - 'null'
+                - object
             revision_number:
               description: |-
                 The revision number of the resource.
@@ -18562,7 +19162,9 @@ components:
                 anti MAC/IP spoofing.
                 `ovs_hybrid_plug` is a boolean used to inform an API consumer
                 like nova that the hybrid plugging strategy for OVS should be used.
-              type: string
+              type:
+                - 'null'
+                - object
             vif_type:
               description: |-
                 The type of which mechanism is used for the port.
@@ -18644,7 +19246,9 @@ components:
             status:
               type: string
             vif_details:
-              type: string
+              type:
+                - 'null'
+                - object
             vif_type:
               type: string
             vnic_type:
@@ -18716,7 +19320,9 @@ components:
             status:
               type: string
             vif_details:
-              type: string
+              type:
+                - 'null'
+                - object
             vif_type:
               type: string
             vnic_type:
@@ -18771,7 +19377,9 @@ components:
                   anti MAC/IP spoofing.
                   `ovs_hybrid_plug` is a boolean used to inform an API consumer
                   like nova that the hybrid plugging strategy for OVS should be used.
-                type: string
+                type:
+                  - 'null'
+                  - object
               vif_type:
                 description: |-
                   The type of which mechanism is used for the port.
@@ -19004,7 +19612,9 @@ components:
                 - preferred
                 - required
                 - socket
-              type: string
+              type:
+                - 'null'
+                - string
             port_security_enabled:
               description: |-
                 The port security status. A valid value is
@@ -19152,7 +19762,9 @@ components:
                 - 
                 - ACTIVE
                 - DOWN
-              type: string
+              type:
+                - 'null'
+                - string
             description:
               description: |-
                 A human-readable description for the resource.
@@ -19277,7 +19889,9 @@ components:
                 - preferred
                 - required
                 - socket
-              type: string
+              type:
+                - 'null'
+                - string
             port_security_enabled:
               description: |-
                 The port security status. A valid value is
@@ -19327,7 +19941,9 @@ components:
                 `same_subtree` key contains a list of `id` values from every resource
                 group. This value is `null` if the port does not request any Placement
                 resources.
-              type: string
+              type:
+                - 'null'
+                - object
             revision_number:
               description: |-
                 The revision number of the resource.
@@ -19464,7 +20080,9 @@ components:
                   - 
                   - ACTIVE
                   - DOWN
-                type: string
+                type:
+                  - 'null'
+                  - string
               description:
                 description: |-
                   A human-readable description for the resource.
@@ -19589,7 +20207,9 @@ components:
                   - preferred
                   - required
                   - socket
-                type: string
+                type:
+                  - 'null'
+                  - string
               port_security_enabled:
                 description: |-
                   The port security status. A valid value is
@@ -19639,7 +20259,9 @@ components:
                   `same_subtree` key contains a list of `id` values from every resource
                   group. This value is `null` if the port does not request any Placement
                   resources.
-                type: string
+                type:
+                  - 'null'
+                  - object
               revision_number:
                 description: |-
                   The revision number of the resource.
@@ -26085,20 +26707,26 @@ components:
                 The IPv6 address modes specifies mechanisms for assigning IP addresses.
                 Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
               enum:
+                - 
                 - dhcpv6-stateful
                 - dhcpv6-stateless
                 - slaac
-              type: string
+              type:
+                - 'null'
+                - string
             ipv6_ra_mode:
               description: |-
                 The IPv6 router advertisement specifies whether the networking service
                 should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
                 `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
               enum:
+                - 
                 - dhcpv6-stateful
                 - dhcpv6-stateless
                 - slaac
-              type: string
+              type:
+                - 'null'
+                - string
             name:
               description: |-
                 Human-readable name of the resource.
@@ -26331,20 +26959,26 @@ components:
                 The IPv6 address modes specifies mechanisms for assigning IP addresses.
                 Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
               enum:
+                - 
                 - dhcpv6-stateful
                 - dhcpv6-stateless
                 - slaac
-              type: string
+              type:
+                - 'null'
+                - string
             ipv6_ra_mode:
               description: |-
                 The IPv6 router advertisement specifies whether the networking service
                 should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
                 `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
               enum:
+                - 
                 - dhcpv6-stateful
                 - dhcpv6-stateless
                 - slaac
-              type: string
+              type:
+                - 'null'
+                - string
             name:
               description: |-
                 Human-readable name of the resource.
@@ -27207,20 +27841,26 @@ components:
                 The IPv6 address modes specifies mechanisms for assigning IP addresses.
                 Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
               enum:
+                - 
                 - dhcpv6-stateful
                 - dhcpv6-stateless
                 - slaac
-              type: string
+              type:
+                - 'null'
+                - string
             ipv6_ra_mode:
               description: |-
                 The IPv6 router advertisement specifies whether the networking service
                 should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
                 `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
               enum:
+                - 
                 - dhcpv6-stateful
                 - dhcpv6-stateless
                 - slaac
-              type: string
+              type:
+                - 'null'
+                - string
             name:
               description: |-
                 Human-readable name of the resource. Default is an empty string.
@@ -27369,20 +28009,26 @@ components:
                 The IPv6 address modes specifies mechanisms for assigning IP addresses.
                 Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
               enum:
+                - 
                 - dhcpv6-stateful
                 - dhcpv6-stateless
                 - slaac
-              type: string
+              type:
+                - 'null'
+                - string
             ipv6_ra_mode:
               description: |-
                 The IPv6 router advertisement specifies whether the networking service
                 should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
                 `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
               enum:
+                - 
                 - dhcpv6-stateful
                 - dhcpv6-stateless
                 - slaac
-              type: string
+              type:
+                - 'null'
+                - string
             name:
               description: |-
                 Human-readable name of the resource.
@@ -27529,20 +28175,26 @@ components:
                   The IPv6 address modes specifies mechanisms for assigning IP addresses.
                   Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
                 enum:
+                  - 
                   - dhcpv6-stateful
                   - dhcpv6-stateless
                   - slaac
-                type: string
+                type:
+                  - 'null'
+                  - string
               ipv6_ra_mode:
                 description: |-
                   The IPv6 router advertisement specifies whether the networking service
                   should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
                   `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
                 enum:
+                  - 
                   - dhcpv6-stateful
                   - dhcpv6-stateless
                   - slaac
-                type: string
+                type:
+                  - 'null'
+                  - string
               name:
                 description: |-
                   Human-readable name of the resource.

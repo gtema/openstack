@@ -241,8 +241,8 @@ pub struct PortResponse {
     /// contains a list of `id` values from every resource group. This value is
     /// `null` if the port does not request any Placement resources.
     #[serde(default)]
-    #[structable(optional)]
-    pub resource_request: Option<String>,
+    #[structable(optional, serialize)]
+    pub resource_request: Option<BTreeMap<String, Value>>,
 
     /// The revision number of the resource.
     #[serde(default)]

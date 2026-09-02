@@ -45,6 +45,26 @@ use openstack_sdk_core::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// auth_algorithm query parameter for /v2.0/vpn/ikepolicies API
+    #[builder(default, setter(into))]
+    auth_algorithm: Option<Cow<'a, str>>,
+
+    /// description query parameter for /v2.0/vpn/ikepolicies API
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// encryption_algorithm query parameter for /v2.0/vpn/ikepolicies API
+    #[builder(default, setter(into))]
+    encryption_algorithm: Option<Cow<'a, str>>,
+
+    /// id query parameter for /v2.0/vpn/ikepolicies API
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
+    /// ike_version query parameter for /v2.0/vpn/ikepolicies API
+    #[builder(default, setter(into))]
+    ike_version: Option<Cow<'a, str>>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -58,9 +78,21 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
+    /// name query parameter for /v2.0/vpn/ikepolicies API
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
     /// Reverse the page direction
     #[builder(default)]
     page_reverse: Option<bool>,
+
+    /// pfs query parameter for /v2.0/vpn/ikepolicies API
+    #[builder(default, setter(into))]
+    pfs: Option<Cow<'a, str>>,
+
+    /// phase1_negotiation_mode query parameter for /v2.0/vpn/ikepolicies API
+    #[builder(default, setter(into))]
+    phase1_negotiation_mode: Option<Cow<'a, str>>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -71,6 +103,10 @@ pub struct Request<'a> {
     /// silently ignored by the server.
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
+
+    /// tenant_id query parameter for /v2.0/vpn/ikepolicies API
+    #[builder(default, setter(into))]
+    tenant_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -149,6 +185,18 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
+        params.push_opt("auth_algorithm", self.auth_algorithm.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("encryption_algorithm", self.encryption_algorithm.as_ref());
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("ike_version", self.ike_version.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("pfs", self.pfs.as_ref());
+        params.push_opt(
+            "phase1_negotiation_mode",
+            self.phase1_negotiation_mode.as_ref(),
+        );
+        params.push_opt("tenant_id", self.tenant_id.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);

@@ -69,6 +69,34 @@ pub struct IpsecSiteConnectionsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// admin_state_up query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    admin_state_up: Option<bool>,
+
+    /// auth_mode query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long, value_parser = ["psk"])]
+    auth_mode: Option<String>,
+
+    /// description query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    /// id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
+    /// ikepolicy_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    ikepolicy_id: Option<String>,
+
+    /// initiator query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long, value_parser = ["bi-directional","response-only"])]
+    initiator: Option<String>,
+
+    /// ipsecpolicy_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    ipsecpolicy_id: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -80,15 +108,53 @@ struct QueryParameters {
     )]
     limit: Option<u32>,
 
+    /// local_ep_group_id query parameter for /v2.0/vpn/ipsec-site-connections
+    /// API
+    #[arg(help_heading = "Query parameters", long)]
+    local_ep_group_id: Option<String>,
+
+    /// local_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    local_id: Option<String>,
+
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
+    /// mtu query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    mtu: Option<u32>,
+
+    /// name query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
     /// Reverse the page direction
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
+
+    /// peer_address query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    peer_address: Option<String>,
+
+    /// peer_ep_group_id query parameter for /v2.0/vpn/ipsec-site-connections
+    /// API
+    #[arg(help_heading = "Query parameters", long)]
+    peer_ep_group_id: Option<String>,
+
+    /// peer_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    peer_id: Option<String>,
+
+    /// psk query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    psk: Option<String>,
+
+    /// route_mode query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    route_mode: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -99,6 +165,18 @@ struct QueryParameters {
     /// silently ignored by the server.
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
+
+    /// status query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    status: Option<String>,
+
+    /// tenant_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    tenant_id: Option<String>,
+
+    /// vpnservice_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[arg(help_heading = "Query parameters", long)]
+    vpnservice_id: Option<String>,
 }
 
 /// Path parameters
@@ -124,6 +202,63 @@ impl IpsecSiteConnectionsCommand {
         let mut ep_builder = list::Request::builder();
 
         // Set query parameters
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.auth_mode {
+            ep_builder.auth_mode(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.ikepolicy_id {
+            ep_builder.ikepolicy_id(val);
+        }
+        if let Some(val) = &self.query.initiator {
+            ep_builder.initiator(val);
+        }
+        if let Some(val) = &self.query.ipsecpolicy_id {
+            ep_builder.ipsecpolicy_id(val);
+        }
+        if let Some(val) = &self.query.local_ep_group_id {
+            ep_builder.local_ep_group_id(val);
+        }
+        if let Some(val) = &self.query.local_id {
+            ep_builder.local_id(val);
+        }
+        if let Some(val) = &self.query.mtu {
+            ep_builder.mtu(*val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.peer_address {
+            ep_builder.peer_address(val);
+        }
+        if let Some(val) = &self.query.peer_ep_group_id {
+            ep_builder.peer_ep_group_id(val);
+        }
+        if let Some(val) = &self.query.peer_id {
+            ep_builder.peer_id(val);
+        }
+        if let Some(val) = &self.query.psk {
+            ep_builder.psk(val);
+        }
+        if let Some(val) = &self.query.route_mode {
+            ep_builder.route_mode(val);
+        }
+        if let Some(val) = &self.query.status {
+            ep_builder.status(val);
+        }
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
+        }
+        if let Some(val) = &self.query.vpnservice_id {
+            ep_builder.vpnservice_id(val);
+        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }

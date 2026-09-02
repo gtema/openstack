@@ -71,6 +71,30 @@ pub struct VpnservicesCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// admin_state_up query parameter for /v2.0/vpn/vpnservices API
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    admin_state_up: Option<bool>,
+
+    /// description query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    /// external_v4_ip query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    external_v4_ip: Option<String>,
+
+    /// external_v6_ip query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    external_v6_ip: Option<String>,
+
+    /// flavor_id query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    flavor_id: Option<String>,
+
+    /// id query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -88,9 +112,17 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
+    /// name query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
     /// Reverse the page direction
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
+
+    /// router_id query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    router_id: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -101,6 +133,18 @@ struct QueryParameters {
     /// silently ignored by the server.
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
+
+    /// status query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    status: Option<String>,
+
+    /// subnet_id query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    subnet_id: Option<String>,
+
+    /// tenant_id query parameter for /v2.0/vpn/vpnservices API
+    #[arg(help_heading = "Query parameters", long)]
+    tenant_id: Option<String>,
 }
 
 /// Path parameters
@@ -137,6 +181,39 @@ impl VpnservicesCommand {
         }
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val.iter());
+        }
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.external_v4_ip {
+            ep_builder.external_v4_ip(val);
+        }
+        if let Some(val) = &self.query.external_v6_ip {
+            ep_builder.external_v6_ip(val);
+        }
+        if let Some(val) = &self.query.flavor_id {
+            ep_builder.flavor_id(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.router_id {
+            ep_builder.router_id(val);
+        }
+        if let Some(val) = &self.query.status {
+            ep_builder.status(val);
+        }
+        if let Some(val) = &self.query.subnet_id {
+            ep_builder.subnet_id(val);
+        }
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
         }
 
         let ep = ep_builder

@@ -53,8 +53,8 @@ pub struct BindingResponse {
     /// API consumer like nova that the hybrid plugging strategy for OVS should
     /// be used.
     #[serde(default)]
-    #[structable(optional)]
-    pub vif_details: Option<String>,
+    #[structable(optional, serialize)]
+    pub vif_details: Option<BTreeMap<String, Value>>,
 
     /// The type of which mechanism is used for the port. An API consumer like
     /// nova can use this to determine an appropriate way to attach a device

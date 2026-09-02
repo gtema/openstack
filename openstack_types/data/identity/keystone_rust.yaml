@@ -6265,7 +6265,13 @@ components:
             potentially dangerous. Defaults to `false`.
     ApplicationCredentialCreateRequest:
       type: object
-      description: Wrapper for a create request body.
+      description: |-
+        Wrapper for a create request body.
+
+        No `PartialEq`: `application_credential` may carry a plaintext `secret`
+        (`ApplicationCredentialCreate.secret: Option<SecretString>`), and
+        `secrecy::SecretString` deliberately does not implement `PartialEq` to
+        discourage comparing secrets outside constant-time paths.
       required:
       - application_credential
       properties:
@@ -6274,7 +6280,12 @@ components:
           description: The application credential creation payload.
     ApplicationCredentialCreateResponse:
       type: object
-      description: Wrapper for create response body.
+      description: |-
+        Wrapper for create response body.
+
+        No `PartialEq`: see [`ApplicationCredentialCreateRequest`] -- this
+        wrapper carries `ApplicationCredentialCreated.secret: SecretString`,
+        which deliberately has no `PartialEq` impl.
       required:
       - application_credential
       properties:

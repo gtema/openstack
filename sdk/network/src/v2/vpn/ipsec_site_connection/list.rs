@@ -45,6 +45,34 @@ use openstack_sdk_core::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// admin_state_up query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default)]
+    admin_state_up: Option<bool>,
+
+    /// auth_mode query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    auth_mode: Option<Cow<'a, str>>,
+
+    /// description query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
+    /// ikepolicy_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    ikepolicy_id: Option<Cow<'a, str>>,
+
+    /// initiator query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    initiator: Option<Cow<'a, str>>,
+
+    /// ipsecpolicy_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    ipsecpolicy_id: Option<Cow<'a, str>>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -52,15 +80,53 @@ pub struct Request<'a> {
     #[builder(default)]
     limit: Option<u32>,
 
+    /// local_ep_group_id query parameter for /v2.0/vpn/ipsec-site-connections
+    /// API
+    #[builder(default, setter(into))]
+    local_ep_group_id: Option<Cow<'a, str>>,
+
+    /// local_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    local_id: Option<Cow<'a, str>>,
+
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
+    /// mtu query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default)]
+    mtu: Option<u32>,
+
+    /// name query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
     /// Reverse the page direction
     #[builder(default)]
     page_reverse: Option<bool>,
+
+    /// peer_address query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    peer_address: Option<Cow<'a, str>>,
+
+    /// peer_ep_group_id query parameter for /v2.0/vpn/ipsec-site-connections
+    /// API
+    #[builder(default, setter(into))]
+    peer_ep_group_id: Option<Cow<'a, str>>,
+
+    /// peer_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    peer_id: Option<Cow<'a, str>>,
+
+    /// psk query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    psk: Option<Cow<'a, str>>,
+
+    /// route_mode query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    route_mode: Option<Cow<'a, str>>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -71,6 +137,18 @@ pub struct Request<'a> {
     /// silently ignored by the server.
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
+
+    /// status query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    status: Option<Cow<'a, str>>,
+
+    /// tenant_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    tenant_id: Option<Cow<'a, str>>,
+
+    /// vpnservice_id query parameter for /v2.0/vpn/ipsec-site-connections API
+    #[builder(default, setter(into))]
+    vpnservice_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -149,6 +227,25 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
+        params.push_opt("admin_state_up", self.admin_state_up);
+        params.push_opt("auth_mode", self.auth_mode.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("ikepolicy_id", self.ikepolicy_id.as_ref());
+        params.push_opt("initiator", self.initiator.as_ref());
+        params.push_opt("ipsecpolicy_id", self.ipsecpolicy_id.as_ref());
+        params.push_opt("local_ep_group_id", self.local_ep_group_id.as_ref());
+        params.push_opt("local_id", self.local_id.as_ref());
+        params.push_opt("mtu", self.mtu);
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("peer_address", self.peer_address.as_ref());
+        params.push_opt("peer_ep_group_id", self.peer_ep_group_id.as_ref());
+        params.push_opt("peer_id", self.peer_id.as_ref());
+        params.push_opt("psk", self.psk.as_ref());
+        params.push_opt("route_mode", self.route_mode.as_ref());
+        params.push_opt("status", self.status.as_ref());
+        params.push_opt("tenant_id", self.tenant_id.as_ref());
+        params.push_opt("vpnservice_id", self.vpnservice_id.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);

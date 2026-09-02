@@ -41,8 +41,8 @@ pub struct BindingResponse {
     pub status: Option<String>,
 
     #[serde(default)]
-    #[structable(optional)]
-    pub vif_details: Option<String>,
+    #[structable(optional, serialize)]
+    pub vif_details: Option<BTreeMap<String, Value>>,
 
     #[serde(default)]
     #[structable(optional)]
