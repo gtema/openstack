@@ -343,8 +343,8 @@ pub struct ServerResponse {
     /// certificate IDs are not set.
     ///
     /// **New in version 2.63**
-    #[structable(serialize)]
-    pub trusted_image_certificates: Vec<String>,
+    #[structable(optional, serialize)]
+    pub trusted_image_certificates: Option<Vec<String>>,
 
     /// The date and time when the resource was updated. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
