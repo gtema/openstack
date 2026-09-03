@@ -5178,6 +5178,30 @@ paths:
           description: Resource purged
       security:
       - x-auth: []
+  /v4/spiffe/{domain_id}/jwks:
+    get:
+      tags:
+      - spiffe
+      summary: Publish a domain's active SPIFFE attestation signing keys as a JWKS.
+      description: |-
+        Unauthenticated by design, same rationale as
+        `GET /v4/oauth2/{domain_id}/jwks`: the (external, Phase 5) SPIRE server
+        plugin must be able to fetch and cache this without a Keystone token.
+      operationId: /spiffe:jwks
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: JSON Web Key Set
+        '404':
+          description: No attestation signing keys provisioned for this domain
+        '429':
+          description: Rate limit exceeded
   /v4/system/users/{user_id}/roles:
     get:
       tags:
@@ -5706,6 +5730,30 @@ paths:
                 $ref: '#/components/schemas/UserPasskeyRegistrationStartResponse'
         '500':
           description: Internal error
+  /v4/vendordata:
+    post:
+      tags:
+      - vendordata
+      operationId: /vendordata:create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendorDataRequest'
+        required: true
+      responses:
+        '201':
+          description: Attestation JWT issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorDataResponse'
+        '403':
+          description: Ownership check failed, or not the internal interface
+        '503':
+          description: Nova ownership check unavailable
+      security:
+      - x-auth: []
   v4auth_plugins/{plugin_name}/identity_links:
     post:
       tags:
@@ -10275,6 +10323,32 @@ components:
         version:
           $ref: '#/components/schemas/Version'
           description: The version.
+    SpiffeJwt:
+      type: object
+      description: |-
+        The signed attestation JWT, nested under `spiffe_jwt` in the response
+        body (matching Nova's `vendor_data_key_name` convention).
+      required:
+      - algorithm
+      - jti
+      - token
+      - expires_at
+      properties:
+        algorithm:
+          type: string
+          description: JWS signing algorithm, e.g. `ES256`.
+        expires_at:
+          type: string
+          description: |-
+            Human-readable ISO 8601 echo of the JWT's `exp` claim. Expiry
+            validation uses the unix-timestamp `exp` claim inside the JWT
+            payload itself, not this field.
+        jti:
+          type: string
+          description: The JWT's `jti` claim, echoed here for convenience.
+        token:
+          type: string
+          description: The encoded JWT.
     System:
       type: object
       description: System information.
@@ -11227,6 +11301,48 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Version'
+    VendorDataRequest:
+      type: object
+      description: |-
+        Request body for `POST /v4/vendordata`, sent by Nova's `vendor_data_url`
+        mechanism.
+      required:
+      - project_id
+      - instance_id
+      properties:
+        domain_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Domain owning the signing key used to sign the attestation JWT.
+            Defaults to `default` when omitted.
+        instance_id:
+          type: string
+          description: The booting instance's ID.
+        project_id:
+          type: string
+          description: Owning project ID.
+        ttl_seconds:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: |-
+            Requested JWT lifetime in seconds. Accepted range 60-600; defaults
+            to `[vendordata] default_ttl_seconds` when omitted, and is capped at
+            `[oauth2] access_token_lifetime_minutes` regardless of what is
+            requested.
+          minimum: 0
+    VendorDataResponse:
+      type: object
+      description: Response body for `POST /v4/vendordata` (`201 Created`).
+      required:
+      - spiffe_jwt
+      properties:
+        spiffe_jwt:
+          $ref: '#/components/schemas/SpiffeJwt'
+          description: The signed attestation JWT.
     Version:
       type: object
       description: Single API version.
@@ -11399,12 +11515,16 @@ tags:
     SCIM realm administration. A SCIM realm is the explicit administrative
     activation of an `(domain_id, provider_id)` coordinate for SCIM Users/Groups
     resource provisioning (ADR 0024).
+- name: spiffe
+  description: SPIFFE attestation signing key API (SPIRE integration plan, Phase 2). Unauthenticated by design.
 - name: token
   description: Token API
 - name: token_restriction
   description: "Token restrictions API.\n\nToken restrictions allow controlling multiple aspects of the authentication and authorization.\n\n- `allow_rescope` controls whether it is allowed to change the scope of the token. That is by default possible for normal (i.e. password) authentication, is forbidden for the application credentials and may need to be also forbidden for the JWT based authentication.\n\n- `allow_renew` controls whether it is possible to renew the token (get a new token from existing token). This is most likely undisired for the JWT auth.\n\n- `project_id` may control that this token can be only issued for the fixed project scope.\n\n- `user_id` may specify the fixed user_id that will be used when issuing the token independently of the authentication. This is useful for Service Accounts.\n\n- `roles` binds the roles of the issued token on the scope. Using this bypasses necessity to grant the roles explicitly to the user.\n\n        "
 - name: users
   description: "User API.\n\nUser management endpoints for creating, retrieving, updating, and deleting users.\n        "
+- name: vendordata
+  description: Vendor data JWT API (SPIRE integration plan, Phase 2).
 - name: passkey
   description: Passkey API.
 
