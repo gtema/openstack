@@ -19,6 +19,7 @@
 
 use clap::CommandFactory;
 use clap_complete::CompleteEnv;
+use color_eyre::Help;
 use color_eyre::eyre::{Report, Result};
 use color_eyre::owo_colors::OwoColorize;
 use color_eyre::section::PanicMessage;
@@ -37,7 +38,14 @@ async fn main() -> Result<(), Report> {
             return Ok(());
         }
         Ok(false) | Err(_) => {
-            openstack_cli::entry_point().await?;
+            if let Err(e) = openstack_cli::entry_point().await {
+                let hint = e.wait_hint();
+                let report: Report = e.into();
+                return Err(match hint {
+                    Some(hint) => report.suggestion(hint),
+                    None => report,
+                });
+            }
         }
     }
 

@@ -216,4 +216,26 @@ impl OpenStackCliError {
             data,
         }
     }
+
+    /// A short, user-facing hint for errors coming from the SDK's
+    /// `wait`/`wait_deleted`/`wait_for_status` combinators, distinguishing
+    /// timeout, failure, and vanished-resource cases instead of leaving
+    /// them as an opaque, generic API error.
+    pub fn wait_hint(&self) -> Option<&'static str> {
+        let Self::OpenStackApi { source } = self else {
+            return None;
+        };
+        match source {
+            openstack_sdk_core::api::ApiError::WaitTimeout { .. } => Some(
+                "the resource may still be transitioning; re-run the command later or check its current status directly",
+            ),
+            openstack_sdk_core::api::ApiError::WaitFailed { .. } => Some(
+                "the resource reported a failure state while waiting for it; inspect it directly for details",
+            ),
+            openstack_sdk_core::api::ApiError::WaitResourceVanished => Some(
+                "the resource disappeared while waiting for it to reach the desired state (it may have been deleted concurrently)",
+            ),
+            _ => None,
+        }
+    }
 }
