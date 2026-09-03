@@ -97,7 +97,7 @@ pub struct Cli {
     ///
     /// This does not accept parameters at the moment and will always get config from default
     /// location.
-    #[arg(hide = true, long("cli-config"), value_parser = parse_config, default_value_t = Config::new().expect("invalid config"))]
+    #[arg(hide = true, long("cli-config"), value_parser = parse_config, default_value_t = Config::new().unwrap_or_default())]
     pub config: Config,
 }
 
