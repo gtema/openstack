@@ -13,48 +13,33 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::action::Action;
-use crate::cloud_worker::load_balancer::v2::{
-    LoadBalancerApiRequest, LoadBalancerHealthmonitorApiRequest, LoadBalancerHealthmonitorList,
-};
-use crate::cloud_worker::types::ApiRequest;
+use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-
-const VIEW_CONFIG_KEY: &str = "load-balancer.healthmonitor";
 
 pub struct LoadBalancerHealthMonitorsBehaviour;
 
 impl ResourceBehaviour for LoadBalancerHealthMonitorsBehaviour {
-    type Filter = LoadBalancerHealthmonitorList;
+    type Filter = cloud_types::LoadBalancerHealthmonitorList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::healthmonitor::Generated::view_key()
     }
     fn title() -> &'static str {
-        "LB HealthMonitors"
+        super::generated::healthmonitor::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::healthmonitor::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(LoadBalancerHealthmonitorApiRequest::List(Box::new(
-            filter.clone(),
-        )))
+        super::generated::healthmonitor::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Healthmonitor(boxreq))
-            if matches!(**boxreq, LoadBalancerHealthmonitorApiRequest::List(_))
-        )
+        super::generated::healthmonitor::Generated::matches_request(request)
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetLoadBalancerHealthMonitorListFilters(f) = action {
-            Some(f.clone())
-        } else {
-            None
-        }
+        super::generated::healthmonitor::Generated::handle_set_filter_action(action)
     }
 }
 
@@ -74,7 +59,7 @@ mod tests {
         );
         assert_eq!(
             LoadBalancerHealthMonitorsBehaviour::title(),
-            "LB HealthMonitors"
+            "Health Monitors"
         );
         assert_eq!(
             LoadBalancerHealthMonitorsBehaviour::mode(),
@@ -84,18 +69,18 @@ mod tests {
 
     #[test]
     fn request_from_filter_creates_list_request() {
-        let filter = LoadBalancerHealthmonitorList::default();
+        let filter = cloud_types::LoadBalancerHealthmonitorList::default();
         let request = LoadBalancerHealthMonitorsBehaviour::request_from_filter(&filter);
         assert!(matches!(
             request,
-            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Healthmonitor(boxreq))
-            if matches!(*boxreq, LoadBalancerHealthmonitorApiRequest::List(_))
+            ApiRequest::LoadBalancer(cloud_types::LoadBalancerApiRequest::Healthmonitor(boxreq))
+            if matches!(*boxreq, cloud_types::LoadBalancerHealthmonitorApiRequest::List(_))
         ));
     }
 
     #[test]
     fn matches_request_returns_true_for_list() {
-        let filter = LoadBalancerHealthmonitorList::default();
+        let filter = cloud_types::LoadBalancerHealthmonitorList::default();
         let request = LoadBalancerHealthMonitorsBehaviour::request_from_filter(&filter);
         assert!(LoadBalancerHealthMonitorsBehaviour::matches_request(
             &request
@@ -104,17 +89,16 @@ mod tests {
 
     #[test]
     fn matches_request_returns_false_for_unrelated() {
-        let req = ApiRequest::LoadBalancer(LoadBalancerApiRequest::Listener(Box::new(
-            crate::cloud_worker::load_balancer::v2::LoadBalancerListenerApiRequest::List(
-                Box::default(),
-            ),
-        )));
+        let req =
+            ApiRequest::LoadBalancer(cloud_types::LoadBalancerApiRequest::Listener(Box::new(
+                cloud_types::LoadBalancerListenerApiRequest::List(Box::default()),
+            )));
         assert!(!LoadBalancerHealthMonitorsBehaviour::matches_request(&req));
     }
 
     #[test]
     fn handle_set_filter_action_returns_filter() {
-        let filter = LoadBalancerHealthmonitorList::default();
+        let filter = cloud_types::LoadBalancerHealthmonitorList::default();
         let action = Action::SetLoadBalancerHealthMonitorListFilters(filter);
         let result = LoadBalancerHealthMonitorsBehaviour::handle_set_filter_action(&action);
         assert!(result.is_some());
