@@ -1010,201 +1010,237 @@ impl AsyncOpenStack {
         let requested_scope =
             scope.map_or_else(|| AuthTokenScope::try_from(&self.config), |v| Ok(v.clone()))?;
 
-        let auth_opt = {
-            let mut session = self.session_write("authorize_with_auth_helper: get cache auth");
-            session.state.get_scope_auth(&requested_scope)
-        };
-        if let Some(auth) = auth_opt
-            && !renew_auth
-        {
+        if let Some(auth) = self.cached_auth_for_scope(&requested_scope, renew_auth) {
             // Valid authorization is already available and no renewal is required
             trace!("Auth already available");
-            self.set_auth(Auth::AuthToken(Box::new(auth.clone())), true)?;
+            self.set_auth(Auth::AuthToken(Box::new(auth)), true)?;
         } else {
             // No valid authorization data is available in the state or
             // renewal is requested
-            let auth_type = AuthType::from_cloud_config(&self.config)?;
-            let force_new_auth = matches!(auth_type, AuthType::V3ApplicationCredential);
-            let available_auth_opt = {
-                let mut session = self.session_write("authorize_with_auth_helper: reauthz");
-                session.state.get_any_valid_auth()
-            };
-            if let (Some(available_auth), false) = (available_auth_opt, force_new_auth) {
-                // State contain valid authentication for different scope/unscoped. It is possible
-                // to request new authz using this other auth
-                trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                let token_auth = self.reauth(&available_auth, &requested_scope).await?;
-                self.set_auth(token_auth.clone(), false)?;
-            } else {
-                // No auth/authz information available or force_new_auth. Proceed with new auth
-                trace!("No Auth already available. Proceeding with new login");
-
-                let auth_type = auth_type.as_str();
-                // Find authenticator supporting the auth_type: a compiled-in
-                // plugin first, then (if enabled) a loaded wasm plugin as a
-                // fallback.
-                let compiled_authenticator = inventory::iter::<AuthPluginRegistration>
-                    .into_iter()
-                    .find(|x| x.method.get_supported_auth_methods().contains(&auth_type))
-                    .map(|x| x.method);
-                #[cfg(feature = "wasm_plugins")]
-                let wasm_authenticator: Option<Arc<dyn OpenStackAuthType>> =
-                    if compiled_authenticator.is_none() {
-                        match openstack_sdk_plugin_wasm::registry::lookup(auth_type) {
-                            Ok(Some(p)) => Some(p as Arc<dyn OpenStackAuthType>),
-                            Ok(None) => None,
-                            Err(e) => {
-                                warn!("Failed to look up wasm auth plugin for `{auth_type}`: {e}");
-                                None
-                            }
-                        }
-                    } else {
-                        None
-                    };
-                #[cfg(not(feature = "wasm_plugins"))]
-                let wasm_authenticator: Option<Arc<dyn OpenStackAuthType>> = None;
-
-                if let Some(authenticator) = compiled_authenticator
-                    .map(|a| a as &dyn OpenStackAuthType)
-                    .or(wasm_authenticator.as_deref())
-                {
-                    // authenticate
-                    let auth_hints = self
-                        .config
-                        .auth_methods
-                        .as_ref()
-                        .map(|methods| serde_json::json!({"auth_methods": methods}));
-                    match authenticator
-                        .auth(
-                            &self.client,
-                            self.get_service_endpoint(
-                                &ServiceType::Identity,
-                                Some(&ApiVersion::from(authenticator.api_version())),
-                            )
-                            .await?
-                            .url(),
-                            &gather_auth_data(
-                                &authenticator.requirements(auth_hints.as_ref())?,
-                                &self.config,
-                                auth_helper,
-                            )
-                            .await?,
-                            Some(&requested_scope),
-                            auth_hints.as_ref(),
-                        )
-                        .await
-                    {
-                        Ok(token_auth) => {
-                            self.set_auth(token_auth.clone(), false)?;
-                        }
-                        Err(AuthError::AuthReceipt(receipt)) => {
-                            // Auth Receipt is received
-                            // Find the receipt auth plugin
-                            // Convert the receipt into auth hints
-                            let auth_hints = serde_json::to_value(&receipt)?;
-                            // Authenticate
-                            let token_auth = token_receipt::PLUGIN
-                                .auth(
-                                    &self.client,
-                                    self.get_service_endpoint(
-                                        &ServiceType::Identity,
-                                        Some(&ApiVersion::from(authenticator.api_version())),
-                                    )
-                                    .await?
-                                    .url(),
-                                    &gather_auth_data(
-                                        &token_receipt::PLUGIN.requirements(Some(&auth_hints))?,
-                                        &self.config,
-                                        auth_helper,
-                                    )
-                                    .await?,
-                                    Some(&requested_scope),
-                                    Some(&auth_hints),
-                                )
-                                .await?;
-                            self.set_auth(token_auth.clone(), false)?;
-                        }
-                        Err(other) => {
-                            return Err(other.into());
-                        }
-                    }
-                } else {
-                    Err(AuthTokenError::IdentityMethod {
-                        auth_type: auth_type.into(),
-                    })?;
-                }
-            }
+            self.login(&requested_scope, auth_helper).await?;
         }
 
+        self.finalize_scope(&requested_scope).await?;
+        self.apply_catalog_from_auth()
+    }
+
+    /// Step 1 of [`Self::authorize_with_auth_helper`]: look up a still-valid
+    /// cached token for `requested_scope`. Returns `None` (forcing a fresh
+    /// login/reauth) when nothing is cached or `renew_auth` was requested.
+    fn cached_auth_for_scope(
+        &self,
+        requested_scope: &AuthTokenScope,
+        renew_auth: bool,
+    ) -> Option<AuthToken> {
+        let mut session = self.session_write("authorize_with_auth_helper: get cache auth");
+        let auth = session.state.get_scope_auth(requested_scope)?;
+        if renew_auth { None } else { Some(auth) }
+    }
+
+    /// Step 2 of [`Self::authorize_with_auth_helper`], run when no usable
+    /// cached auth was found: either reauthorize the currently held token
+    /// into `requested_scope`, or perform a brand new login through a
+    /// compiled-in or wasm auth plugin (handling an `AuthReceipt` retry).
+    /// Sets the resulting auth on success.
+    async fn login<A>(
+        &self,
+        requested_scope: &AuthTokenScope,
+        auth_helper: &A,
+    ) -> Result<(), OpenStackError>
+    where
+        A: AuthHelper + Sync + Send + 'static,
+    {
+        let auth_type = AuthType::from_cloud_config(&self.config)?;
+        let force_new_auth = matches!(auth_type, AuthType::V3ApplicationCredential);
+        let available_auth_opt = {
+            let mut session = self.session_write("authorize_with_auth_helper: reauthz");
+            session.state.get_any_valid_auth()
+        };
+        if let (Some(available_auth), false) = (available_auth_opt, force_new_auth) {
+            // State contain valid authentication for different scope/unscoped. It is possible
+            // to request new authz using this other auth
+            trace!("Valid Auth is available for reauthz: {:?}", available_auth);
+            let token_auth = self.reauth(&available_auth, requested_scope).await?;
+            self.set_auth(token_auth.clone(), false)?;
+            return Ok(());
+        }
+
+        // No auth/authz information available or force_new_auth. Proceed with new auth
+        trace!("No Auth already available. Proceeding with new login");
+
+        let auth_type = auth_type.as_str();
+        // Find authenticator supporting the auth_type: a compiled-in
+        // plugin first, then (if enabled) a loaded wasm plugin as a
+        // fallback.
+        let compiled_authenticator = inventory::iter::<AuthPluginRegistration>
+            .into_iter()
+            .find(|x| x.method.get_supported_auth_methods().contains(&auth_type))
+            .map(|x| x.method);
+        #[cfg(feature = "wasm_plugins")]
+        let wasm_authenticator: Option<Arc<dyn OpenStackAuthType>> =
+            if compiled_authenticator.is_none() {
+                match openstack_sdk_plugin_wasm::registry::lookup(auth_type) {
+                    Ok(Some(p)) => Some(p as Arc<dyn OpenStackAuthType>),
+                    Ok(None) => None,
+                    Err(e) => {
+                        warn!("Failed to look up wasm auth plugin for `{auth_type}`: {e}");
+                        None
+                    }
+                }
+            } else {
+                None
+            };
+        #[cfg(not(feature = "wasm_plugins"))]
+        let wasm_authenticator: Option<Arc<dyn OpenStackAuthType>> = None;
+
+        let Some(authenticator) = compiled_authenticator
+            .map(|a| a as &dyn OpenStackAuthType)
+            .or(wasm_authenticator.as_deref())
+        else {
+            Err(AuthTokenError::IdentityMethod {
+                auth_type: auth_type.into(),
+            })?;
+            unreachable!()
+        };
+
+        // authenticate
+        let auth_hints = self
+            .config
+            .auth_methods
+            .as_ref()
+            .map(|methods| serde_json::json!({"auth_methods": methods}));
+        match authenticator
+            .auth(
+                &self.client,
+                self.get_service_endpoint(
+                    &ServiceType::Identity,
+                    Some(&ApiVersion::from(authenticator.api_version())),
+                )
+                .await?
+                .url(),
+                &gather_auth_data(
+                    &authenticator.requirements(auth_hints.as_ref())?,
+                    &self.config,
+                    auth_helper,
+                )
+                .await?,
+                Some(requested_scope),
+                auth_hints.as_ref(),
+            )
+            .await
+        {
+            Ok(token_auth) => {
+                self.set_auth(token_auth.clone(), false)?;
+                Ok(())
+            }
+            Err(AuthError::AuthReceipt(receipt)) => {
+                // Auth Receipt is received
+                // Find the receipt auth plugin
+                // Convert the receipt into auth hints
+                let auth_hints = serde_json::to_value(&receipt)?;
+                // Authenticate
+                let token_auth = token_receipt::PLUGIN
+                    .auth(
+                        &self.client,
+                        self.get_service_endpoint(
+                            &ServiceType::Identity,
+                            Some(&ApiVersion::from(authenticator.api_version())),
+                        )
+                        .await?
+                        .url(),
+                        &gather_auth_data(
+                            &token_receipt::PLUGIN.requirements(Some(&auth_hints))?,
+                            &self.config,
+                            auth_helper,
+                        )
+                        .await?,
+                        Some(requested_scope),
+                        Some(&auth_hints),
+                    )
+                    .await?;
+                self.set_auth(token_auth.clone(), false)?;
+                Ok(())
+            }
+            Err(other) => Err(other.into()),
+        }
+    }
+
+    /// Step 3 of [`Self::authorize_with_auth_helper`]: given whatever auth
+    /// is now held (from cache, reauth, or a fresh login), make sure it is
+    /// resolved to `requested_scope` and cached under that scope. An
+    /// unscoped token also gets cached under its resolved scope; a token
+    /// that's already scoped correctly is just saved as-is.
+    async fn finalize_scope(&self, requested_scope: &AuthTokenScope) -> Result<(), OpenStackError> {
         let auth_opt = {
             let session = self.session_read("authorize_with_auth_helper: get auth");
             session.auth.clone()
         };
-        if let Auth::AuthToken(token_auth) = &auth_opt {
-            // When unscoped auth is requested (maybe by not specifying the scope) we expect that
-            // the Authenticator returns the necessary scope (i.e. for ApplicationCredentials it is
-            // not possible to request scope, but the Keystone manages the scope) or unscoped.
-            // In this case we just save the auth as unscoped (in addition to what was done above).
-            // Otherwise we should rescope.
+        let Auth::AuthToken(token_auth) = &auth_opt else {
+            return Err(OpenStackError::NoAuth);
+        };
+        // When unscoped auth is requested (maybe by not specifying the scope) we expect that
+        // the Authenticator returns the necessary scope (i.e. for ApplicationCredentials it is
+        // not possible to request scope, but the Keystone manages the scope) or unscoped.
+        // In this case we just save the auth as unscoped (in addition to what was done above).
+        // Otherwise we should rescope.
 
-            if token_auth.auth_info.is_none() {
-                let mut resolved_token = token_auth.clone();
-                let token_info = self.fetch_token_info(token_auth.token.clone()).await?;
-                resolved_token.auth_info = Some(token_info.clone());
-                let scope = AuthTokenScope::from(&token_info);
+        if token_auth.auth_info.is_none() {
+            let mut resolved_token = token_auth.clone();
+            let token_info = self.fetch_token_info(token_auth.token.clone()).await?;
+            resolved_token.auth_info = Some(token_info.clone());
+            let scope = AuthTokenScope::from(&token_info);
 
-                // Save unscoped token in the cache
-                {
-                    let mut session =
-                        self.session_write("authorize_with_auth_helper: set unscoped cache");
-                    session.state.set_scope_auth(&scope, &resolved_token);
-                }
-            }
-
-            if requested_scope != AuthTokenScope::Unscoped
-                && !token_auth
-                    .auth_info
-                    .as_ref()
-                    .map(AuthTokenScope::from)
-                    .is_some_and(|scope| requested_scope.matches(&scope))
+            // Save unscoped token in the cache
             {
-                // And now time to rescope the token
-                let token_auth = self.reauth(token_auth, &requested_scope).await?;
-                self.set_auth(token_auth.clone(), false)?;
-            } else {
-                // Client may not specify the target scope expecting the mapping to set
-                // the proper token. Save the auth as unscope (similarly to the AppCred
-                // handling).
-                {
-                    let mut session =
-                        self.session_write("authorize_with_auth_helper: set unscoped");
-                    session
-                        .state
-                        .set_scope_auth(&AuthTokenScope::Unscoped, token_auth);
-                }
+                let mut session =
+                    self.session_write("authorize_with_auth_helper: set unscoped cache");
+                session.state.set_scope_auth(&scope, &resolved_token);
             }
-        } else {
-            Err(OpenStackError::NoAuth)?;
         }
 
+        if *requested_scope != AuthTokenScope::Unscoped
+            && !token_auth
+                .auth_info
+                .as_ref()
+                .map(AuthTokenScope::from)
+                .is_some_and(|scope| requested_scope.matches(&scope))
         {
-            let mut session = self.session_write("authorize_with_auth_helper: process catalog");
-            let auth_data = match &session.auth {
-                Auth::AuthToken(token_data) => match &token_data.auth_info {
-                    Some(ad) => ad.clone(),
-                    _ => return Err(OpenStackError::NoAuth),
-                },
+            // And now time to rescope the token
+            let token_auth = self.reauth(token_auth, requested_scope).await?;
+            self.set_auth(token_auth.clone(), false)?;
+        } else {
+            // Client may not specify the target scope expecting the mapping to set
+            // the proper token. Save the auth as unscope (similarly to the AppCred
+            // handling).
+            {
+                let mut session = self.session_write("authorize_with_auth_helper: set unscoped");
+                session
+                    .state
+                    .set_scope_auth(&AuthTokenScope::Unscoped, token_auth);
+            }
+        }
+        Ok(())
+    }
+
+    /// Step 4 of [`Self::authorize_with_auth_helper`]: project the now
+    /// finalized auth's token catalog into the session's [`Catalog`].
+    fn apply_catalog_from_auth(&self) -> Result<(), OpenStackError> {
+        let mut session = self.session_write("authorize_with_auth_helper: process catalog");
+        let auth_data = match &session.auth {
+            Auth::AuthToken(token_data) => match &token_data.auth_info {
+                Some(ad) => ad.clone(),
                 _ => return Err(OpenStackError::NoAuth),
-            };
-            if let Some(project) = &auth_data.token.project {
-                session.catalog.set_project_id(project.id.clone());
-                session.catalog.configure(&self.config)?;
-            }
-            if let Some(endpoints) = &auth_data.token.catalog {
-                session.catalog.process_catalog_endpoints(endpoints)?;
-            } else {
-                error!("No catalog information");
-            }
+            },
+            _ => return Err(OpenStackError::NoAuth),
+        };
+        if let Some(project) = &auth_data.token.project {
+            session.catalog.set_project_id(project.id.clone());
+            session.catalog.configure(&self.config)?;
+        }
+        if let Some(endpoints) = &auth_data.token.catalog {
+            session.catalog.process_catalog_endpoints(endpoints)?;
+        } else {
+            error!("No catalog information");
         }
         Ok(())
     }
@@ -2680,5 +2716,70 @@ mod tests {
 
         mock_reauth.assert_calls_async(0).await;
         drop(handle);
+    }
+
+    // Item 22: `authorize_with_auth_helper`'s cache-lookup step, extracted
+    // as `cached_auth_for_scope`, is now a plain sync fn and directly unit
+    // testable without any HTTP mocking.
+    #[tokio::test]
+    async fn test_cached_auth_for_scope_miss_when_nothing_cached() {
+        let server = MockServer::start_async().await;
+        let client = create_test_client(&server, "old-token", 1, None);
+        assert!(
+            client
+                .cached_auth_for_scope(&AuthTokenScope::Unscoped, false)
+                .is_none()
+        );
+    }
+
+    fn valid_cached_token(secret: &str) -> AuthToken {
+        AuthToken {
+            token: SecretString::from(secret),
+            auth_info: Some(AuthResponse {
+                token: openstack_sdk_auth_core::types::TokenInfo {
+                    expires_at: Utc::now() + chrono::TimeDelta::hours(1),
+                    ..Default::default()
+                },
+            }),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_cached_auth_for_scope_hit() {
+        let server = MockServer::start_async().await;
+        let client = create_test_client(&server, "old-token", 1, None);
+        let cached = valid_cached_token("cached-token");
+        {
+            let mut session = client.session_write("test: seed cache");
+            session
+                .state
+                .set_scope_auth(&AuthTokenScope::Unscoped, &cached);
+        }
+
+        let found = client
+            .cached_auth_for_scope(&AuthTokenScope::Unscoped, false)
+            .expect("cached auth should be found");
+        assert_eq!(found.token.expose_secret(), "cached-token");
+    }
+
+    #[tokio::test]
+    async fn test_cached_auth_for_scope_ignored_when_renewing() {
+        let server = MockServer::start_async().await;
+        let client = create_test_client(&server, "old-token", 1, None);
+        let cached = valid_cached_token("cached-token");
+        {
+            let mut session = client.session_write("test: seed cache");
+            session
+                .state
+                .set_scope_auth(&AuthTokenScope::Unscoped, &cached);
+        }
+
+        // renew_auth=true must force a fresh login even though a cached
+        // token for the scope exists.
+        assert!(
+            client
+                .cached_auth_for_scope(&AuthTokenScope::Unscoped, true)
+                .is_none()
+        );
     }
 }
