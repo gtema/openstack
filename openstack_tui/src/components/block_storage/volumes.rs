@@ -13,21 +13,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::action::Action;
-use crate::cloud_worker::block_storage::v3::{
-    BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeDelete,
-    BlockStorageVolumeDeleteBuilder, BlockStorageVolumeList,
-};
-use crate::cloud_worker::types::ApiRequest;
+use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
 
-const VIEW_CONFIG_KEY: &str = "block_storage.volume";
-
-impl TryFrom<&serde_json::Value> for BlockStorageVolumeDelete {
+impl TryFrom<&serde_json::Value> for cloud_types::BlockStorageVolumeDelete {
     type Error = crate::cloud_worker::block_storage::v3::BlockStorageVolumeDeleteBuilderError;
     fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
-        let mut builder = BlockStorageVolumeDeleteBuilder::default();
+        let mut builder =
+            crate::cloud_worker::block_storage::v3::BlockStorageVolumeDeleteBuilder::default();
         if let Some(val) = crate::components::view_render::get_str(value, "/id") {
             builder.id(val.to_string());
         }
@@ -41,28 +36,22 @@ impl TryFrom<&serde_json::Value> for BlockStorageVolumeDelete {
 pub struct BlockStorageVolumesBehaviour;
 
 impl ResourceBehaviour for BlockStorageVolumesBehaviour {
-    type Filter = BlockStorageVolumeList;
+    type Filter = cloud_types::BlockStorageVolumeList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::volume::Generated::view_key()
     }
     fn title() -> &'static str {
-        "Volumes"
+        super::generated::volume::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::volume::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(BlockStorageVolumeApiRequest::ListDetailed(Box::new(
-            filter.clone(),
-        )))
+        super::generated::volume::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(boxreq))
-            if matches!(**boxreq, BlockStorageVolumeApiRequest::ListDetailed(_))
-        )
+        super::generated::volume::Generated::matches_request(request)
     }
     fn confirm_request(
         action: &Action,
@@ -74,10 +63,10 @@ impl ResourceBehaviour for BlockStorageVolumesBehaviour {
         } = action
             && *key == Self::view_key()
         {
-            let del = BlockStorageVolumeDelete::try_from(selected?).ok()?;
-            Some(ApiRequest::from(BlockStorageVolumeApiRequest::Delete(
-                Box::new(del),
-            )))
+            let del = cloud_types::BlockStorageVolumeDelete::try_from(selected?).ok()?;
+            Some(ApiRequest::from(
+                cloud_types::BlockStorageVolumeApiRequest::Delete(Box::new(del)),
+            ))
         } else {
             None
         }
@@ -133,29 +122,28 @@ mod tests {
 
     #[test]
     fn request_from_filter_creates_list_detailed() {
-        let filter = BlockStorageVolumeList::default();
+        let filter = cloud_types::BlockStorageVolumeList::default();
         let request = BlockStorageVolumesBehaviour::request_from_filter(&filter);
         assert!(matches!(
             request,
-            ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(boxreq))
-            if matches!(*boxreq, BlockStorageVolumeApiRequest::ListDetailed(_))
+            ApiRequest::BlockStorage(cloud_types::BlockStorageApiRequest::Volume(boxreq))
+            if matches!(*boxreq, cloud_types::BlockStorageVolumeApiRequest::ListDetailed(_))
         ));
     }
 
     #[test]
     fn matches_request_returns_true_for_list_detailed() {
-        let filter = BlockStorageVolumeList::default();
+        let filter = cloud_types::BlockStorageVolumeList::default();
         let request = BlockStorageVolumesBehaviour::request_from_filter(&filter);
         assert!(BlockStorageVolumesBehaviour::matches_request(&request));
     }
 
     #[test]
     fn matches_request_returns_false_for_unrelated() {
-        let req = ApiRequest::BlockStorage(BlockStorageApiRequest::Snapshot(Box::new(
-            crate::cloud_worker::block_storage::v3::BlockStorageSnapshotApiRequest::ListDetailed(
-                Box::default(),
-            ),
-        )));
+        let req =
+            ApiRequest::BlockStorage(cloud_types::BlockStorageApiRequest::Snapshot(Box::new(
+                cloud_types::BlockStorageSnapshotApiRequest::ListDetailed(Box::default()),
+            )));
         assert!(!BlockStorageVolumesBehaviour::matches_request(&req));
     }
 
@@ -173,8 +161,8 @@ mod tests {
         let request = result.unwrap();
         assert!(matches!(
             request,
-            ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(boxreq))
-            if matches!(*boxreq, BlockStorageVolumeApiRequest::Delete(_))
+            ApiRequest::BlockStorage(cloud_types::BlockStorageApiRequest::Volume(boxreq))
+            if matches!(*boxreq, cloud_types::BlockStorageVolumeApiRequest::Delete(_))
         ));
     }
 

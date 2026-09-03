@@ -6,46 +6,37 @@
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR ANY KIND, either express or implied.
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::cloud_worker::block_storage::v3::{
-    BlockStorageApiRequest, BlockStorageBackupApiRequest, BlockStorageBackupList,
-};
-use crate::cloud_worker::types::ApiRequest;
+use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
 
 /// Behaviour implementation for BlockStorageBackups.
 pub struct BlockStorageBackupsBehaviour;
 
 impl ResourceBehaviour for BlockStorageBackupsBehaviour {
-    type Filter = BlockStorageBackupList;
+    type Filter = cloud_types::BlockStorageBackupList;
 
     fn view_key() -> &'static str {
-        "block_storage.backup"
+        super::generated::backup::Generated::view_key()
     }
     fn title() -> &'static str {
-        "Backups"
+        super::generated::backup::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::backup::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(BlockStorageBackupApiRequest::ListDetailed(Box::new(
-            filter.clone(),
-        )))
+        super::generated::backup::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::BlockStorage(BlockStorageApiRequest::Backup(boxreq))
-            if matches!(**boxreq, BlockStorageBackupApiRequest::ListDetailed(_))
-        )
+        super::generated::backup::Generated::matches_request(request)
     }
 }
 
@@ -72,28 +63,26 @@ mod tests {
 
     #[test]
     fn request_from_filter_creates_request() {
-        let filter = BlockStorageBackupList::default();
+        let filter = cloud_types::BlockStorageBackupList::default();
         let request = BlockStorageBackupsBehaviour::request_from_filter(&filter);
         assert!(matches!(
             request,
-            ApiRequest::BlockStorage(BlockStorageApiRequest::Backup(boxreq))
-            if matches!(*boxreq, BlockStorageBackupApiRequest::ListDetailed(_))
+            ApiRequest::BlockStorage(cloud_types::BlockStorageApiRequest::Backup(boxreq))
+            if matches!(*boxreq, cloud_types::BlockStorageBackupApiRequest::ListDetailed(_))
         ));
     }
 
     #[test]
     fn matches_request_returns_true_for_matching() {
-        let filter = BlockStorageBackupList::default();
+        let filter = cloud_types::BlockStorageBackupList::default();
         let request = BlockStorageBackupsBehaviour::request_from_filter(&filter);
         assert!(BlockStorageBackupsBehaviour::matches_request(&request));
     }
 
     #[test]
     fn matches_request_returns_false_for_unrelated() {
-        let req = ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(Box::new(
-            crate::cloud_worker::block_storage::v3::BlockStorageVolumeApiRequest::ListDetailed(
-                Box::default(),
-            ),
+        let req = ApiRequest::BlockStorage(cloud_types::BlockStorageApiRequest::Volume(Box::new(
+            cloud_types::BlockStorageVolumeApiRequest::ListDetailed(Box::default()),
         )));
         assert!(!BlockStorageBackupsBehaviour::matches_request(&req));
     }
