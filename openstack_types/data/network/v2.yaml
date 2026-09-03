@@ -7755,17 +7755,6 @@ paths:
         - $ref: '#/components/parameters/page_reverse'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
-        - $ref: '#/components/parameters/vpnservices_admin_state_up'
-        - $ref: '#/components/parameters/vpnservices_description'
-        - $ref: '#/components/parameters/vpnservices_external_v4_ip'
-        - $ref: '#/components/parameters/vpnservices_external_v6_ip'
-        - $ref: '#/components/parameters/vpnservices_flavor_id'
-        - $ref: '#/components/parameters/vpnservices_id'
-        - $ref: '#/components/parameters/vpnservices_name'
-        - $ref: '#/components/parameters/vpnservices_router_id'
-        - $ref: '#/components/parameters/vpnservices_status'
-        - $ref: '#/components/parameters/vpnservices_subnet_id'
-        - $ref: '#/components/parameters/vpnservices_tenant_id'
       responses:
         '200':
           content:

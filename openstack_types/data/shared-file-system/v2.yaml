@@ -4067,13 +4067,6 @@ components:
       required: true
       schema:
         type: string
-    shares_migration_progress_id:
-      description: id parameter for /shares/{id}/migration-progress API
-      in: path
-      name: id
-      required: true
-      schema:
-        type: string
     snapshot_instances_action_id:
       description: id parameter for /snapshot-instances/{id}/action API
       in: path
@@ -7924,6 +7917,7 @@ components:
                 - restoring
                 - reverting
                 - reverting_error
+                - reverting_to_snapshot
                 - server_migrating
                 - server_migrating_to
                 - shrinking
@@ -7960,6 +7954,7 @@ components:
                 - restoring
                 - reverting
                 - reverting_error
+                - reverting_to_snapshot
                 - server_migrating
                 - server_migrating_to
                 - shrinking
@@ -8010,6 +8005,7 @@ components:
                 - restoring
                 - reverting
                 - reverting_error
+                - reverting_to_snapshot
                 - server_migrating
                 - server_migrating_to
                 - shrinking
@@ -8046,6 +8042,7 @@ components:
                 - restoring
                 - reverting
                 - reverting_error
+                - reverting_to_snapshot
                 - server_migrating
                 - server_migrating_to
                 - shrinking

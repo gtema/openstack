@@ -22,31 +22,31 @@ use crate::mode::Mode;
 pub(crate) struct Generated;
 
 impl GeneratedResourceBehaviour for Generated {
-    type Filter = cloud_types::DnsRecordsetList;
+    type Filter = cloud_types::LoadBalancerHealthmonitorList;
 
     fn view_key() -> &'static str {
-        crate::mode::DNS_RECORDSET
+        crate::mode::LB_HEALTHMONITOR
     }
     fn title() -> &'static str {
-        "Recordsets"
+        "Health Monitors"
     }
     fn mode() -> Mode {
         Mode::Resource(Self::view_key())
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(cloud_types::DnsRecordsetApiRequest::List(Box::new(
-            filter.clone(),
-        )))
+        ApiRequest::from(cloud_types::LoadBalancerHealthmonitorApiRequest::List(
+            Box::new(filter.clone()),
+        ))
     }
     fn matches_request(request: &ApiRequest) -> bool {
         matches!(
             request,
-            ApiRequest::Dns(cloud_types::DnsApiRequest::Recordset(boxreq))
-            if matches!(**boxreq, cloud_types::DnsRecordsetApiRequest::List(_))
+            ApiRequest::LoadBalancer(cloud_types::LoadBalancerApiRequest::Healthmonitor(boxreq))
+            if matches!(**boxreq, cloud_types::LoadBalancerHealthmonitorApiRequest::List(_))
         )
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetDnsRecordsetListFilters(f) = action {
+        if let Action::SetLoadBalancerHealthMonitorListFilters(f) = action {
             Some(f.clone())
         } else {
             None
