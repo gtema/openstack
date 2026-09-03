@@ -13,39 +13,30 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::action::Action;
-use crate::cloud_worker::identity::v3::{
-    IdentityApiRequest, IdentityProjectApiRequest, IdentityProjectList,
-};
-use crate::cloud_worker::types::ApiRequest;
+use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-
-const VIEW_CONFIG_KEY: &str = "identity.project";
 
 pub struct IdentityProjectsBehaviour;
 
 impl ResourceBehaviour for IdentityProjectsBehaviour {
-    type Filter = IdentityProjectList;
+    type Filter = cloud_types::IdentityProjectList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::project::Generated::view_key()
     }
     fn title() -> &'static str {
-        "Identity Projects"
+        super::generated::project::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::project::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(IdentityProjectApiRequest::List(Box::new(filter.clone())))
+        super::generated::project::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Identity(IdentityApiRequest::Project(boxreq))
-            if matches!(**boxreq, IdentityProjectApiRequest::List(_))
-        )
+        super::generated::project::Generated::matches_request(request)
     }
     fn filter_carry_action(
         action: &Action,
@@ -92,7 +83,7 @@ mod tests {
     #[test]
     fn view_key_and_title() {
         assert_eq!(IdentityProjectsBehaviour::view_key(), "identity.project");
-        assert_eq!(IdentityProjectsBehaviour::title(), "Identity Projects");
+        assert_eq!(IdentityProjectsBehaviour::title(), "Projects");
         assert_eq!(
             IdentityProjectsBehaviour::mode(),
             Mode::Resource(crate::mode::IDENTITY_PROJECT)
@@ -101,18 +92,18 @@ mod tests {
 
     #[test]
     fn request_from_filter_creates_list_request() {
-        let filter = IdentityProjectList::default();
+        let filter = cloud_types::IdentityProjectList::default();
         let request = IdentityProjectsBehaviour::request_from_filter(&filter);
         assert!(matches!(
             request,
-            ApiRequest::Identity(IdentityApiRequest::Project(boxreq))
-            if matches!(*boxreq, IdentityProjectApiRequest::List(_))
+            ApiRequest::Identity(cloud_types::IdentityApiRequest::Project(boxreq))
+            if matches!(*boxreq, cloud_types::IdentityProjectApiRequest::List(_))
         ));
     }
 
     #[test]
     fn matches_request_returns_true_for_list() {
-        let filter = IdentityProjectList::default();
+        let filter = cloud_types::IdentityProjectList::default();
         let request = IdentityProjectsBehaviour::request_from_filter(&filter);
         assert!(IdentityProjectsBehaviour::matches_request(&request));
     }
@@ -123,7 +114,9 @@ mod tests {
             .id("test".into())
             .build()
             .unwrap();
-        let req = ApiRequest::from(IdentityProjectApiRequest::Delete(Box::new(del)));
+        let req = ApiRequest::from(cloud_types::IdentityProjectApiRequest::Delete(Box::new(
+            del,
+        )));
         assert!(!IdentityProjectsBehaviour::matches_request(&req));
     }
 
@@ -133,7 +126,7 @@ mod tests {
         let actions = IdentityProjectsBehaviour::filter_carry_action(
             &Action::SwitchToProject,
             Some(&project),
-            &IdentityProjectList::default(),
+            &cloud_types::IdentityProjectList::default(),
         );
         assert_eq!(actions.len(), 1);
         assert!(matches!(actions[0], Action::CloudChangeScope(_)));
@@ -144,7 +137,7 @@ mod tests {
         let actions = IdentityProjectsBehaviour::filter_carry_action(
             &Action::SwitchToProject,
             None,
-            &IdentityProjectList::default(),
+            &cloud_types::IdentityProjectList::default(),
         );
         assert!(actions.is_empty());
     }
@@ -155,7 +148,7 @@ mod tests {
         let actions = IdentityProjectsBehaviour::filter_carry_action(
             &Action::Tick,
             Some(&project),
-            &IdentityProjectList::default(),
+            &cloud_types::IdentityProjectList::default(),
         );
         assert!(actions.is_empty());
     }
