@@ -13,22 +13,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::action::Action;
-use crate::cloud_worker::load_balancer::v2::{
-    LoadBalancerApiRequest, LoadBalancerHealthmonitorList, LoadBalancerHealthmonitorListBuilder,
-    LoadBalancerPoolApiRequest, LoadBalancerPoolList, LoadBalancerPoolMemberList,
-    LoadBalancerPoolMemberListBuilder,
-};
-use crate::cloud_worker::types::ApiRequest;
+use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
 
-const VIEW_CONFIG_KEY: &str = "load-balancer.pool";
-
-impl TryFrom<&serde_json::Value> for LoadBalancerPoolMemberList {
+impl TryFrom<&serde_json::Value> for cloud_types::LoadBalancerPoolMemberList {
     type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerPoolMemberListBuilderError;
     fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
-        let mut builder = LoadBalancerPoolMemberListBuilder::default();
+        let mut builder =
+            crate::cloud_worker::load_balancer::v2::LoadBalancerPoolMemberListBuilder::default();
         if let Some(val) = crate::components::view_render::get_str(value, "/id") {
             builder.pool_id(val.to_string());
         }
@@ -39,10 +33,11 @@ impl TryFrom<&serde_json::Value> for LoadBalancerPoolMemberList {
     }
 }
 
-impl TryFrom<&serde_json::Value> for LoadBalancerHealthmonitorList {
+impl TryFrom<&serde_json::Value> for cloud_types::LoadBalancerHealthmonitorList {
     type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerHealthmonitorListBuilderError;
     fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
-        let mut builder = LoadBalancerHealthmonitorListBuilder::default();
+        let mut builder =
+            crate::cloud_worker::load_balancer::v2::LoadBalancerHealthmonitorListBuilder::default();
         if let Some(val) = crate::components::view_render::get_str(value, "/id") {
             builder.pool_id(val.to_string());
         }
@@ -56,33 +51,25 @@ impl TryFrom<&serde_json::Value> for LoadBalancerHealthmonitorList {
 pub struct LoadBalancerPoolsBehaviour;
 
 impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
-    type Filter = LoadBalancerPoolList;
+    type Filter = cloud_types::LoadBalancerPoolList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::pool::Generated::view_key()
     }
     fn title() -> &'static str {
-        "LB Pools"
+        super::generated::pool::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::pool::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(LoadBalancerPoolApiRequest::List(Box::new(filter.clone())))
+        super::generated::pool::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(boxreq))
-            if matches!(**boxreq, LoadBalancerPoolApiRequest::List(_))
-        )
+        super::generated::pool::Generated::matches_request(request)
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetLoadBalancerPoolListFilters(f) = action {
-            Some(f.clone())
-        } else {
-            None
-        }
+        super::generated::pool::Generated::handle_set_filter_action(action)
     }
     fn filter_carry_action(
         action: &Action,
@@ -92,7 +79,7 @@ impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
         if let Action::ShowResource(key) = action
             && *key == crate::mode::LB_POOL_MEMBER
             && let Some(sel) = selected
-            && let Ok(list) = LoadBalancerPoolMemberList::try_from(sel)
+            && let Ok(list) = cloud_types::LoadBalancerPoolMemberList::try_from(sel)
         {
             return vec![
                 Action::Mode {
@@ -105,7 +92,7 @@ impl ResourceBehaviour for LoadBalancerPoolsBehaviour {
         if let Action::ShowResource(key) = action
             && *key == crate::mode::LB_HEALTHMONITOR
             && let Some(sel) = selected
-            && let Ok(list) = LoadBalancerHealthmonitorList::try_from(sel)
+            && let Ok(list) = cloud_types::LoadBalancerHealthmonitorList::try_from(sel)
         {
             return vec![
                 Action::Mode {
@@ -151,7 +138,7 @@ mod tests {
     #[test]
     fn view_key_and_title() {
         assert_eq!(LoadBalancerPoolsBehaviour::view_key(), "load-balancer.pool");
-        assert_eq!(LoadBalancerPoolsBehaviour::title(), "LB Pools");
+        assert_eq!(LoadBalancerPoolsBehaviour::title(), "Pools");
         assert_eq!(
             LoadBalancerPoolsBehaviour::mode(),
             Mode::Resource(crate::mode::LB_POOL)
@@ -160,35 +147,34 @@ mod tests {
 
     #[test]
     fn request_from_filter_creates_list_request() {
-        let filter = LoadBalancerPoolList::default();
+        let filter = cloud_types::LoadBalancerPoolList::default();
         let request = LoadBalancerPoolsBehaviour::request_from_filter(&filter);
         assert!(matches!(
             request,
-            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(boxreq))
-            if matches!(*boxreq, LoadBalancerPoolApiRequest::List(_))
+            ApiRequest::LoadBalancer(cloud_types::LoadBalancerApiRequest::Pool(boxreq))
+            if matches!(*boxreq, cloud_types::LoadBalancerPoolApiRequest::List(_))
         ));
     }
 
     #[test]
     fn matches_request_returns_true_for_list() {
-        let filter = LoadBalancerPoolList::default();
+        let filter = cloud_types::LoadBalancerPoolList::default();
         let request = LoadBalancerPoolsBehaviour::request_from_filter(&filter);
         assert!(LoadBalancerPoolsBehaviour::matches_request(&request));
     }
 
     #[test]
     fn matches_request_returns_false_for_unrelated() {
-        let req = ApiRequest::LoadBalancer(LoadBalancerApiRequest::Listener(Box::new(
-            crate::cloud_worker::load_balancer::v2::LoadBalancerListenerApiRequest::List(
-                Box::default(),
-            ),
-        )));
+        let req =
+            ApiRequest::LoadBalancer(cloud_types::LoadBalancerApiRequest::Listener(Box::new(
+                cloud_types::LoadBalancerListenerApiRequest::List(Box::default()),
+            )));
         assert!(!LoadBalancerPoolsBehaviour::matches_request(&req));
     }
 
     #[test]
     fn handle_set_filter_action_returns_filter() {
-        let filter = LoadBalancerPoolList::default();
+        let filter = cloud_types::LoadBalancerPoolList::default();
         let action = Action::SetLoadBalancerPoolListFilters(filter);
         let result = LoadBalancerPoolsBehaviour::handle_set_filter_action(&action);
         assert!(result.is_some());
@@ -206,7 +192,7 @@ mod tests {
         let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::LB_POOL_MEMBER),
             Some(&pool),
-            &LoadBalancerPoolList::default(),
+            &cloud_types::LoadBalancerPoolList::default(),
         );
         assert_eq!(actions.len(), 2);
         assert!(matches!(
@@ -228,7 +214,7 @@ mod tests {
         let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::LB_HEALTHMONITOR),
             Some(&pool),
-            &LoadBalancerPoolList::default(),
+            &cloud_types::LoadBalancerPoolList::default(),
         );
         assert_eq!(actions.len(), 2);
         assert!(matches!(
@@ -249,7 +235,7 @@ mod tests {
         let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::LB_POOL_MEMBER),
             None,
-            &LoadBalancerPoolList::default(),
+            &cloud_types::LoadBalancerPoolList::default(),
         );
         assert!(actions.is_empty());
     }
@@ -260,7 +246,7 @@ mod tests {
         let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::LB_POOL),
             Some(&pool),
-            &LoadBalancerPoolList::default(),
+            &cloud_types::LoadBalancerPoolList::default(),
         );
         assert!(actions.is_empty());
     }
@@ -271,7 +257,7 @@ mod tests {
         let actions = LoadBalancerPoolsBehaviour::filter_carry_action(
             &Action::Tick,
             Some(&pool),
-            &LoadBalancerPoolList::default(),
+            &cloud_types::LoadBalancerPoolList::default(),
         );
         assert!(actions.is_empty());
     }
