@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack-sdk-network-v0.22.7...openstack-sdk-network-v0.22.8) - 2026-09-05
+
+### Added
+
+- *(rust)* Emit BODY_SCHEMA const on request structs ([#1935](https://github.com/gtema/openstack/pull/1935))
+- Implement "waitable" interface for rust ([#1929](https://github.com/gtema/openstack/pull/1929))
+- Source ColumnSpec from config.yaml ([#1915](https://github.com/gtema/openstack/pull/1915))
+- Start populating max_version for sdk ([#1883](https://github.com/gtema/openstack/pull/1883))
+- *(sdk)* Start populating max_ver and min_ver ([#1881](https://github.com/gtema/openstack/pull/1881))
+- Adapt codegen to use min ver suffix ([#1870](https://github.com/gtema/openstack/pull/1870))
+
+### Fixed
+
+- *(openapi)* Param dedupe in neutron ([#1969](https://github.com/gtema/openstack/pull/1969))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-sdk-network-v0.1.0...openstack-sdk-network-v0.22.7) - 2026-06-01
 
 ### Other
