@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack-sdk-identity-v0.22.7...openstack-sdk-identity-v0.22.8) - 2026-09-05
+
+### Added
+
+- *(rust)* Emit BODY_SCHEMA const on request structs ([#1935](https://github.com/gtema/openstack/pull/1935))
+- Stream paginated list responses via iter_async ([#1885](https://github.com/gtema/openstack/pull/1885))
+- Start populating max_version for sdk ([#1883](https://github.com/gtema/openstack/pull/1883))
+- *(sdk)* Start populating max_ver and min_ver ([#1881](https://github.com/gtema/openstack/pull/1881))
+- Adapt codegen to use min ver suffix ([#1870](https://github.com/gtema/openstack/pull/1870))
+
+### Other
+
+- Stop use deprecated RawQuery/RawQueryAsync ([#1889](https://github.com/gtema/openstack/pull/1889))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-sdk-identity-v0.1.0...openstack-sdk-identity-v0.22.7) - 2026-06-01
 
 ### Other

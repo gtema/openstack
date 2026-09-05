@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack-types-compute-v0.22.7...openstack-types-compute-v0.22.8) - 2026-09-05
+
+### Added
+
+- *(rust)* Emit BODY_SCHEMA const on request structs ([#1935](https://github.com/gtema/openstack/pull/1935))
+- Implement "waitable" interface for rust ([#1929](https://github.com/gtema/openstack/pull/1929))
+- *(tui)* Remove dynamic_item from generated code ([#1919](https://github.com/gtema/openstack/pull/1919))
+- Source ColumnSpec from config.yaml ([#1915](https://github.com/gtema/openstack/pull/1915))
+- Dispatch response schema per negotiated microversion ([#1907](https://github.com/gtema/openstack/pull/1907))
+- Generate mode/action/app wiring per resource ([#1897](https://github.com/gtema/openstack/pull/1897))
+- Start populating max_version for sdk ([#1883](https://github.com/gtema/openstack/pull/1883))
+- *(sdk)* Start populating max_ver and min_ver ([#1881](https://github.com/gtema/openstack/pull/1881))
+- Changes from adapted codegenerator templates ([#1879](https://github.com/gtema/openstack/pull/1879))
+- Adapt codegen to use min ver suffix ([#1870](https://github.com/gtema/openstack/pull/1870))
+
+### Fixed
+
+- *(types)* Render nullable arrays as Option ([#1970](https://github.com/gtema/openstack/pull/1970))
+- *(openapi)* Safely handle schemas missing 'type' field ([#1967](https://github.com/gtema/openstack/pull/1967))
+- Codegenerator fixes ([#1884](https://github.com/gtema/openstack/pull/1884))
+
+### Other
+
+- Propagate ConfirmableRequest through enums ([#1943](https://github.com/gtema/openstack/pull/1943))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-types-compute-v0.1.0...openstack-types-compute-v0.22.7) - 2026-06-01
 
 ### Other
