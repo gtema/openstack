@@ -1,7 +1,7 @@
 [package]
 name = "openstack-sdk-auth-multifactor"
 description = "OpenStack SDK auth plugin for multifactor authentication"
-version = "0.22.6"
+version = "0.22.7"
 license.workspace = true
 edition.workspace = true
 authors.workspace = true
