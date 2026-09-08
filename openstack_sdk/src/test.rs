@@ -116,6 +116,14 @@ mod tests {
                 }),
                 region_name: Some("RegionOne".into()),
                 interface: Some("public".into()),
+                // Never touch the on-disk auth/discovery cache (`~/.osc/<hash>`).
+                // httpmock reuses pooled server ports, so consecutive tests get
+                // the same `auth_url` and therefore the same cache hash; a token
+                // or discovery doc persisted by one test would then satisfy a
+                // later test and suppress the HTTP calls it asserts on. This is
+                // why the suite is flaky under `cargo test` but not `nextest`
+                // (one test per process, no predecessor to write the cache).
+                auth_cache: Some(false),
                 ..Default::default()
             }
         }
@@ -560,6 +568,10 @@ mod tests {
             }),
             region_name: Some("RegionOne".into()),
             interface: Some("public".into()),
+            // See `helpers::create_test_cloud_config`: a token/discovery doc
+            // cached on disk by an earlier test sharing this port would make
+            // `new()` succeed and defeat the assertion below.
+            auth_cache: Some(false),
             ..Default::default()
         };
 
