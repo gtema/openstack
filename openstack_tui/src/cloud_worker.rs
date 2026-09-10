@@ -28,9 +28,9 @@ use secrecy::SecretString;
 use std::path::PathBuf;
 use tokio::sync::mpsc::{self, UnboundedReceiver, UnboundedSender};
 use tokio::sync::oneshot;
-use tracing::{debug, instrument, trace};
+use tracing::{debug, instrument, trace, warn};
 
-use futures::future::try_join_all;
+use futures::future::join_all;
 
 use crate::action::Action;
 
@@ -135,7 +135,7 @@ impl Cloud {
             .connect()
             .await?;
 
-        Self::discover_services(&session, &TUI_SERVICES).await?;
+        Self::discover_services(&session, &TUI_SERVICES).await;
 
         // Replacing `self.cloud` also happens here; assigning a new
         // `_renew_handle` first drops (aborts) any renewal task for the
@@ -153,24 +153,27 @@ impl Cloud {
     async fn discover_services(
         session: &AsyncOpenStack,
         services: &[openstack_sdk::types::ServiceType],
-    ) -> Result<()> {
-        try_join_all(services.iter().map(|st| {
+    ) {
+        join_all(services.iter().map(|service_type| {
             let session = session.clone();
             async move {
-                session.discover_service_endpoint(st).await?;
-                Ok::<_, openstack_sdk::OpenStackError>(())
+                if let Err(err) = session.discover_service_endpoint(service_type).await {
+                    warn!(
+                        "Version discovery for the `{}` service failed, continuing with its unversioned catalog endpoint: {}",
+                        service_type, err
+                    );
+                }
             }
         }))
-        .await?;
-        Ok(())
+        .await;
     }
 
     /// Re-authorise and rediscovers service endpoints for the given session,
-    /// sending [`Action::Error`] on failure instead of propagating the error
-    /// out of the worker loop.
+    /// sending [`Action::Error`] on re-authorisation failure instead of propagating the error
+    /// out of the worker loop. Endpoint discovery is best-effort, see [`Cloud::discover_services`].
     ///
-    /// Returns `true` when the whole sequence completed without errors,
-    /// `false` when an [`Action::Error`] was already emitted.
+    /// Returns `true` when re-authorisation succeeded, `false` when an [`Action::Error`] was
+    /// already emitted.
     async fn prepare_session_for_work(
         session: &mut AsyncOpenStack,
         services: &[openstack_sdk::types::ServiceType],
@@ -187,13 +190,7 @@ impl Cloud {
             return false;
         }
 
-        if let Err(err) = Cloud::discover_services(session, services).await {
-            let _ = app_tx.send(Action::Error {
-                msg: format!("Service discovery failed: {err:?}"),
-                action: Some(Box::new(action.clone())),
-            });
-            return false;
-        }
+        Cloud::discover_services(session, services).await;
         true
     }
 
@@ -231,13 +228,7 @@ impl Cloud {
                 }
                 debug!("Authed as {:?}", session.get_auth_info());
 
-                if let Err(err) = Cloud::discover_services(session, &TUI_SERVICES).await {
-                    let _ = app_tx.send(Action::Error {
-                        msg: format!("Service discovery failed: {err:?}"),
-                        action: Some(Box::new(action.clone())),
-                    });
-                    return false;
-                }
+                Cloud::discover_services(session, &TUI_SERVICES).await;
 
                 if let Some(auth_info) = session.get_auth_info() {
                     let _ = app_tx.send(Action::ConnectedToCloud(Box::new(auth_info.token)));
