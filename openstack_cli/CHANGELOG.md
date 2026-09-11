@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.9](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.8...openstack_cli-v0.13.9) - 2026-09-11
+
+### Added
+
+- Extend 'osc auth' commands ([#1990](https://github.com/gtema/openstack/pull/1990))
+
+### Fixed
+
+- *(cli)* Disable auto --version flag on plugin subcommands ([#1989](https://github.com/gtema/openstack/pull/1989))
+
 ## [0.13.8](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.7...openstack_cli-v0.13.8) - 2026-09-07
 
 ### Added
