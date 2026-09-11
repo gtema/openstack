@@ -45,6 +45,10 @@ pub struct TokenCommand {
     #[command(flatten)]
     query: QueryParameters,
 
+    /// Request Headers parameters
+    #[command(flatten)]
+    headers: HeaderParameters,
+
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
@@ -53,6 +57,14 @@ pub struct TokenCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {}
+
+/// Header parameters
+#[derive(Args)]
+struct HeaderParameters {
+    /// The token to revoke, in the `X-Subject-Token` header.
+    #[arg()]
+    x_subject_token: String,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -71,7 +83,19 @@ impl TokenCommand {
             OutputProcessor::from_args(parsed_args, Some("identity.auth/token"), Some("delete"));
         op.validate_args(parsed_args)?;
 
-        let ep_builder = delete::Request::builder();
+        let mut ep_builder = delete::Request::builder();
+        // Set header parameters
+
+        // Stop-gap fix (upstream codegenerator bug): this generated file
+        // never sets `X-Subject-Token`, so the DELETE only authenticates as
+        // the caller and revokes nothing. Mirrors the fix in `get.rs`'s
+        // HeaderParameters handling; also lowercased since `HeaderName::
+        // from_static` panics on uppercase. Remove once the codegenerator
+        // template is fixed upstream.
+        ep_builder.header(
+            http::header::HeaderName::from_static("x-subject-token"),
+            http::header::HeaderValue::from_str(&self.headers.x_subject_token)?,
+        );
 
         let ep = ep_builder
             .build()

@@ -316,6 +316,21 @@ impl OpenStack {
         self
     }
 
+    /// Delete all locally cached credentials for this connection (in-memory
+    /// and on-disk, including the discovery cache). Does not contact the
+    /// cloud.
+    pub fn clear_auth_cache(&self) -> Vec<std::path::PathBuf> {
+        self.inner.clear_auth_cache()
+    }
+
+    /// Revoke the connection's current token at Keystone and then purge the
+    /// local cache. Returns `Ok(false)` when there was no token to revoke.
+    #[cfg(feature = "identity")]
+    pub fn revoke_current_token(&self) -> OpenStackResult<bool> {
+        let rt = self.runtime_init();
+        rt.block_on(self.inner.revoke_current_token())
+    }
+
     /// Set the auth helper used for 401 re-authentication.
     pub fn set_auth_helper<A>(&mut self, auth_helper: A)
     where

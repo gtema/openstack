@@ -635,4 +635,160 @@ mod tests {
             .await;
         assert!(result.is_err(), "Unknown service type should fail");
     }
+
+    /// Happy path: `revoke_current_token()` issues `DELETE /v3/auth/tokens`
+    /// with a correctly-lowercased `x-subject-token` header carrying the
+    /// current token, and reports success. Regression test for the header
+    /// bug found in the generated `osc identity auth token delete` command
+    /// (which never sets `X-Subject-Token` at all).
+    #[cfg(all(feature = "sync", feature = "async", feature = "identity"))]
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn test_revoke_current_token_async() {
+        let server = MockServer::start_async().await;
+
+        helpers::mock_identity_catalog(&server);
+
+        let revoke_mock = server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/auth/tokens")
+                .header("x-subject-token", "test-token-from-catalog");
+            then.status(StatusCode::NO_CONTENT);
+        });
+
+        let config = helpers::create_test_cloud_config(&server);
+        let client = AsyncOpenStack::new_with_authentication_helper(
+            &config,
+            crate::auth::auth_helper::Noop::default(),
+            false,
+        )
+        .await
+        .expect("AsyncOpenStack client creation failed");
+
+        let result = client.revoke_current_token().await;
+        assert!(result.is_ok(), "revoke_current_token failed: {result:?}");
+        assert!(result.unwrap());
+        assert_eq!(revoke_mock.calls_async().await, 1);
+        assert!(
+            client.get_auth_token().is_none(),
+            "in-memory token must be cleared after revoke"
+        );
+    }
+
+    /// Sync-facade counterpart, matching the parity convention already
+    /// established for other auth methods (see `test_builder_disable_auth_cache_sync`).
+    #[cfg(all(feature = "sync", feature = "async", feature = "identity"))]
+    #[test]
+    fn test_revoke_current_token_sync() {
+        let server = MockServer::start();
+
+        helpers::mock_identity_catalog(&server);
+
+        let revoke_mock = server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/auth/tokens")
+                .header("x-subject-token", "test-token-from-catalog");
+            then.status(StatusCode::NO_CONTENT);
+        });
+
+        let config = helpers::create_test_cloud_config(&server);
+        let client = OpenStack::new(&config).expect("OpenStack client creation failed");
+
+        let result = client.revoke_current_token();
+        assert!(result.is_ok(), "revoke_current_token failed: {result:?}");
+        assert!(result.unwrap());
+        revoke_mock.assert();
+        assert!(client.get_auth_token().is_none());
+    }
+
+    /// No cached token: `revoke_current_token()` is a no-op success and
+    /// never hits the network.
+    #[cfg(all(feature = "sync", feature = "async", feature = "identity"))]
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn test_revoke_current_token_no_token() {
+        let server = MockServer::start_async().await;
+
+        let revoke_mock = server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/auth/tokens");
+            then.status(StatusCode::NO_CONTENT);
+        });
+
+        let config = helpers::create_test_cloud_config(&server);
+        let client =
+            AsyncOpenStack::new_cache_only(&config).expect("cache-only client creation failed");
+        assert!(client.get_auth_token().is_none());
+
+        let result = client.revoke_current_token().await;
+        assert!(result.is_ok());
+        assert!(
+            !result.unwrap(),
+            "nothing to revoke should return Ok(false)"
+        );
+        assert_eq!(revoke_mock.calls_async().await, 0);
+    }
+
+    /// Keystone `404` (token already invalid/unknown) is treated as a soft
+    /// success — the goal state ("this token is dead") already holds.
+    #[cfg(all(feature = "sync", feature = "async", feature = "identity"))]
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn test_revoke_current_token_404_is_soft_success() {
+        let server = MockServer::start_async().await;
+
+        helpers::mock_identity_catalog(&server);
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/auth/tokens");
+            then.status(StatusCode::NOT_FOUND)
+                .body(r#"{"error": {"message": "Not Found"}, "message": "Not Found"}"#);
+        });
+
+        let config = helpers::create_test_cloud_config(&server);
+        let client = AsyncOpenStack::new_with_authentication_helper(
+            &config,
+            crate::auth::auth_helper::Noop::default(),
+            false,
+        )
+        .await
+        .expect("AsyncOpenStack client creation failed");
+
+        let result = client.revoke_current_token().await;
+        assert!(result.is_ok(), "404 must be a soft success: {result:?}");
+        assert!(result.unwrap());
+        assert!(client.get_auth_token().is_none());
+    }
+
+    /// A hard Keystone error (`500`) is propagated as an error, but the
+    /// local cache/in-memory token is still cleared — a token we just tried
+    /// to kill must never be left cached as reusable.
+    #[cfg(all(feature = "sync", feature = "async", feature = "identity"))]
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn test_revoke_current_token_500_is_error_but_clears_cache() {
+        let server = MockServer::start_async().await;
+
+        helpers::mock_identity_catalog(&server);
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/auth/tokens");
+            then.status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(r#"{"error": {"message": "boom"}, "message": "boom"}"#);
+        });
+
+        let config = helpers::create_test_cloud_config(&server);
+        let client = AsyncOpenStack::new_with_authentication_helper(
+            &config,
+            crate::auth::auth_helper::Noop::default(),
+            false,
+        )
+        .await
+        .expect("AsyncOpenStack client creation failed");
+
+        let result = client.revoke_current_token().await;
+        assert!(result.is_err(), "500 must propagate as an error");
+        assert!(
+            client.get_auth_token().is_none(),
+            "cache must be cleared even when the revoke call itself failed"
+        );
+    }
 }

@@ -91,8 +91,11 @@ impl TokenCommand {
 
         // Set header parameters
 
+        // Stop-gap fix (upstream codegenerator bug): `HeaderName::from_static`
+        // panics on an uppercase literal; header names must be lowercase.
+        // Remove once the codegenerator template is fixed upstream.
         ep_builder.header(
-            http::header::HeaderName::from_static("X-Subject-Token"),
+            http::header::HeaderName::from_static("x-subject-token"),
             http::header::HeaderValue::from_str(&self.headers.x_subject_token)?,
         );
 

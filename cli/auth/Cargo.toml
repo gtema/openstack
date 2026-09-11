@@ -12,6 +12,7 @@ repository.workspace = true
 [dependencies]
 chrono.workspace = true
 clap.workspace = true
+dialoguer.workspace = true
 eyre.workspace = true
 openstack-cli-core.workspace = true
 openstack_sdk = { workspace = true, features = ["async", "identity"] }
