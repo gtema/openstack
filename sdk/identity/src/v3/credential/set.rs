@@ -17,6 +17,10 @@
 
 //! Updates a credential.
 //!
+//! Only `blob` may be updated. `project_id`, `type`, and `user_id` are
+//! immutable after creation; to change any of those, delete the credential and
+//! create a new one.
+//!
 //! Relationship:
 //! `https://docs.openstack.org/api/openstack-identity/3/rel/credential`
 //!
@@ -27,52 +31,16 @@ use openstack_sdk_core::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
-use serde_json::Value;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
 
 /// A `credential` object.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Credential<'a> {
     /// The credential itself, as a serialized blob.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) blob: Option<Cow<'a, str>>,
-
-    /// The ID for the project.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) project_id: Option<Option<Cow<'a, str>>>,
-
-    /// The credential type, such as `ec2` or `cert`. The implementation
-    /// determines the list of supported types.
-    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) _type: Option<Cow<'a, str>>,
-
-    /// The ID of the user who owns the credential.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) user_id: Option<Cow<'a, str>>,
-
-    #[builder(setter(name = "_properties"), default, private)]
-    #[serde(flatten)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
-}
-
-impl<'a> CredentialBuilder<'a> {
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) blob: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -168,7 +136,7 @@ impl RestEndpoint for Request<'_> {
 /// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
 /// constraints, `enum`, ranges and descriptions that the generated struct's
 /// `Option<T>` fields alone do not express).
-pub const BODY_SCHEMA: &str = "{\"description\": \"A credential object.\", \"properties\": {\"credential\": {\"additionalProperties\": true, \"description\": \"A `credential` object.\", \"minProperties\": 1, \"properties\": {\"blob\": {\"description\": \"The credential itself, as a serialized blob.\", \"type\": \"string\"}, \"project_id\": {\"description\": \"The ID for the project.\", \"type\": [\"null\", \"string\"]}, \"type\": {\"description\": \"The credential type, such as `ec2` or `cert`.\\nThe implementation determines the list of supported types.\", \"type\": \"string\"}, \"user_id\": {\"description\": \"The ID of the user who owns the credential.\", \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"credential\"], \"type\": \"object\"}";
+pub const BODY_SCHEMA: &str = "{\"description\": \"A credential object.\", \"properties\": {\"credential\": {\"additionalProperties\": false, \"description\": \"A `credential` object.\", \"properties\": {\"blob\": {\"description\": \"The credential itself, as a serialized blob.\", \"type\": \"string\"}}, \"required\": [\"blob\"], \"type\": \"object\"}}, \"required\": [\"credential\"], \"type\": \"object\"}";
 
 #[cfg(test)]
 mod tests {
@@ -185,7 +153,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .credential(CredentialBuilder::default().build().unwrap())
+                .credential(CredentialBuilder::default().blob("foo").build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -197,7 +165,7 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .credential(CredentialBuilder::default().build().unwrap())
+                .credential(CredentialBuilder::default().blob("foo").build().unwrap())
                 .build()
                 .unwrap()
                 .response_key()
@@ -222,7 +190,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .credential(CredentialBuilder::default().build().unwrap())
+            .credential(CredentialBuilder::default().blob("foo").build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -246,7 +214,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .credential(CredentialBuilder::default().build().unwrap())
+            .credential(CredentialBuilder::default().blob("foo").build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
