@@ -25,6 +25,7 @@ use structable::{StructTable, StructTableOptions};
 /// Show every installed version of a wasm auth plugin, read from the
 /// lockfile.
 #[derive(Debug, Parser)]
+#[command(disable_version_flag = true)]
 pub struct InfoCommand {
     /// Plugin name.
     pub name: String,
