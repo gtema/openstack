@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.9](https://github.com/gtema/openstack/compare/openstack-cli-auth-v0.13.8...openstack-cli-auth-v0.13.9) - 2026-09-11
+
+### Added
+
+- Extend 'osc auth' commands ([#1990](https://github.com/gtema/openstack/pull/1990))
+
 ## [0.13.8](https://github.com/gtema/openstack/compare/openstack-cli-auth-v0.13.7...openstack-cli-auth-v0.13.8) - 2026-09-07
 
 ### Added
