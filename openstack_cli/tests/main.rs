@@ -40,6 +40,7 @@ mod object_store;
 mod placement;
 
 use assert_cmd::prelude::*;
+use clap::CommandFactory;
 use std::process::Command;
 
 #[test]
@@ -50,4 +51,15 @@ fn help() -> Result<(), Box<dyn std::error::Error>> {
     cmd.assert().success();
 
     Ok(())
+}
+
+/// Walks the whole clap command tree and panics on structural errors —
+/// duplicate arg/group names (e.g. a subcommand field named `version`
+/// colliding with the auto-generated `--version` flag), conflicting
+/// short/long flags, etc. `clap::Command::build()` alone (via `--help`)
+/// does not exercise every subcommand, so a per-subcommand arg collision
+/// can slip past it; `debug_assert()` recurses into every subcommand.
+#[test]
+fn cli_tree_has_no_arg_collisions() {
+    openstack_cli::Cli::command().debug_assert();
 }

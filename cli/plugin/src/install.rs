@@ -43,6 +43,7 @@ use crate::confirm;
 /// installing over an already-installed `name@version` fails unless
 /// `--force` is given.
 #[derive(Debug, Parser)]
+#[command(disable_version_flag = true)]
 pub struct InstallCommand {
     /// Plugin to install: `<name>` (latest) or `<name>@<version>` (pinned),
     /// resolved against the registry index. Omit when using `--file`.
