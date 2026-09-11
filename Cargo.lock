@@ -3666,6 +3666,7 @@ version = "0.13.8"
 dependencies = [
  "chrono",
  "clap",
+ "dialoguer",
  "eyre",
  "openstack-cli-core",
  "openstack_sdk",

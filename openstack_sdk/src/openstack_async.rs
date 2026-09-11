@@ -825,7 +825,9 @@ impl AsyncOpenStack {
     /// and on-disk, including the discovery cache). Does not contact the
     /// cloud. Returns the on-disk paths that were actually removed.
     pub fn clear_auth_cache(&self) -> Vec<std::path::PathBuf> {
-        self.session_write("clear_auth_cache").state.clear_cache_files()
+        self.session_write("clear_auth_cache")
+            .state
+            .clear_cache_files()
     }
 
     /// Revoke the connection's current token at Keystone and then purge the
@@ -865,7 +867,9 @@ impl AsyncOpenStack {
             | Err(ApiError::OpenStackUnrecognized { status, .. })
                 if status == StatusCode::UNAUTHORIZED || status == StatusCode::NOT_FOUND =>
             {
-                debug!("Token was already invalid at revoke time (status {status}); treating as revoked");
+                debug!(
+                    "Token was already invalid at revoke time (status {status}); treating as revoked"
+                );
                 Ok(true)
             }
             Err(source) => Err(OpenStackError::from(source)),

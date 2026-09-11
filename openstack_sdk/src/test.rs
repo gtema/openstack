@@ -708,18 +708,22 @@ mod tests {
         let server = MockServer::start_async().await;
 
         let revoke_mock = server.mock(|when, then| {
-            when.method(httpmock::Method::DELETE).path("/v3/auth/tokens");
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/auth/tokens");
             then.status(StatusCode::NO_CONTENT);
         });
 
         let config = helpers::create_test_cloud_config(&server);
-        let client = AsyncOpenStack::new_cache_only(&config)
-            .expect("cache-only client creation failed");
+        let client =
+            AsyncOpenStack::new_cache_only(&config).expect("cache-only client creation failed");
         assert!(client.get_auth_token().is_none());
 
         let result = client.revoke_current_token().await;
         assert!(result.is_ok());
-        assert!(!result.unwrap(), "nothing to revoke should return Ok(false)");
+        assert!(
+            !result.unwrap(),
+            "nothing to revoke should return Ok(false)"
+        );
         assert_eq!(revoke_mock.calls_async().await, 0);
     }
 
@@ -733,7 +737,8 @@ mod tests {
         helpers::mock_identity_catalog(&server);
 
         server.mock(|when, then| {
-            when.method(httpmock::Method::DELETE).path("/v3/auth/tokens");
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/auth/tokens");
             then.status(StatusCode::NOT_FOUND)
                 .body(r#"{"error": {"message": "Not Found"}, "message": "Not Found"}"#);
         });
@@ -764,7 +769,8 @@ mod tests {
         helpers::mock_identity_catalog(&server);
 
         server.mock(|when, then| {
-            when.method(httpmock::Method::DELETE).path("/v3/auth/tokens");
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/auth/tokens");
             then.status(StatusCode::INTERNAL_SERVER_ERROR)
                 .body(r#"{"error": {"message": "boom"}, "message": "boom"}"#);
         });
