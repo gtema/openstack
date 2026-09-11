@@ -72,6 +72,17 @@ pub struct Floatingip<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
+
+    /// The ID of the router that hosts NAT for the floating IP. When provided
+    /// on update, Neutron validates that the router exists and has an external
+    /// gateway on the floating IP external network, then stores the supplied
+    /// router instead of selecting one based on direct subnet adjacency. When
+    /// omitted, Neutron computes `router_id` using the existing
+    /// direct-connectivity logic. Available when the
+    /// `floating-ip-router-writable` extension is enabled.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) router_id: Option<Option<Cow<'a, str>>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -170,7 +181,7 @@ impl RestEndpoint for Request<'_> {
 /// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
 /// constraints, `enum`, ranges and descriptions that the generated struct's
 /// `Option<T>` fields alone do not express).
-pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the floatingips/id:put operation\", \"properties\": {\"floatingip\": {\"description\": \"A `floatingip` object. When you associate a\\nfloating IP address with a VM, the instance has the same public IP\\naddress each time that it boots, basically to maintain a\\nconsistent IP address for maintaining DNS assignment.\", \"properties\": {\"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"fixed_ip_address\": {\"description\": \"The fixed IP address that is associated with the floating IP.\\nIf an internal port has multiple associated IP addresses,\\nthe service chooses the first IP address unless you explicitly\\ndefine a fixed IP address in the `fixed_ip_address` parameter.\", \"type\": [\"null\", \"string\"]}, \"port_id\": {\"description\": \"The ID of a port associated with the floating IP.\\nTo associate the floating IP with a fixed IP,\\nyou must specify the ID of the internal port.\\nTo disassociate the floating IP, `null` should be specified.\", \"format\": \"uuid\", \"type\": [\"null\", \"string\"]}, \"qos_policy_id\": {\"format\": \"uuid\", \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the floatingips/id:put operation\", \"properties\": {\"floatingip\": {\"description\": \"A `floatingip` object. When you associate a\\nfloating IP address with a VM, the instance has the same public IP\\naddress each time that it boots, basically to maintain a\\nconsistent IP address for maintaining DNS assignment.\", \"properties\": {\"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"fixed_ip_address\": {\"description\": \"The fixed IP address that is associated with the floating IP.\\nIf an internal port has multiple associated IP addresses,\\nthe service chooses the first IP address unless you explicitly\\ndefine a fixed IP address in the `fixed_ip_address` parameter.\", \"type\": [\"null\", \"string\"]}, \"port_id\": {\"description\": \"The ID of a port associated with the floating IP.\\nTo associate the floating IP with a fixed IP,\\nyou must specify the ID of the internal port.\\nTo disassociate the floating IP, `null` should be specified.\", \"format\": \"uuid\", \"type\": [\"null\", \"string\"]}, \"qos_policy_id\": {\"format\": \"uuid\", \"type\": [\"null\", \"string\"]}, \"router_id\": {\"description\": \"The ID of the router that hosts NAT for the floating IP. When provided on\\nupdate, Neutron validates that the router exists and has an external\\ngateway on the floating IP external network, then stores the supplied\\nrouter instead of selecting one based on direct subnet adjacency. When\\nomitted, Neutron computes `router_id` using the existing\\ndirect-connectivity logic. Available when the\\n`floating-ip-router-writable` extension is enabled.\", \"format\": \"uuid\", \"type\": [\"null\", \"string\"]}}, \"type\": \"object\"}}, \"type\": \"object\"}";
 
 /// (min_version_inclusive, max_version_exclusive, json_pointer)
 pub const STATUS_POINTER: &[(

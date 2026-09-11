@@ -13872,6 +13872,19 @@ components:
               type:
                 - 'null'
                 - string
+            router_id:
+              description: |-
+                The ID of the router that hosts NAT for the floating IP. When provided on
+                update, Neutron validates that the router exists and has an external
+                gateway on the floating IP external network, then stores the supplied
+                router instead of selecting one based on direct subnet adjacency. When
+                omitted, Neutron computes `router_id` using the existing
+                direct-connectivity logic. Available when the
+                `floating-ip-router-writable` extension is enabled.
+              format: uuid
+              type:
+                - 'null'
+                - string
           type: object
       type: object
     FloatingipUpdateResponse:
@@ -14238,6 +14251,19 @@ components:
             qos_policy_id:
               description: |-
                 The ID of the QoS policy associated with the floating IP.
+              format: uuid
+              type:
+                - 'null'
+                - string
+            router_id:
+              description: |-
+                The ID of the router that hosts NAT for the floating IP. When provided on
+                create, Neutron validates that the router exists and has an external
+                gateway on the floating IP external network, then stores the supplied
+                router instead of selecting one based on direct subnet adjacency. When
+                omitted, Neutron computes `router_id` using the existing
+                direct-connectivity logic. Available when the
+                `floating-ip-router-writable` extension is enabled.
               format: uuid
               type:
                 - 'null'
