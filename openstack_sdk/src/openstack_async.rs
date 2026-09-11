@@ -28,7 +28,7 @@ use bytes::Bytes;
 use chrono::TimeDelta;
 use futures::io::{Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
-use http::{HeaderMap, HeaderValue, Response as HttpResponse, StatusCode, header};
+use http::{HeaderMap, HeaderName, HeaderValue, Response as HttpResponse, StatusCode, header};
 use parking_lot::RwLock;
 use reqwest::{Certificate, Request, Response};
 use secrecy::{ExposeSecret, SecretString};
@@ -819,6 +819,66 @@ impl AsyncOpenStack {
     pub fn disable_auth_cache(&self) -> &Self {
         self.session.write().state.disable_auth_cache();
         self
+    }
+
+    /// Delete all locally cached credentials for this connection (in-memory
+    /// and on-disk, including the discovery cache). Does not contact the
+    /// cloud. Returns the on-disk paths that were actually removed.
+    pub fn clear_auth_cache(&self) -> Vec<std::path::PathBuf> {
+        self.session_write("clear_auth_cache").state.clear_cache_files()
+    }
+
+    /// Revoke the connection's current token at Keystone and then purge the
+    /// local cache, so the dead token can never be replayed.
+    ///
+    /// Returns `Ok(false)` when there was no token to revoke (nothing to do,
+    /// not an error). A `404`/`401` response from Keystone (token already
+    /// invalid) is treated as success. Any other error is propagated, but
+    /// the local cache is cleared regardless — a token we just tried to kill
+    /// must never be left cached as reusable.
+    ///
+    /// Builds the Keystone `DELETE /v3/auth/tokens` request directly here
+    /// (rather than via the generated `osc identity auth token delete`
+    /// command) with a correctly-lowercased `x-subject-token` header, so
+    /// this does not depend on that command's header handling.
+    #[cfg(feature = "identity")]
+    pub async fn revoke_current_token(&self) -> Result<bool, OpenStackError> {
+        use openstack_sdk_core::api::ApiError;
+
+        let Some(token) = self.get_auth_token() else {
+            return Ok(false);
+        };
+
+        let header_value = HeaderValue::from_str(token.expose_secret())
+            .map_err(|err| OpenStackError::from(ApiError::<RestError>::endpoint_builder(err)))?;
+        let ep = crate::api::identity::v3::auth::token::delete::Request::builder()
+            .header(HeaderName::from_static("x-subject-token"), header_value)
+            .build()
+            .map_err(|err| OpenStackError::from(ApiError::<RestError>::endpoint_builder(err)))?;
+
+        let revoke_result = api::ignore(ep).query_async(self).await;
+
+        let outcome = match revoke_result {
+            Ok(()) => Ok(true),
+            Err(ApiError::OpenStack { status, .. })
+            | Err(ApiError::OpenStackService { status, .. })
+            | Err(ApiError::OpenStackUnrecognized { status, .. })
+                if status == StatusCode::UNAUTHORIZED || status == StatusCode::NOT_FOUND =>
+            {
+                debug!("Token was already invalid at revoke time (status {status}); treating as revoked");
+                Ok(true)
+            }
+            Err(source) => Err(OpenStackError::from(source)),
+        };
+
+        // Always drop the local cache and the in-memory token, including on
+        // the hard-error path: a token we just tried to kill must never be
+        // reused, and a long-lived client should not keep reporting a dead
+        // token as authenticated.
+        self.clear_auth_cache();
+        let _ = self.set_auth(Auth::None, true);
+
+        outcome
     }
 
     /// Spawn a background task that proactively re-authenticates `margin`
