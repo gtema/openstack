@@ -462,6 +462,68 @@ paths:
           description: Invalid input
         '500':
           description: Internal error
+  /v3/domains/config/default:
+    get:
+      tags:
+      - domain_config
+      summary: Show every group's defaults.
+      operationId: show
+      responses:
+        '200':
+          description: Default configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '403':
+          description: Forbidden
+  /v3/domains/config/{group}/default:
+    get:
+      tags:
+      - domain_config
+      summary: Show one group's defaults.
+      operationId: show_group
+      parameters:
+      - name: group
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Default group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '403':
+          description: Forbidden or unsupported group
+  /v3/domains/config/{group}/{option}/default:
+    get:
+      tags:
+      - domain_config
+      summary: Show one option's default.
+      operationId: show_option
+      parameters:
+      - name: group
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: option
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Default option
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '403':
+          description: Forbidden or unsupported option
   /v3/domains/{domain_id}:
     get:
       tags:
@@ -526,6 +588,292 @@ paths:
                 $ref: '#/components/schemas/DomainResponse'
         '404':
           description: Domain not found
+  /v3/domains/{domain_id}/config:
+    get:
+      tags:
+      - domain_config
+      summary: Show the whole configuration of a domain.
+      operationId: show
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Stored configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain has no configuration
+    put:
+      tags:
+      - domain_config
+      summary: Create (replace) the whole configuration of a domain.
+      description: Options absent from the body are removed, sensitive storage included.
+      operationId: create
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainConfigRequest'
+        required: true
+      responses:
+        '201':
+          description: Stored configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '400':
+          description: Invalid configuration
+        '403':
+          description: Forbidden
+    delete:
+      tags:
+      - domain_config
+      summary: Delete the whole configuration of a domain.
+      operationId: remove
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain has no configuration
+    patch:
+      tags:
+      - domain_config
+      summary: Merge changes into the whole configuration of a domain.
+      description: Options absent from the body keep their stored value.
+      operationId: update
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainConfigRequest'
+        required: true
+      responses:
+        '200':
+          description: Resulting configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '400':
+          description: Invalid configuration
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain has no configuration
+  /v3/domains/{domain_id}/config/{group}:
+    get:
+      tags:
+      - domain_config
+      summary: Show a single configuration group of a domain.
+      operationId: show
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: group
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Stored group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '403':
+          description: Forbidden or unsupported group
+        '404':
+          description: Group not stored for the domain
+    delete:
+      tags:
+      - domain_config
+      summary: Delete a single configuration group of a domain.
+      operationId: remove
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: group
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '403':
+          description: Forbidden or unsupported group
+        '404':
+          description: Group not stored for the domain
+    patch:
+      tags:
+      - domain_config
+      summary: Merge changes into a single configuration group of a domain.
+      operationId: update
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: group
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainConfigRequest'
+        required: true
+      responses:
+        '200':
+          description: Resulting group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '400':
+          description: Invalid configuration
+        '403':
+          description: Forbidden or unsupported group
+        '404':
+          description: Group not stored for the domain
+  /v3/domains/{domain_id}/config/{group}/{option}:
+    get:
+      tags:
+      - domain_config
+      summary: Show a single configuration option of a domain.
+      operationId: show
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: group
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: option
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Stored option
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '403':
+          description: Forbidden or unsupported group
+        '404':
+          description: Option not stored for the domain
+    delete:
+      tags:
+      - domain_config
+      summary: Delete a single configuration option of a domain.
+      operationId: remove
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: group
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: option
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '403':
+          description: Forbidden or unsupported group
+        '404':
+          description: Option not stored for the domain
+    patch:
+      tags:
+      - domain_config
+      summary: Set a single configuration option of a domain.
+      operationId: update
+      parameters:
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: group
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: option
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainConfigRequest'
+        required: true
+      responses:
+        '200':
+          description: Stored option
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainConfigResponse'
+        '400':
+          description: Invalid configuration
+        '403':
+          description: Forbidden or unsupported group
   /v3/ec2tokens:
     post:
       tags:
@@ -6958,6 +7306,29 @@ components:
           - string
           - 'null'
           description: Domain Name.
+    DomainConfigRequest:
+      type: object
+      description: '`PUT` / `PATCH` body for the domain-configuration endpoints.'
+      required:
+      - config
+      properties:
+        config:
+          description: |-
+            The configuration, an object of groups each mapping option name to
+            value. For a group- or option-scoped request only the addressed group
+            is present.
+    DomainConfigResponse:
+      type: object
+      description: |-
+        Response body for the domain-configuration endpoints, including the
+        defaults endpoints.
+      required:
+      - config
+      properties:
+        config:
+          description: |-
+            The configuration, an object of groups each mapping option name to
+            value. Sensitive options are omitted.
     DomainCreate:
       type: object
       description: New domain data.

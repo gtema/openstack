@@ -153,6 +153,20 @@ struct Floatingip {
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "qos_policy_id")]
     no_qos_policy_id: bool,
 
+    /// The ID of the router that hosts NAT for the floating IP. When provided
+    /// on create, Neutron validates that the router exists and has an external
+    /// gateway on the floating IP external network, then stores the supplied
+    /// router instead of selecting one based on direct subnet adjacency. When
+    /// omitted, Neutron computes `router_id` using the existing
+    /// direct-connectivity logic. Available when the
+    /// `floating-ip-router-writable` extension is enabled.
+    #[arg(help_heading = "Body parameters", long)]
+    router_id: Option<String>,
+
+    /// Set explicit NULL for the router_id
+    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "router_id")]
+    no_router_id: bool,
+
     /// The subnet ID on which you want to create the floating IP.
     #[arg(help_heading = "Body parameters", long)]
     subnet_id: Option<String>,
@@ -221,6 +235,12 @@ impl FloatingipCommand {
             floatingip_builder.qos_policy_id(Some(val.into()));
         } else if args.no_qos_policy_id {
             floatingip_builder.qos_policy_id(None);
+        }
+
+        if let Some(val) = &args.router_id {
+            floatingip_builder.router_id(Some(val.into()));
+        } else if args.no_router_id {
+            floatingip_builder.router_id(None);
         }
 
         if let Some(val) = &args.subnet_id {

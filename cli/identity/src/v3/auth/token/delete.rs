@@ -84,14 +84,10 @@ impl TokenCommand {
         op.validate_args(parsed_args)?;
 
         let mut ep_builder = delete::Request::builder();
+        // Set path parameters
+
         // Set header parameters
 
-        // Stop-gap fix (upstream codegenerator bug): this generated file
-        // never sets `X-Subject-Token`, so the DELETE only authenticates as
-        // the caller and revokes nothing. Mirrors the fix in `get.rs`'s
-        // HeaderParameters handling; also lowercased since `HeaderName::
-        // from_static` panics on uppercase. Remove once the codegenerator
-        // template is fixed upstream.
         ep_builder.header(
             http::header::HeaderName::from_static("x-subject-token"),
             http::header::HeaderValue::from_str(&self.headers.x_subject_token)?,
