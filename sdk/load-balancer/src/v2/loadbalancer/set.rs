@@ -167,6 +167,23 @@ impl RestEndpoint for Request<'_> {
 /// `Option<T>` fields alone do not express).
 pub const BODY_SCHEMA: &str = "{\"description\": \"Base type for complex types\", \"properties\": {\"loadbalancer\": {\"description\": \"A load balancer object.\", \"properties\": {\"admin_state_up\": {\"description\": \"The administrative state of the resource, which is\\nup (`true`) or down (`false`).\", \"type\": \"boolean\"}, \"description\": {\"description\": \"A human-readable description for the resource.\", \"maxLength\": 255, \"type\": \"string\"}, \"name\": {\"description\": \"Human-readable name of the resource.\", \"maxLength\": 255, \"type\": \"string\"}, \"tags\": {\"description\": \"A list of simple strings assigned to the resource.\\n\\n**New in version 2.5**\", \"items\": {\"maxLength\": 255, \"type\": \"string\"}, \"type\": \"array\"}, \"vip_qos_policy_id\": {\"description\": \"The ID of the QoS Policy which will apply to the Virtual IP (VIP).\", \"format\": \"uuid\", \"type\": \"string\"}, \"vip_sg_ids\": {\"items\": {\"format\": \"uuid\", \"type\": \"string\"}, \"type\": \"array\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
 
+/// (min_version_inclusive, max_version_exclusive, json_pointer)
+pub const STATUS_POINTER: &[(
+    openstack_sdk_core::types::ApiVersion,
+    openstack_sdk_core::types::ApiVersion,
+    &str,
+)] = &[(
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    "/loadbalancer/provisioning_status",
+)];
+
+impl openstack_sdk_core::api::HasStatusPointer for Request<'_> {
+    fn status_pointer(_negotiated: Option<openstack_sdk_core::types::ApiVersion>) -> &'static str {
+        STATUS_POINTER[0].2
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

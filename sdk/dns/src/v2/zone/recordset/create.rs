@@ -190,6 +190,23 @@ impl RestEndpoint for Request<'_> {
 /// `Option<T>` fields alone do not express).
 pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"Zone Record object\", \"properties\": {\"action\": {\"description\": \"current action in progress on the resource\", \"enum\": [\"CREATE\", \"DELETE\", \"NONE\", \"UPDATE\"], \"readOnly\": true, \"type\": [\"null\", \"string\"]}, \"created_at\": {\"description\": \"Date / Time when resource was created.\", \"format\": \"date-time\", \"readOnly\": true, \"type\": \"string\"}, \"description\": {\"description\": \"Description for this recordset\", \"type\": \"string\"}, \"id\": {\"description\": \"ID for the resource\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"links\": {\"description\": \"Links to the resource, and other related resources.\\nWhen a response has been broken into pages, we will include\\na `next` link that should be followed to retrieve all results\", \"properties\": {\"self\": {\"format\": \"uri\", \"type\": \"string\"}}, \"readOnly\": true, \"type\": \"object\"}, \"name\": {\"description\": \"DNS Name for the recordset\", \"type\": \"string\"}, \"project_id\": {\"description\": \"ID for the project that owns the resource\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"records\": {\"description\": \"A list of data for this recordset. Each item will be a separate record in Designate\\nThese items should conform to the DNS spec for the record type - e.g. A records\\nmust be IPv4 addresses, CNAME records must be a hostname.\", \"items\": {\"type\": \"string\"}, \"type\": \"array\"}, \"status\": {\"description\": \"The status of the resource.\", \"enum\": [\"ACTIVE\", \"DELETED\", \"ERROR\", \"PENDING\", \"SUCCESS\"], \"readOnly\": true, \"type\": [\"null\", \"string\"]}, \"ttl\": {\"description\": \"TTL (Time to Live) for the recordset.\", \"type\": \"integer\"}, \"type\": {\"description\": \"They RRTYPE of the recordset.\", \"enum\": [\"A\", \"AAAA\", \"CAA\", \"CERT\", \"CNAME\", \"MX\", \"NAPTR\", \"NS\", \"PTR\", \"SOA\", \"SPF\", \"SRV\", \"SSHFP\", \"TXT\"], \"type\": \"string\"}, \"updated_at\": {\"description\": \"Date / Time when resource last updated.\", \"format\": \"date-time\", \"readOnly\": true, \"type\": [\"null\", \"string\"]}, \"version\": {\"description\": \"Version of the resource\", \"readOnly\": true, \"type\": \"integer\"}, \"zone_id\": {\"description\": \"ID for the zone that contains this recordset\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"zone_name\": {\"description\": \"The name of the zone that contains this recordset\", \"readOnly\": true, \"type\": \"string\"}}, \"type\": \"object\"}";
 
+/// (min_version_inclusive, max_version_exclusive, json_pointer)
+pub const STATUS_POINTER: &[(
+    openstack_sdk_core::types::ApiVersion,
+    openstack_sdk_core::types::ApiVersion,
+    &str,
+)] = &[(
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    "/status",
+)];
+
+impl openstack_sdk_core::api::HasStatusPointer for Request<'_> {
+    fn status_pointer(_negotiated: Option<openstack_sdk_core::types::ApiVersion>) -> &'static str {
+        STATUS_POINTER[0].2
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

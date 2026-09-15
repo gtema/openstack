@@ -193,6 +193,23 @@ impl RestEndpoint for Request<'_> {
 /// `Option<T>` fields alone do not express).
 pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"DNS Zone\", \"properties\": {\"action\": {\"description\": \"current action in progress on the resource\", \"enum\": [\"CREATE\", \"DELETE\", \"NONE\", \"UPDATE\"], \"readOnly\": true, \"type\": [\"null\", \"string\"]}, \"attributes\": {\"additionalProperties\": {\"type\": \"string\"}, \"description\": \"Key:Value pairs of information about this zone, and the pool the user\\nwould like to place the zone in. This information can be used by the\\nscheduler to place zones on the correct pool.\", \"type\": \"object\"}, \"created_at\": {\"description\": \"Date / Time when resource was created.\", \"format\": \"date-time\", \"readOnly\": true, \"type\": \"string\"}, \"description\": {\"description\": \"Description for this zone\", \"type\": \"string\"}, \"email\": {\"description\": \"e-mail for the zone. Used in SOA records for the zone.\\nMandatory for PRIMARY zones, forbidden for SECONDARY zones.\", \"format\": \"uuid\", \"type\": \"string\"}, \"id\": {\"description\": \"ID for the resource\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"links\": {\"description\": \"Links to the resource, and other related resources.\\nWhen a response has been broken into pages, we will include\\na `next` link that should be followed to retrieve all results\", \"properties\": {\"self\": {\"format\": \"uri\", \"type\": \"string\"}}, \"readOnly\": true, \"type\": \"object\"}, \"masters\": {\"description\": \"Mandatory for secondary zones. The servers to slave from to get DNS information\", \"items\": {\"type\": \"string\"}, \"type\": \"array\"}, \"name\": {\"description\": \"DNS Name for the zone\", \"format\": \"uuid\", \"type\": \"string\"}, \"pool_id\": {\"description\": \"ID for the pool hosting this zone\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"project_id\": {\"description\": \"ID for the project that owns the resource\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"serial\": {\"description\": \"current serial number for the zone\", \"readOnly\": true, \"type\": \"integer\"}, \"shared\": {\"description\": \"True if the zone is shared with another project.\\n\\n**New in version 2.1**\", \"readOnly\": true, \"type\": \"boolean\", \"x-openstack\": {\"min-ver\": \"2.1\"}}, \"status\": {\"description\": \"The status of the resource.\", \"enum\": [\"ACTIVE\", \"DELETED\", \"ERROR\", \"PENDING\", \"SUCCESS\", \"ZONE\"], \"readOnly\": true, \"type\": [\"null\", \"string\"]}, \"transferred_at\": {\"description\": \"For secondary zones. The last time an update was retrieved from the master servers\", \"format\": \"date-time\", \"readOnly\": true, \"type\": [\"null\", \"string\"]}, \"ttl\": {\"description\": \"TTL (Time to Live) for the zone.\", \"type\": \"integer\"}, \"type\": {\"default\": \"PRIMARY\", \"description\": \"Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are slaved from another DNS Server. Defaults to PRIMARY\", \"enum\": [\"CATALOG\", \"PRIMARY\", \"SECONDARY\"], \"type\": \"string\"}, \"updated_at\": {\"description\": \"Date / Time when resource last updated.\", \"format\": \"date-time\", \"readOnly\": true, \"type\": [\"null\", \"string\"]}, \"version\": {\"description\": \"Version of the resource\", \"readOnly\": true, \"type\": \"integer\"}}, \"type\": \"object\"}";
 
+/// (min_version_inclusive, max_version_exclusive, json_pointer)
+pub const STATUS_POINTER: &[(
+    openstack_sdk_core::types::ApiVersion,
+    openstack_sdk_core::types::ApiVersion,
+    &str,
+)] = &[(
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    "/status",
+)];
+
+impl openstack_sdk_core::api::HasStatusPointer for Request<'_> {
+    fn status_pointer(_negotiated: Option<openstack_sdk_core::types::ApiVersion>) -> &'static str {
+        STATUS_POINTER[0].2
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

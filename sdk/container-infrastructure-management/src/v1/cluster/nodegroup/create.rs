@@ -455,11 +455,28 @@ pub const STATUS_POINTER: &[(
     openstack_sdk_core::types::ApiVersion,
     openstack_sdk_core::types::ApiVersion,
     &str,
-)] = &[(
-    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
-    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
-    "/nodegroups/status",
-)];
+)] = &[
+    (
+        openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+        openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+        "/nodegroups/status",
+    ),
+    (
+        openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+        openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+        "/status",
+    ),
+    (
+        openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+        openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+        "/status",
+    ),
+    (
+        openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+        openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+        "/status",
+    ),
+];
 
 impl openstack_sdk_core::api::HasStatusPointer for Request<'_> {
     fn status_pointer(_negotiated: Option<openstack_sdk_core::types::ApiVersion>) -> &'static str {

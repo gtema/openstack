@@ -136,6 +136,23 @@ impl RestEndpoint for Request<'_> {
 /// `Option<T>` fields alone do not express).
 pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"description\": \"DNS Zone\", \"properties\": {\"description\": {\"description\": \"Description for this zone\", \"type\": \"string\"}, \"email\": {\"description\": \"e-mail for the zone. Used in SOA records for the zone.\\nForbidden for SECONDARY zones.\", \"format\": \"uuid\", \"type\": \"string\"}, \"ttl\": {\"description\": \"TTL (Time to Live) for the zone.\", \"type\": \"integer\"}}, \"type\": \"object\"}";
 
+/// (min_version_inclusive, max_version_exclusive, json_pointer)
+pub const STATUS_POINTER: &[(
+    openstack_sdk_core::types::ApiVersion,
+    openstack_sdk_core::types::ApiVersion,
+    &str,
+)] = &[(
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    "/status",
+)];
+
+impl openstack_sdk_core::api::HasStatusPointer for Request<'_> {
+    fn status_pointer(_negotiated: Option<openstack_sdk_core::types::ApiVersion>) -> &'static str {
+        STATUS_POINTER[0].2
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
