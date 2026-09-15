@@ -13,22 +13,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::action::Action;
-use crate::cloud_worker::load_balancer::v2::{
-    LoadBalancerApiRequest, LoadBalancerListenerList, LoadBalancerListenerListBuilder,
-    LoadBalancerLoadbalancerApiRequest, LoadBalancerLoadbalancerList, LoadBalancerPoolList,
-    LoadBalancerPoolListBuilder,
-};
-use crate::cloud_worker::types::ApiRequest;
+use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
 
-const VIEW_CONFIG_KEY: &str = "load-balancer.loadbalancer";
-
-impl TryFrom<&serde_json::Value> for LoadBalancerListenerList {
+impl TryFrom<&serde_json::Value> for cloud_types::LoadBalancerListenerList {
     type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerListenerListBuilderError;
     fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
-        let mut builder = LoadBalancerListenerListBuilder::default();
+        let mut builder =
+            crate::cloud_worker::load_balancer::v2::LoadBalancerListenerListBuilder::default();
         if let Some(val) = crate::components::view_render::get_str(value, "/id") {
             builder.load_balancer_id(val.to_string());
         }
@@ -39,10 +33,11 @@ impl TryFrom<&serde_json::Value> for LoadBalancerListenerList {
     }
 }
 
-impl TryFrom<&serde_json::Value> for LoadBalancerPoolList {
+impl TryFrom<&serde_json::Value> for cloud_types::LoadBalancerPoolList {
     type Error = crate::cloud_worker::load_balancer::v2::LoadBalancerPoolListBuilderError;
     fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
-        let mut builder = LoadBalancerPoolListBuilder::default();
+        let mut builder =
+            crate::cloud_worker::load_balancer::v2::LoadBalancerPoolListBuilder::default();
         if let Some(val) = crate::components::view_render::get_str(value, "/id") {
             builder.loadbalancer_id(val.to_string());
         }
@@ -56,35 +51,25 @@ impl TryFrom<&serde_json::Value> for LoadBalancerPoolList {
 pub struct LoadBalancersBehaviour;
 
 impl ResourceBehaviour for LoadBalancersBehaviour {
-    type Filter = LoadBalancerLoadbalancerList;
+    type Filter = cloud_types::LoadBalancerLoadbalancerList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::loadbalancer::Generated::view_key()
     }
     fn title() -> &'static str {
-        "LoadBalancers"
+        super::generated::loadbalancer::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::loadbalancer::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(LoadBalancerLoadbalancerApiRequest::List(Box::new(
-            filter.clone(),
-        )))
+        super::generated::loadbalancer::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Loadbalancer(boxreq))
-            if matches!(**boxreq, LoadBalancerLoadbalancerApiRequest::List(_))
-        )
+        super::generated::loadbalancer::Generated::matches_request(request)
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetLoadBalancerListFilters(f) = action {
-            Some(f.clone())
-        } else {
-            None
-        }
+        super::generated::loadbalancer::Generated::handle_set_filter_action(action)
     }
     fn filter_carry_action(
         action: &Action,
@@ -94,7 +79,7 @@ impl ResourceBehaviour for LoadBalancersBehaviour {
         if let Action::ShowResource(key) = action
             && *key == crate::mode::LB_LISTENER
             && let Some(sel) = selected
-            && let Ok(list) = LoadBalancerListenerList::try_from(sel)
+            && let Ok(list) = cloud_types::LoadBalancerListenerList::try_from(sel)
         {
             return vec![
                 Action::Mode {
@@ -107,7 +92,7 @@ impl ResourceBehaviour for LoadBalancersBehaviour {
         if let Action::ShowResource(key) = action
             && *key == crate::mode::LB_POOL
             && let Some(sel) = selected
-            && let Ok(list) = LoadBalancerPoolList::try_from(sel)
+            && let Ok(list) = cloud_types::LoadBalancerPoolList::try_from(sel)
         {
             return vec![
                 Action::Mode {
@@ -155,7 +140,7 @@ mod tests {
             LoadBalancersBehaviour::view_key(),
             "load-balancer.loadbalancer"
         );
-        assert_eq!(LoadBalancersBehaviour::title(), "LoadBalancers");
+        assert_eq!(LoadBalancersBehaviour::title(), "Load Balancers");
         assert_eq!(
             LoadBalancersBehaviour::mode(),
             Mode::Resource(crate::mode::LB_LOADBALANCER)
@@ -164,35 +149,34 @@ mod tests {
 
     #[test]
     fn request_from_filter_creates_list_request() {
-        let filter = LoadBalancerLoadbalancerList::default();
+        let filter = cloud_types::LoadBalancerLoadbalancerList::default();
         let request = LoadBalancersBehaviour::request_from_filter(&filter);
         assert!(matches!(
             request,
-            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Loadbalancer(boxreq))
-            if matches!(*boxreq, LoadBalancerLoadbalancerApiRequest::List(_))
+            ApiRequest::LoadBalancer(cloud_types::LoadBalancerApiRequest::Loadbalancer(boxreq))
+            if matches!(*boxreq, cloud_types::LoadBalancerLoadbalancerApiRequest::List(_))
         ));
     }
 
     #[test]
     fn matches_request_returns_true_for_list() {
-        let filter = LoadBalancerLoadbalancerList::default();
+        let filter = cloud_types::LoadBalancerLoadbalancerList::default();
         let request = LoadBalancersBehaviour::request_from_filter(&filter);
         assert!(LoadBalancersBehaviour::matches_request(&request));
     }
 
     #[test]
     fn matches_request_returns_false_for_unrelated() {
-        let req = ApiRequest::LoadBalancer(LoadBalancerApiRequest::Listener(Box::new(
-            crate::cloud_worker::load_balancer::v2::LoadBalancerListenerApiRequest::List(
-                Box::default(),
-            ),
-        )));
+        let req =
+            ApiRequest::LoadBalancer(cloud_types::LoadBalancerApiRequest::Listener(Box::new(
+                cloud_types::LoadBalancerListenerApiRequest::List(Box::default()),
+            )));
         assert!(!LoadBalancersBehaviour::matches_request(&req));
     }
 
     #[test]
     fn handle_set_filter_action_returns_filter() {
-        let filter = LoadBalancerLoadbalancerList::default();
+        let filter = cloud_types::LoadBalancerLoadbalancerList::default();
         let action = Action::SetLoadBalancerListFilters(filter);
         let result = LoadBalancersBehaviour::handle_set_filter_action(&action);
         assert!(result.is_some());
@@ -210,7 +194,7 @@ mod tests {
         let actions = LoadBalancersBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::LB_LISTENER),
             Some(&lb),
-            &LoadBalancerLoadbalancerList::default(),
+            &cloud_types::LoadBalancerLoadbalancerList::default(),
         );
         assert_eq!(actions.len(), 2);
         assert!(matches!(
@@ -232,7 +216,7 @@ mod tests {
         let actions = LoadBalancersBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::LB_POOL),
             Some(&lb),
-            &LoadBalancerLoadbalancerList::default(),
+            &cloud_types::LoadBalancerLoadbalancerList::default(),
         );
         assert_eq!(actions.len(), 2);
         assert!(matches!(
@@ -253,7 +237,7 @@ mod tests {
         let actions = LoadBalancersBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::LB_LISTENER),
             None,
-            &LoadBalancerLoadbalancerList::default(),
+            &cloud_types::LoadBalancerLoadbalancerList::default(),
         );
         assert!(actions.is_empty());
     }
@@ -264,7 +248,7 @@ mod tests {
         let actions = LoadBalancersBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::LB_LOADBALANCER),
             Some(&lb),
-            &LoadBalancerLoadbalancerList::default(),
+            &cloud_types::LoadBalancerLoadbalancerList::default(),
         );
         assert!(actions.is_empty());
     }
@@ -275,7 +259,7 @@ mod tests {
         let actions = LoadBalancersBehaviour::filter_carry_action(
             &Action::Tick,
             Some(&lb),
-            &LoadBalancerLoadbalancerList::default(),
+            &cloud_types::LoadBalancerLoadbalancerList::default(),
         );
         assert!(actions.is_empty());
     }

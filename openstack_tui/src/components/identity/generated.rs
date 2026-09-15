@@ -17,3 +17,12 @@
 // once per service, as the anchor new resources' lines get inserted after.
 
 // GENERATED-ANCHOR: resource mods
+// BEGIN GENERATED rust-resource-behaviour mod user
+pub(crate) mod user;
+// END GENERATED rust-resource-behaviour mod user
+// BEGIN GENERATED rust-resource-behaviour mod project
+pub(crate) mod project;
+// END GENERATED rust-resource-behaviour mod project
+// BEGIN GENERATED rust-resource-behaviour mod group
+pub(crate) mod group;
+// END GENERATED rust-resource-behaviour mod group

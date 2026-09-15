@@ -13,48 +13,33 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::action::Action;
-use crate::cloud_worker::load_balancer::v2::{
-    LoadBalancerApiRequest, LoadBalancerListenerApiRequest, LoadBalancerListenerList,
-};
-use crate::cloud_worker::types::ApiRequest;
+use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::ResourceBehaviour;
+use crate::components::resource_behaviour::{GeneratedResourceBehaviour, ResourceBehaviour};
 use crate::mode::Mode;
-
-const VIEW_CONFIG_KEY: &str = "load-balancer.listener";
 
 pub struct LoadBalancerListenersBehaviour;
 
 impl ResourceBehaviour for LoadBalancerListenersBehaviour {
-    type Filter = LoadBalancerListenerList;
+    type Filter = cloud_types::LoadBalancerListenerList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::listener::Generated::view_key()
     }
     fn title() -> &'static str {
-        "LB Listeners"
+        super::generated::listener::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::listener::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(LoadBalancerListenerApiRequest::List(Box::new(
-            filter.clone(),
-        )))
+        super::generated::listener::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Listener(boxreq))
-            if matches!(**boxreq, LoadBalancerListenerApiRequest::List(_))
-        )
+        super::generated::listener::Generated::matches_request(request)
     }
     fn handle_set_filter_action(action: &Action) -> Option<Self::Filter> {
-        if let Action::SetLoadBalancerListenerListFilters(f) = action {
-            Some(f.clone())
-        } else {
-            None
-        }
+        super::generated::listener::Generated::handle_set_filter_action(action)
     }
 }
 
@@ -71,7 +56,7 @@ mod tests {
             LoadBalancerListenersBehaviour::view_key(),
             "load-balancer.listener"
         );
-        assert_eq!(LoadBalancerListenersBehaviour::title(), "LB Listeners");
+        assert_eq!(LoadBalancerListenersBehaviour::title(), "Listeners");
         assert_eq!(
             LoadBalancerListenersBehaviour::mode(),
             Mode::Resource(crate::mode::LB_LISTENER)
@@ -80,33 +65,33 @@ mod tests {
 
     #[test]
     fn request_from_filter_creates_list_request() {
-        let filter = LoadBalancerListenerList::default();
+        let filter = cloud_types::LoadBalancerListenerList::default();
         let request = LoadBalancerListenersBehaviour::request_from_filter(&filter);
         assert!(matches!(
             request,
-            ApiRequest::LoadBalancer(LoadBalancerApiRequest::Listener(boxreq))
-            if matches!(*boxreq, LoadBalancerListenerApiRequest::List(_))
+            ApiRequest::LoadBalancer(cloud_types::LoadBalancerApiRequest::Listener(boxreq))
+            if matches!(*boxreq, cloud_types::LoadBalancerListenerApiRequest::List(_))
         ));
     }
 
     #[test]
     fn matches_request_returns_true_for_list() {
-        let filter = LoadBalancerListenerList::default();
+        let filter = cloud_types::LoadBalancerListenerList::default();
         let request = LoadBalancerListenersBehaviour::request_from_filter(&filter);
         assert!(LoadBalancerListenersBehaviour::matches_request(&request));
     }
 
     #[test]
     fn matches_request_returns_false_for_unrelated() {
-        let req = ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(Box::new(
-            crate::cloud_worker::load_balancer::v2::LoadBalancerPoolApiRequest::List(Box::default()),
+        let req = ApiRequest::LoadBalancer(cloud_types::LoadBalancerApiRequest::Pool(Box::new(
+            cloud_types::LoadBalancerPoolApiRequest::List(Box::default()),
         )));
         assert!(!LoadBalancerListenersBehaviour::matches_request(&req));
     }
 
     #[test]
     fn handle_set_filter_action_returns_filter() {
-        let filter = LoadBalancerListenerList::default();
+        let filter = cloud_types::LoadBalancerListenerList::default();
         let action = Action::SetLoadBalancerListenerListFilters(filter);
         let result = LoadBalancerListenersBehaviour::handle_set_filter_action(&action);
         assert!(result.is_some());

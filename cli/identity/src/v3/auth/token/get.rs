@@ -92,7 +92,7 @@ impl TokenCommand {
         // Set header parameters
 
         ep_builder.header(
-            http::header::HeaderName::from_static("X-Subject-Token"),
+            http::header::HeaderName::from_static("x-subject-token"),
             http::header::HeaderValue::from_str(&self.headers.x_subject_token)?,
         );
 

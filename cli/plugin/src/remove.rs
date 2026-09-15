@@ -29,6 +29,7 @@ use crate::list::PluginListEntry;
 /// other versions of `name` remain, the most recently installed of those
 /// becomes active.
 #[derive(Debug, Parser)]
+#[command(disable_version_flag = true)]
 pub struct RemoveCommand {
     /// Plugin name to remove.
     pub name: String,

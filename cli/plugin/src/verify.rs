@@ -28,6 +28,7 @@ use structable::{StructTable, StructTableOptions};
 /// Fails on the first version whose on-disk content no longer matches, or
 /// whose file is missing.
 #[derive(Debug, Parser)]
+#[command(disable_version_flag = true)]
 pub struct VerifyCommand {
     /// Plugin name to verify.
     pub name: String,

@@ -77,6 +77,15 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         return args.take_action(&cli).await;
     }
 
+    if let TopLevelCommands::Auth(args) = &cli.command
+        && let Some(cmd) = args.as_offline_cache_clear_all()
+    {
+        // `auth cache clear --all` is profile-independent and must run
+        // before any cloud is resolved (it may be run with no clouds
+        // configured at all).
+        return cmd.take_action_offline(&cli);
+    }
+
     // Initialize tracing layers
     // fmt for console logging
     let log_layer = tracing_subscriber::fmt::layer()

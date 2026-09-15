@@ -13,23 +13,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::action::Action;
-use crate::cloud_worker::identity::v3::{
-    IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialList,
-    IdentityUserApplicationCredentialListBuilder, IdentityUserDelete, IdentityUserDeleteBuilder,
-    IdentityUserList, IdentityUserSetBuilder,
-};
-use crate::cloud_worker::types::ApiRequest;
+use crate::cloud_worker::types::{self as cloud_types, ApiRequest};
 use crate::components::generic_resource_view::GenericResourceView;
-use crate::components::resource_behaviour::{Mutation, ResourceBehaviour};
+use crate::components::resource_behaviour::{
+    GeneratedResourceBehaviour, Mutation, ResourceBehaviour,
+};
 use crate::mode::Mode;
 use serde_json::Value;
 
-const VIEW_CONFIG_KEY: &str = "identity.user";
-
-impl TryFrom<&serde_json::Value> for IdentityUserDelete {
+impl TryFrom<&serde_json::Value> for cloud_types::IdentityUserDelete {
     type Error = crate::cloud_worker::identity::v3::IdentityUserDeleteBuilderError;
     fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
-        let mut builder = IdentityUserDeleteBuilder::default();
+        let mut builder = crate::cloud_worker::identity::v3::IdentityUserDeleteBuilder::default();
         if let Some(val) = crate::components::view_render::get_str(value, "/id") {
             builder.id(val.to_string());
         }
@@ -40,11 +35,13 @@ impl TryFrom<&serde_json::Value> for IdentityUserDelete {
     }
 }
 
-impl TryFrom<&serde_json::Value> for IdentityUserApplicationCredentialList {
+impl TryFrom<&serde_json::Value> for cloud_types::IdentityUserApplicationCredentialList {
     type Error =
         crate::cloud_worker::identity::v3::IdentityUserApplicationCredentialListBuilderError;
     fn try_from(value: &serde_json::Value) -> Result<Self, Self::Error> {
-        let mut builder = IdentityUserApplicationCredentialListBuilder::default();
+        let mut builder =
+            crate::cloud_worker::identity::v3::IdentityUserApplicationCredentialListBuilder::default(
+            );
         if let Some(val) = crate::components::view_render::get_str(value, "/id") {
             builder.user_id(val.to_string());
         }
@@ -58,26 +55,22 @@ impl TryFrom<&serde_json::Value> for IdentityUserApplicationCredentialList {
 pub struct IdentityUsersBehaviour;
 
 impl ResourceBehaviour for IdentityUsersBehaviour {
-    type Filter = IdentityUserList;
+    type Filter = cloud_types::IdentityUserList;
 
     fn view_key() -> &'static str {
-        VIEW_CONFIG_KEY
+        super::generated::user::Generated::view_key()
     }
     fn title() -> &'static str {
-        "Identity Users"
+        super::generated::user::Generated::title()
     }
     fn mode() -> Mode {
-        Mode::Resource(Self::view_key())
+        super::generated::user::Generated::mode()
     }
     fn request_from_filter(filter: &Self::Filter) -> ApiRequest {
-        ApiRequest::from(IdentityUserApiRequest::List(Box::new(filter.clone())))
+        super::generated::user::Generated::request_from_filter(filter)
     }
     fn matches_request(request: &ApiRequest) -> bool {
-        matches!(
-            request,
-            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
-            if matches!(**boxreq, IdentityUserApiRequest::List(_))
-        )
+        super::generated::user::Generated::matches_request(request)
     }
     fn action_to_request(
         action: &Action,
@@ -97,14 +90,14 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
                     .enabled(!enabled)
                     .build()
                     .ok()?;
-            let set_req = IdentityUserSetBuilder::default()
+            let set_req = crate::cloud_worker::identity::v3::IdentityUserSetBuilder::default()
                 .id(id.to_string())
                 .user(req)
                 .build()
                 .ok()?;
-            Some(ApiRequest::from(IdentityUserApiRequest::Set(Box::new(
-                set_req,
-            ))))
+            Some(ApiRequest::from(cloud_types::IdentityUserApiRequest::Set(
+                Box::new(set_req),
+            )))
         } else {
             None
         }
@@ -119,10 +112,10 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
         } = action
             && *key == Self::view_key()
         {
-            let del = IdentityUserDelete::try_from(selected?).ok()?;
-            Some(ApiRequest::from(IdentityUserApiRequest::Delete(Box::new(
-                del,
-            ))))
+            let del = cloud_types::IdentityUserDelete::try_from(selected?).ok()?;
+            Some(ApiRequest::from(
+                cloud_types::IdentityUserApiRequest::Delete(Box::new(del)),
+            ))
         } else {
             None
         }
@@ -135,7 +128,7 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
         if let Action::ShowResource(key) = action
             && *key == crate::mode::IDENTITY_APPLICATION_CREDENTIAL
             && let Some(sel) = selected
-            && let Ok(list) = IdentityUserApplicationCredentialList::try_from(sel)
+            && let Ok(list) = cloud_types::IdentityUserApplicationCredentialList::try_from(sel)
         {
             return vec![
                 Action::Mode {
@@ -148,11 +141,11 @@ impl ResourceBehaviour for IdentityUsersBehaviour {
         Vec::new()
     }
     fn handle_mutation_response(request: &ApiRequest, data: &Value) -> Option<Vec<Mutation>> {
-        if let ApiRequest::Identity(IdentityApiRequest::User(req)) = request {
-            if let IdentityUserApiRequest::Delete(del) = &**req {
+        if let ApiRequest::Identity(cloud_types::IdentityApiRequest::User(req)) = request {
+            if let cloud_types::IdentityUserApiRequest::Delete(del) = &**req {
                 return Some(vec![Mutation::DeleteRow(del.id.clone())]);
             }
-            if let IdentityUserApiRequest::Set(_) = &**req
+            if let cloud_types::IdentityUserApiRequest::Set(_) = &**req
                 && let Some(id) = data.get("id").and_then(|v| v.as_str().map(String::from))
             {
                 return Some(vec![Mutation::UpdateRow(id, data.clone())]);
@@ -181,7 +174,7 @@ mod tests {
     #[test]
     fn view_key_and_title() {
         assert_eq!(IdentityUsersBehaviour::view_key(), "identity.user");
-        assert_eq!(IdentityUsersBehaviour::title(), "Identity Users");
+        assert_eq!(IdentityUsersBehaviour::title(), "Users");
         assert_eq!(
             IdentityUsersBehaviour::mode(),
             Mode::Resource(crate::mode::IDENTITY_USER)
@@ -190,7 +183,7 @@ mod tests {
 
     #[test]
     fn normalise_filter_passthrough() {
-        let filter = IdentityUserList::default();
+        let filter = cloud_types::IdentityUserList::default();
         let filter_clone = filter.clone();
         let norm = IdentityUsersBehaviour::normalise_filter(filter);
         assert_eq!(norm, filter_clone);
@@ -198,29 +191,29 @@ mod tests {
 
     #[test]
     fn request_from_filter_creates_list_request() {
-        let filter = IdentityUserList::default();
+        let filter = cloud_types::IdentityUserList::default();
         let request = IdentityUsersBehaviour::request_from_filter(&filter);
         assert!(matches!(
             request,
-            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
-            if matches!(*boxreq, IdentityUserApiRequest::List(_))
+            ApiRequest::Identity(cloud_types::IdentityApiRequest::User(boxreq))
+            if matches!(*boxreq, cloud_types::IdentityUserApiRequest::List(_))
         ));
     }
 
     #[test]
     fn matches_request_returns_true_for_list() {
-        let filter = IdentityUserList::default();
+        let filter = cloud_types::IdentityUserList::default();
         let request = IdentityUsersBehaviour::request_from_filter(&filter);
         assert!(IdentityUsersBehaviour::matches_request(&request));
     }
 
     #[test]
     fn matches_request_returns_false_for_delete() {
-        let del = IdentityUserDeleteBuilder::default()
+        let del = crate::cloud_worker::identity::v3::IdentityUserDeleteBuilder::default()
             .id("test".into())
             .build()
             .unwrap();
-        let request = ApiRequest::from(IdentityUserApiRequest::Delete(Box::new(del)));
+        let request = ApiRequest::from(cloud_types::IdentityUserApiRequest::Delete(Box::new(del)));
         assert!(!IdentityUsersBehaviour::matches_request(&request));
     }
 
@@ -244,8 +237,8 @@ mod tests {
         let request = result.unwrap();
         assert!(matches!(
             request,
-            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
-            if matches!(*boxreq, IdentityUserApiRequest::Set(_))
+            ApiRequest::Identity(cloud_types::IdentityApiRequest::User(boxreq))
+            if matches!(*boxreq, cloud_types::IdentityUserApiRequest::Set(_))
         ));
     }
 
@@ -295,8 +288,8 @@ mod tests {
         let request = result.unwrap();
         assert!(matches!(
             request,
-            ApiRequest::Identity(IdentityApiRequest::User(boxreq))
-            if matches!(*boxreq, IdentityUserApiRequest::Delete(_))
+            ApiRequest::Identity(cloud_types::IdentityApiRequest::User(boxreq))
+            if matches!(*boxreq, cloud_types::IdentityUserApiRequest::Delete(_))
         ));
     }
 
@@ -338,7 +331,7 @@ mod tests {
         let actions = IdentityUsersBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
             Some(&user),
-            &IdentityUserList::default(),
+            &cloud_types::IdentityUserList::default(),
         );
         assert_eq!(actions.len(), 2);
         assert!(matches!(
@@ -359,7 +352,7 @@ mod tests {
         let actions = IdentityUsersBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::IDENTITY_APPLICATION_CREDENTIAL),
             None,
-            &IdentityUserList::default(),
+            &cloud_types::IdentityUserList::default(),
         );
         assert!(actions.is_empty());
     }
@@ -370,7 +363,7 @@ mod tests {
         let actions = IdentityUsersBehaviour::filter_carry_action(
             &Action::ShowResource(crate::mode::IDENTITY_USER),
             Some(&user),
-            &IdentityUserList::default(),
+            &cloud_types::IdentityUserList::default(),
         );
         assert!(actions.is_empty());
     }
@@ -381,18 +374,18 @@ mod tests {
         let actions = IdentityUsersBehaviour::filter_carry_action(
             &Action::Tick,
             Some(&user),
-            &IdentityUserList::default(),
+            &cloud_types::IdentityUserList::default(),
         );
         assert!(actions.is_empty());
     }
 
     #[test]
     fn handle_mutation_response_delete() {
-        let del = IdentityUserDeleteBuilder::default()
+        let del = crate::cloud_worker::identity::v3::IdentityUserDeleteBuilder::default()
             .id("user-1".into())
             .build()
             .unwrap();
-        let request = ApiRequest::from(IdentityUserApiRequest::Delete(Box::new(del)));
+        let request = ApiRequest::from(cloud_types::IdentityUserApiRequest::Delete(Box::new(del)));
         let data = serde_json::json!({});
         let result = IdentityUsersBehaviour::handle_mutation_response(&request, &data);
         let muts = result.unwrap();
@@ -406,7 +399,7 @@ mod tests {
 
     #[test]
     fn handle_mutation_response_set() {
-        let set_req = IdentityUserSetBuilder::default()
+        let set_req = crate::cloud_worker::identity::v3::IdentityUserSetBuilder::default()
             .id("user-1".into())
             .user(
                 crate::cloud_worker::identity::v3::user::set::UserBuilder::default()
@@ -416,7 +409,7 @@ mod tests {
             )
             .build()
             .unwrap();
-        let request = ApiRequest::from(IdentityUserApiRequest::Set(Box::new(set_req)));
+        let request = ApiRequest::from(cloud_types::IdentityUserApiRequest::Set(Box::new(set_req)));
         let data = serde_json::json!({ "id": "user-1", "name": "test" });
         let result = IdentityUsersBehaviour::handle_mutation_response(&request, &data);
         assert!(matches!(result, Some(ref muts) if muts.len() == 1));
@@ -431,7 +424,7 @@ mod tests {
 
     #[test]
     fn handle_mutation_response_non_matching() {
-        let filter = IdentityUserList::default();
+        let filter = cloud_types::IdentityUserList::default();
         let request = IdentityUsersBehaviour::request_from_filter(&filter);
         let data = serde_json::json!({ "id": "user-1" });
         let result = IdentityUsersBehaviour::handle_mutation_response(&request, &data);

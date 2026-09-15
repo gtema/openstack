@@ -42,7 +42,7 @@ use std::fs::{DirBuilder, File, OpenOptions};
 use std::io::prelude::*;
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 use tempfile::NamedTempFile;
@@ -165,15 +165,20 @@ pub struct State {
 }
 
 impl State {
+    /// Default cache base directory (`$HOME/.osc`), the same one [`State::new()`] uses.
+    pub fn default_base_dir() -> PathBuf {
+        dirs::home_dir()
+            .unwrap_or_default()
+            //.expect("Cannot determine users XDG_HOME")
+            .join(".osc")
+    }
+
     pub fn new() -> Self {
         let state = Self {
             auth_hash: String::new(),
             auth_state: Default::default(),
             auth_cache_enabled: false,
-            base_dir: dirs::home_dir()
-                .unwrap_or_default()
-                //.expect("Cannot determine users XDG_HOME")
-                .join(".osc"),
+            base_dir: Self::default_base_dir(),
         };
         DirBuilder::new()
             .recursive(true)
@@ -317,6 +322,72 @@ impl State {
             let _ = std::fs::remove_file(self.get_auth_state_lock_filename(&self.auth_hash));
         }
         self.auth_state.0.clear();
+    }
+
+    /// Removes every on-disk cache file belonging to the current auth hash
+    /// (auth state, discovery state, and their lock files) and drops the
+    /// in-memory token map.
+    ///
+    /// Unlike [`State::clear_all_auth`] (used on the 401-retry/renew hot
+    /// paths, which must not discard the discovery cache), this is meant for
+    /// a user-triggered full logout/cache-clear and also removes the
+    /// discovery cache. Returns the paths that were actually removed.
+    pub fn clear_cache_files(&mut self) -> Vec<PathBuf> {
+        trace!("Clearing all cache files for current auth hash");
+        let mut removed = Vec::new();
+        if self.auth_cache_enabled {
+            let fname = self.get_auth_state_filename(&self.auth_hash);
+            if std::fs::remove_file(&fname).is_ok() {
+                removed.push(fname);
+            }
+            let lock_fname = self.get_auth_state_lock_filename(&self.auth_hash);
+            if std::fs::remove_file(&lock_fname).is_ok() {
+                removed.push(lock_fname);
+            }
+            let discovery_fname = self.get_discovery_state_filename();
+            if std::fs::remove_file(&discovery_fname).is_ok() {
+                removed.push(discovery_fname);
+            }
+            let discovery_lock_fname = self.get_discovery_state_lock_filename();
+            if std::fs::remove_file(&discovery_lock_fname).is_ok() {
+                removed.push(discovery_lock_fname);
+            }
+        }
+        self.auth_state.0.clear();
+        removed
+    }
+
+    /// Removes every cache file under `base_dir` (auth state, discovery
+    /// state, and lock files for *all* auth hashes/profiles), regardless of
+    /// age. Unlike [`State::gc_stale_cache_files`] this is unconditional and
+    /// user-triggered, not an age-based background sweep.
+    ///
+    /// Best-effort and conservative: only regular files directly inside
+    /// `base_dir` are considered for removal; subdirectories and anything
+    /// that fails to be removed are left alone and reported as skipped.
+    /// Returns `(removed_paths, skipped_paths)`.
+    pub fn clear_all_cache_files(base_dir: &Path) -> (Vec<PathBuf>, Vec<PathBuf>) {
+        let mut removed = Vec::new();
+        let mut skipped = Vec::new();
+        let Ok(entries) = std::fs::read_dir(base_dir) else {
+            return (removed, skipped);
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let Ok(metadata) = entry.metadata() else {
+                skipped.push(path);
+                continue;
+            };
+            if !metadata.is_file() {
+                continue;
+            }
+            if std::fs::remove_file(&path).is_ok() {
+                removed.push(path);
+            } else {
+                skipped.push(path);
+            }
+        }
+        (removed, skipped)
     }
 
     /// Returns the discovery document body previously cached for
@@ -1254,5 +1325,134 @@ mod tests {
         let cached = s2.get_discovery_cache("identity", None, None);
         assert!(cached.is_some());
         assert_eq!(cached.unwrap().1, vec![7, 7]);
+    }
+
+    #[test]
+    fn test_clear_cache_files_removes_auth_and_discovery() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 200);
+        let scope = make_project_scope("p200");
+        let token = make_token("tok200");
+        s.set_scope_auth(&scope, &token);
+        s.set_discovery_cache("compute", None, None, "http://example.com/", vec![1]);
+
+        let auth_fname = s.get_auth_state_filename(&s.auth_hash);
+        let auth_lock_fname = s.get_auth_state_lock_filename(&s.auth_hash);
+        let discovery_fname = s.get_discovery_state_filename();
+        let discovery_lock_fname = s.get_discovery_state_lock_filename();
+        assert!(auth_fname.exists());
+        assert!(discovery_fname.exists());
+
+        let removed = s.clear_cache_files();
+        assert!(!auth_fname.exists());
+        assert!(!auth_lock_fname.exists());
+        assert!(!discovery_fname.exists());
+        assert!(!discovery_lock_fname.exists());
+        assert!(removed.contains(&auth_fname));
+        assert!(removed.contains(&discovery_fname));
+        assert!(s.get_scope_auth(&scope).is_none());
+    }
+
+    #[test]
+    fn test_clear_cache_files_noop_when_cache_disabled() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 201);
+        s.disable_auth_cache();
+        let removed = s.clear_cache_files();
+        assert!(removed.is_empty());
+    }
+
+    #[test]
+    fn test_clear_cache_files_missing_files_is_ok() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 202);
+        let removed = s.clear_cache_files();
+        assert!(removed.is_empty());
+    }
+
+    #[test]
+    fn test_clear_all_auth_keeps_discovery_cache() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 203);
+        let scope = make_project_scope("p203");
+        let token = make_token("tok203");
+        s.set_scope_auth(&scope, &token);
+        s.set_discovery_cache("compute", None, None, "http://example.com/", vec![1]);
+        let discovery_fname = s.get_discovery_state_filename();
+        assert!(discovery_fname.exists());
+
+        s.clear_all_auth();
+        assert!(discovery_fname.exists());
+    }
+
+    #[test]
+    fn test_clear_all_cache_files_removes_every_hash() {
+        let dir = make_state_dir();
+        for hash in [300u64, 301, 302] {
+            let mut s = new_state_in(&dir, hash);
+            let scope = make_project_scope(&format!("p{hash}"));
+            let token = make_token(&format!("tok{hash}"));
+            s.set_scope_auth(&scope, &token);
+            s.set_discovery_cache("compute", None, None, "http://example.com/", vec![1]);
+        }
+
+        let entries_before: Vec<_> = std::fs::read_dir(&dir).unwrap().collect();
+        assert!(!entries_before.is_empty());
+
+        let (removed, skipped) = State::clear_all_cache_files(&dir);
+        assert!(skipped.is_empty());
+        assert!(removed.len() >= 3 * 4); // auth + lock + discovery + discovery.lock per hash
+
+        let entries_after: Vec<_> = std::fs::read_dir(&dir).unwrap().collect();
+        assert!(entries_after.is_empty());
+    }
+
+    #[test]
+    fn test_clear_all_cache_files_skips_subdirectories() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 310);
+        let scope = make_project_scope("p310");
+        let token = make_token("tok310");
+        s.set_scope_auth(&scope, &token);
+
+        let subdir = dir.join("sub");
+        std::fs::create_dir(&subdir).unwrap();
+        std::fs::write(subdir.join("file"), b"keep me").unwrap();
+
+        let (removed, _skipped) = State::clear_all_cache_files(&dir);
+        assert!(!removed.is_empty());
+        assert!(subdir.exists());
+        assert!(subdir.join("file").exists());
+    }
+
+    #[test]
+    fn test_clear_all_cache_files_missing_dir() {
+        let dir = make_state_dir().join("does-not-exist");
+        let (removed, skipped) = State::clear_all_cache_files(&dir);
+        assert!(removed.is_empty());
+        assert!(skipped.is_empty());
+    }
+
+    #[test]
+    fn test_clear_all_cache_files_ignores_age() {
+        let dir = make_state_dir();
+        let mut s = new_state_in(&dir, 320);
+        let scope = make_project_scope("p320");
+        let token = make_token("tok320");
+        s.set_scope_auth(&scope, &token);
+        let fname = s.get_auth_state_filename(&s.auth_hash);
+        // File was just written (age ~0s, well under MAX_CACHE_FILE_AGE) -
+        // gc_stale_cache_files() would keep it, clear_all_cache_files() must not.
+        assert!(fname.exists());
+
+        let (removed, _skipped) = State::clear_all_cache_files(&dir);
+        assert!(removed.contains(&fname));
+        assert!(!fname.exists());
+    }
+
+    #[test]
+    fn test_default_base_dir_ends_with_osc() {
+        let base = State::default_base_dir();
+        assert_eq!(base.file_name().unwrap(), ".osc");
     }
 }

@@ -135,15 +135,19 @@ impl FileCommand {
         ep_builder.image_id(&self.path.image_id);
 
         // Set header parameters
+        //
+        // Stop-gap fix (upstream codegenerator bug): `HeaderName::from_static`
+        // panics on an uppercase literal; header names must be lowercase.
+        // Remove once the codegenerator template is fixed upstream.
         if let Some(val) = &self.headers.content_type {
             ep_builder.header(
-                http::header::HeaderName::from_static("Content-Type"),
+                http::header::HeaderName::from_static("content-type"),
                 http::header::HeaderValue::from_str(val)?,
             );
         }
         if let Some(val) = &self.headers.x_image_meta_store {
             ep_builder.header(
-                http::header::HeaderName::from_static("X-Image-Meta-Store"),
+                http::header::HeaderName::from_static("x-image-meta-store"),
                 http::header::HeaderValue::from_str(val)?,
             );
         }

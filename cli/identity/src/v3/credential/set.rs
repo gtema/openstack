@@ -34,6 +34,10 @@ use openstack_types::identity::v3::credential::response;
 
 /// Updates a credential.
 ///
+/// Only `blob` may be updated. `project_id`, `type`, and `user_id` are
+/// immutable after creation; to change any of those, delete the credential and
+/// create a new one.
+///
 /// Relationship:
 /// `https://docs.openstack.org/api/openstack-identity/3/rel/credential`
 #[derive(Args)]
@@ -72,24 +76,7 @@ struct PathParameters {
 struct Credential {
     /// The credential itself, as a serialized blob.
     #[arg(help_heading = "Body parameters", long)]
-    blob: Option<String>,
-
-    /// The ID for the project.
-    #[arg(help_heading = "Body parameters", long)]
-    project_id: Option<String>,
-
-    /// Set explicit NULL for the project_id
-    #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "project_id")]
-    no_project_id: bool,
-
-    /// The credential type, such as `ec2` or `cert`. The implementation
-    /// determines the list of supported types.
-    #[arg(help_heading = "Body parameters", long)]
-    _type: Option<String>,
-
-    /// The ID of the user who owns the credential.
-    #[arg(help_heading = "Body parameters", long)]
-    user_id: Option<String>,
+    blob: String,
 }
 
 impl CredentialCommand {
@@ -112,23 +99,8 @@ impl CredentialCommand {
         // Set Request.credential data
         let args = &self.credential;
         let mut credential_builder = set::CredentialBuilder::default();
-        if let Some(val) = &args.blob {
-            credential_builder.blob(val);
-        }
 
-        if let Some(val) = &args.project_id {
-            credential_builder.project_id(Some(val.into()));
-        } else if args.no_project_id {
-            credential_builder.project_id(None);
-        }
-
-        if let Some(val) = &args._type {
-            credential_builder._type(val);
-        }
-
-        if let Some(val) = &args.user_id {
-            credential_builder.user_id(val);
-        }
+        credential_builder.blob(&args.blob);
 
         ep_builder.credential(
             credential_builder
