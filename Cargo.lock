@@ -4628,6 +4628,7 @@ dependencies = [
  "openstack-sdk-plugin-wasm",
  "openstack_sdk_core",
  "parking_lot",
+ "petgraph",
  "reqwest",
  "secrecy",
  "serde",
