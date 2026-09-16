@@ -34,6 +34,7 @@
 use async_trait::async_trait;
 use serde_json::Value;
 
+use crate::api::compute::v2::keypair;
 use crate::api::compute::v2::server;
 use crate::api::{Pagination, QueryAsync, paged, raw};
 
@@ -44,6 +45,7 @@ use crate::cleanup::relations::RelationRule;
 use crate::cleanup::types::{PlannedResource, ResourceKind};
 
 pub const SERVER: ResourceKind = ResourceKind::new("compute", "server");
+pub const KEYPAIR: ResourceKind = ResourceKind::new("compute", "keypair");
 
 fn value_str<'a>(v: &'a Value, key: &str) -> Option<&'a str> {
     v.get(key).and_then(|x| x.as_str())
@@ -172,6 +174,40 @@ impl CleanupProvider for ComputeCleanupProvider {
             nodes.push(to_planned(SERVER, v));
         }
 
+        // Nova's `GET /os-keypairs` wraps each entry as `{"keypair": {...}}`
+        // inside the `"keypairs"` array, but `keypair::list_20::Request`
+        // declares `response_list_item_key() == Some("keypair")`, which the
+        // paging machinery (`RestEndpoint`/`paged`) uses to unwrap that
+        // per-element envelope before deserializing into `Vec<Value>` — so
+        // by the time we get `keypairs` below, each entry is already the
+        // flat keypair object (no further unwrapping needed here).
+        let keypairs: Vec<Value> = paged(
+            keypair::list_20::Request::builder().build().map_err(|e| {
+                CleanupError::Engine(format!("failed to build keypair list request: {e}"))
+            })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        .map_err(|e| list_err(KEYPAIR)(e.into()))?;
+        for v in keypairs {
+            // Unlike every other resource this provider discovers, Nova
+            // keypairs carry no `id` field at all - `name` is their sole
+            // identifier, used by both `get`/`delete` and here as
+            // `PlannedResource::id`. Using the generic `to_planned` (which
+            // reads `id`) would silently produce an empty id against a
+            // real cloud's response.
+            let name = value_str(&v, "name").unwrap_or_default().to_string();
+            nodes.push(PlannedResource {
+                kind: KEYPAIR,
+                id: name.clone(),
+                name: Some(name),
+                raw: v,
+                selected: false,
+                reason: None,
+            });
+        }
+
         Ok(nodes)
     }
 
@@ -233,6 +269,19 @@ impl CleanupProvider for ComputeCleanupProvider {
                 "server {} did not disappear after delete within the timeout",
                 resource.id
             )));
+        } else if resource.kind == KEYPAIR {
+            let req = keypair::delete_20::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!("failed to build keypair delete request: {e}"))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+
+            Ok(())
         } else {
             return Err(CleanupError::Engine(format!(
                 "ComputeCleanupProvider cannot delete resource kind {:?}",
@@ -319,6 +368,11 @@ mod tests {
                 {"id": "server-1", "name": "vm-1"}
             ]}));
         });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/os-keypairs");
+            then.status(200)
+                .json_body(serde_json::json!({"keypairs": []}));
+        });
 
         let cleanup = ProjectCleanupBuilder::new(&client)
             .with_provider(ComputeCleanupProvider)
@@ -344,6 +398,11 @@ mod tests {
             then.status(200).json_body(serde_json::json!({"servers": [
                 {"id": "server-1", "name": "vm-1"}
             ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/os-keypairs");
+            then.status(200)
+                .json_body(serde_json::json!({"keypairs": []}));
         });
         server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
@@ -387,6 +446,78 @@ mod tests {
             result.errors
         );
         assert!(result.deleted_ids.contains(&"server-1".to_string()));
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn discover_maps_keypairs_to_planned_resources() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/servers");
+            then.status(200)
+                .json_body(serde_json::json!({"servers": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/os-keypairs");
+            then.status(200).json_body(serde_json::json!({"keypairs": [
+                {"keypair": {"id": "test-key", "name": "test-key"}}
+            ]}));
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(ComputeCleanupProvider)
+            .build();
+
+        let plan = cleanup
+            .discover(HashMap::new(), None)
+            .await
+            .expect("discover failed");
+
+        let node = plan.nodes.iter().find(|n| n.id == "test-key").unwrap();
+        assert_eq!(node.kind, KEYPAIR);
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn delete_issues_keypair_delete_request() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/servers");
+            then.status(200)
+                .json_body(serde_json::json!({"servers": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/os-keypairs");
+            then.status(200).json_body(serde_json::json!({"keypairs": [
+                {"keypair": {"id": "test-key", "name": "test-key"}}
+            ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.1/os-keypairs/test-key");
+            then.status(202);
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(ComputeCleanupProvider)
+            .build();
+
+        let eval: crate::cleanup::provider::EvaluationFn =
+            std::sync::Arc::new(|r: &PlannedResource| r.kind == KEYPAIR);
+        let plan = cleanup
+            .discover(HashMap::new(), Some(eval))
+            .await
+            .expect("discover failed");
+        let result = cleanup.apply(plan).await.expect("apply failed");
+
+        assert!(
+            result.errors.is_empty(),
+            "unexpected errors: {:?}",
+            result.errors
+        );
+        assert!(result.deleted_ids.contains(&"test-key".to_string()));
     }
 
     #[cfg(feature = "network")]

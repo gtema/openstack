@@ -16,9 +16,12 @@
 //! across all four built-in providers (network, compute, block-storage,
 //! image) in one related scenario, proving the engine's relation-aware
 //! cross-resource ordering with real resources — not just per-provider
-//! CRUD. Run against devstack in CI (`.github/workflows/functional.yml`)
-//! and manually against a real cloud during development (`OS_CLOUD` +
-//! optionally `TEST_IMAGE_NAME`).
+//! CRUD. Also covers the floating IP, extra security group + rule,
+//! keypair, and volume backup kinds (no relation to the rest of the
+//! scenario other than the backup/volume ordering already exercised by
+//! the snapshot/volume pair). Run against devstack in CI
+//! (`.github/workflows/functional.yml`) and manually against a real cloud
+//! during development (`OS_CLOUD` + optionally `TEST_IMAGE_NAME`).
 
 use std::env;
 
@@ -30,9 +33,12 @@ use openstack_sdk::types::ServiceType;
 use openstack_sdk::{AsyncOpenStack, config::ConfigFile};
 
 use super::helpers::{
-    CreatedResources, create_network, create_router_with_interface, create_server_from_volume,
-    create_snapshot, create_subnet, create_volume_from_image, first_flavor_id,
-    resolve_test_image_id, wait_for_server_active, wait_for_volume_available,
+    CreatedResources, create_floating_ip, create_keypair, create_network,
+    create_router_with_interface, create_security_group, create_security_group_rule,
+    create_server_from_volume, create_snapshot, create_subnet, create_volume_backup,
+    create_volume_from_image, find_external_network_id, first_flavor_id, first_port_id_for_server,
+    resolve_test_image_id, wait_for_backup_available, wait_for_server_active,
+    wait_for_snapshot_available, wait_for_volume_available,
 };
 
 #[tokio::test(flavor = "multi_thread")]
@@ -68,7 +74,11 @@ async fn cleanup_engine_removes_related_resources_across_all_services()
     let marker = format!("osc-cleanup-test-{}", uuid::Uuid::new_v4());
     let mut created = CreatedResources::new(&client);
 
-    // 1. Network + subnet + router-with-interface.
+    // 1. Network + subnet + router-with-interface, gatewayed to the
+    //    external network (needed for the floating IP created in step 5 -
+    //    a router with no external gateway leaves Neutron with no path
+    //    from the external network to this subnet).
+    let external_network_id = find_external_network_id(&client).await?;
     let network_id = create_network(&client, &format!("{marker}-net")).await?;
     created.track("network", network_id.clone());
     let subnet_id = create_subnet(
@@ -78,8 +88,13 @@ async fn cleanup_engine_removes_related_resources_across_all_services()
         "10.250.0.0/24",
     )
     .await?;
-    let router_id =
-        create_router_with_interface(&client, &format!("{marker}-router"), &subnet_id).await?;
+    let router_id = create_router_with_interface(
+        &client,
+        &format!("{marker}-router"),
+        &subnet_id,
+        &external_network_id,
+    )
+    .await?;
     created.track("network-router", format!("{router_id}:{subnet_id}"));
 
     // 2. Resolve the pre-existing boot image (never created/deleted by
@@ -93,6 +108,25 @@ async fn cleanup_engine_removes_related_resources_across_all_services()
     wait_for_volume_available(&client, &volume_id).await?;
     let snapshot_id = create_snapshot(&client, &format!("{marker}-snap"), &volume_id).await?;
     created.track("block-storage-snapshot", snapshot_id.clone());
+    wait_for_snapshot_available(&client, &snapshot_id).await?;
+
+    // 3b. Backup taken *from that snapshot* (not the live volume) - reads
+    //     the already-quiesced snapshot data, so it works regardless of
+    //     the volume's own attach state, and exercises a real
+    //     backup -> snapshot -> volume delete-order chain (unlike a
+    //     volume-only backup, which has no relation to the snapshot at
+    //     all). A direct volume backup fails once the volume is in-use
+    //     (observed in CI: "backup ... went to error") even with
+    //     `force: true`, which this sidesteps entirely.
+    let backup_id = create_volume_backup(
+        &client,
+        &format!("{marker}-backup"),
+        &volume_id,
+        &snapshot_id,
+    )
+    .await?;
+    created.track("block-storage-backup", backup_id.clone());
+    wait_for_backup_available(&client, &backup_id).await?;
 
     // 4. Server booted from that volume, attached to the created network.
     let flavor_id = first_flavor_id(&client).await?;
@@ -107,7 +141,32 @@ async fn cleanup_engine_removes_related_resources_across_all_services()
     created.track("compute", server_id.clone());
     wait_for_server_active(&client, &server_id).await?;
 
-    // 5. Run the real cleanup engine, selecting everything whose name
+    // 5. Floating IP, associated to the server's own port.
+    let port_id = first_port_id_for_server(&client, &server_id).await?;
+    let floating_ip_id = create_floating_ip(
+        &client,
+        &external_network_id,
+        &port_id,
+        &format!("{marker}-fip"),
+    )
+    .await?;
+    created.track("network-floatingip", floating_ip_id.clone());
+
+    // 6. A second, non-default security group with one custom rule (on
+    //    top of the two egress rules Neutron auto-creates for every new
+    //    group) - standalone, not attached to anything, so its only
+    //    purpose here is exercising discovery/deletion of a *named*
+    //    (non-"default") security group and its rule.
+    let security_group_id = create_security_group(&client, &format!("{marker}-sg")).await?;
+    created.track("network-security-group", security_group_id.clone());
+    let security_group_rule_id = create_security_group_rule(&client, &security_group_id).await?;
+
+    // 7. Keypair. Nova keypairs are user-scoped, not project-scoped, and
+    //    have no id distinct from their name.
+    let keypair_name = create_keypair(&client, &format!("{marker}-keypair")).await?;
+    created.track("compute-keypair", keypair_name.clone());
+
+    // 8. Run the real cleanup engine, selecting everything whose name
     //    carries this test's marker. The network's subnet and
     //    router-interface have no `name` field of their own but are
     //    pulled in by the engine's existing `CascadeGroup` rules once
@@ -149,6 +208,11 @@ async fn cleanup_engine_removes_related_resources_across_all_services()
         &volume_id,
         &snapshot_id,
         &server_id,
+        &floating_ip_id,
+        &security_group_id,
+        &security_group_rule_id,
+        &keypair_name,
+        &backup_id,
     ] {
         assert!(
             result.deleted_ids.contains(id),
@@ -179,6 +243,22 @@ async fn cleanup_engine_removes_related_resources_across_all_services()
     assert!(
         pos(&router_id) < pos(&network_id),
         "router interface must delete (and detach the router) before its network"
+    );
+    assert!(
+        pos(&floating_ip_id) < pos(&router_id),
+        "floating ip must delete before the router interface it holds can be removed"
+    );
+    assert!(
+        pos(&backup_id) < pos(&volume_id),
+        "backup must delete before its volume"
+    );
+    assert!(
+        pos(&backup_id) < pos(&snapshot_id),
+        "backup must delete before the snapshot it was taken from"
+    );
+    assert!(
+        pos(&security_group_rule_id) < pos(&security_group_id),
+        "security group rule must delete before its security group"
     );
 
     // Everything above was deleted by the engine under test; `created`'s
