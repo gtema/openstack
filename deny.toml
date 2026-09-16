@@ -76,6 +76,7 @@ ignore = [
     { id = "RUSTSEC-2026-0247", reason = "dep of wasmtime"},
     { id = "RUSTSEC-2026-0250", reason = "dep of wasmtime"},
     { id = "RUSTSEC-2026-0251", reason = "dep of wasmtime"},
+    { id = "RUSTSEC-2026-0255", reason = "dep of wasmtime"},
     { id = "RUSTSEC-2026-0269", reason = "dep of wasmtime"}
 ]
 # If this is true, then cargo deny will use the git executable to fetch advisory database.
