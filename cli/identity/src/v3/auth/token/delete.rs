@@ -61,7 +61,8 @@ struct QueryParameters {}
 /// Header parameters
 #[derive(Args)]
 struct HeaderParameters {
-    /// The token to revoke, in the `X-Subject-Token` header.
+    /// The authentication token. An authentication response returns the token
+    /// ID in this header rather than in the response body.
     #[arg()]
     x_subject_token: String,
 }

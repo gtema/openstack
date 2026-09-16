@@ -20,7 +20,7 @@
 //! Wraps invoking of the `v2.0/ports` with `POST` method
 
 use clap::Args;
-use eyre::WrapErr;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -32,6 +32,8 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::network::v2::port::create;
+use openstack_sdk::api::network::v2::port::get;
+use openstack_sdk::api::wait_for_status_typed;
 use openstack_types::network::v2::port::response;
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -58,6 +60,14 @@ pub struct PortCommand {
     /// A `port` object.
     #[command(flatten)]
     port: Port,
+
+    /// Wait for the resource to reach its target status (or, for delete, to disappear) before
+    /// returning. Uses client-side status polling.
+    #[arg(long)]
+    wait: bool,
+    /// Maximum time to wait, in seconds. Only meaningful with `--wait`.
+    #[arg(long, default_value_t = 600)]
+    wait_timeout: u64,
 }
 
 /// Query parameters
@@ -445,8 +455,28 @@ impl PortCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: serde_json::Value = ep.query_async(client).await?;
+        if self.wait {
+            let wait_id = data
+                .pointer("/port/id")
+                .and_then(serde_json::Value::as_str)
+                .ok_or_eyre("create response is missing /port/id, cannot wait")?
+                .to_string();
+            let wait_ep = get::Request::builder()
+                .id(&wait_id)
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let wait_outcome = wait_for_status_typed(wait_ep, &["ACTIVE"], &["ERROR"])
+                .timeout(std::time::Duration::from_secs(self.wait_timeout))
+                .query_async(client)
+                .await?;
+            let data: serde_json::Value = wait_outcome
+                .into_present()
+                .unwrap_or(serde_json::Value::Null);
 
-        op.output_single::<response::create::PortResponse>(data.clone())?;
+            op.output_single::<response::create::PortResponse>(data.clone())?;
+        } else {
+            op.output_single::<response::create::PortResponse>(data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

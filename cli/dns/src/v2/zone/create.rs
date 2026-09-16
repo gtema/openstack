@@ -20,6 +20,7 @@
 //! Wraps invoking of the `v2/zones` with `POST` method
 
 use clap::Args;
+use eyre::OptionExt;
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -31,6 +32,8 @@ use clap::ValueEnum;
 use openstack_cli_core::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::create;
+use openstack_sdk::api::dns::v2::zone::get;
+use openstack_sdk::api::wait_for_status_typed;
 use openstack_types::dns::v2::zone::response;
 
 /// Create a zone
@@ -79,6 +82,14 @@ pub struct ZoneCommand {
     /// slaved from another DNS Server. Defaults to PRIMARY
     #[arg(help_heading = "Body parameters", long)]
     _type: Option<Type>,
+
+    /// Wait for the resource to reach its target status (or, for delete, to disappear) before
+    /// returning. Uses client-side status polling.
+    #[arg(long)]
+    wait: bool,
+    /// Maximum time to wait, in seconds. Only meaningful with `--wait`.
+    #[arg(long, default_value_t = 600)]
+    wait_timeout: u64,
 }
 
 /// Query parameters
@@ -156,8 +167,28 @@ impl ZoneCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: serde_json::Value = ep.query_async(client).await?;
+        if self.wait {
+            let wait_id = data
+                .pointer("/zone/id")
+                .and_then(serde_json::Value::as_str)
+                .ok_or_eyre("create response is missing /zone/id, cannot wait")?
+                .to_string();
+            let wait_ep = get::Request::builder()
+                .id(&wait_id)
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let wait_outcome = wait_for_status_typed(wait_ep, &["ACTIVE"], &["ERROR"])
+                .timeout(std::time::Duration::from_secs(self.wait_timeout))
+                .query_async(client)
+                .await?;
+            let data: serde_json::Value = wait_outcome
+                .into_present()
+                .unwrap_or(serde_json::Value::Null);
 
-        op.output_single::<response::create::ZoneResponse>(data.clone())?;
+            op.output_single::<response::create::ZoneResponse>(data.clone())?;
+        } else {
+            op.output_single::<response::create::ZoneResponse>(data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

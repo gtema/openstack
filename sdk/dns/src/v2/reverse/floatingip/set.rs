@@ -147,6 +147,23 @@ impl RestEndpoint for Request<'_> {
 /// `Option<T>` fields alone do not express).
 pub const BODY_SCHEMA: &str = "{\"properties\": {\"action\": {\"description\": \"current action in progress on the resource\", \"enum\": [\"DELETE\", \"NONE\", \"UPDATE\"], \"readOnly\": true, \"type\": \"string\"}, \"address\": {\"description\": \"The floatingip address for this PTR record.\", \"type\": \"string\"}, \"description\": {\"description\": \"Description for this PTR record\", \"type\": \"string\"}, \"id\": {\"description\": \"ID for PTR record in the format of <region>:<floatingip_id>\", \"format\": \"uuid\", \"readOnly\": true, \"type\": \"string\"}, \"links\": {\"description\": \"Links to the resource, and other related resources.\\nWhen a response has been broken into pages, we will include\\na `next` link that should be followed to retrieve all results\", \"properties\": {\"self\": {\"format\": \"uri\", \"type\": \"string\"}}, \"readOnly\": true, \"type\": \"object\"}, \"ptrdname\": {\"description\": \"Domain name for this PTR record\", \"type\": [\"null\", \"string\"]}, \"status\": {\"description\": \"The status of the resource.\", \"enum\": [\"ACTIVE\", \"DELETED\", \"ERROR\", \"PENDING\", \"SUCCESS\"], \"readOnly\": true, \"type\": \"string\"}, \"ttl\": {\"description\": \"Time to live for this PTR record\", \"type\": \"integer\"}}, \"type\": \"object\"}";
 
+/// (min_version_inclusive, max_version_exclusive, json_pointer)
+pub const STATUS_POINTER: &[(
+    openstack_sdk_core::types::ApiVersion,
+    openstack_sdk_core::types::ApiVersion,
+    &str,
+)] = &[(
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    openstack_sdk_core::types::ApiVersion { major: 0, minor: 0 },
+    "/status",
+)];
+
+impl openstack_sdk_core::api::HasStatusPointer for Request<'_> {
+    fn status_pointer(_negotiated: Option<openstack_sdk_core::types::ApiVersion>) -> &'static str {
+        STATUS_POINTER[0].2
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
