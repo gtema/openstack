@@ -30,5 +30,14 @@ pub use provider::{
 pub use relations::{Edge, RelationEffect, RelationRule, evaluate_edges};
 pub use types::{PlannedResource, ResourceKind};
 
+#[cfg(feature = "block_storage")]
+pub use providers::block_storage::BlockStorageCleanupProvider;
+
+#[cfg(feature = "compute")]
+pub use providers::compute::ComputeCleanupProvider;
+
+#[cfg(feature = "image")]
+pub use providers::image::ImageCleanupProvider;
+
 #[cfg(feature = "network")]
 pub use providers::network::NetworkCleanupProvider;

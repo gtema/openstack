@@ -12,17 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Built-in [`crate::cleanup::CleanupProvider`] implementations, one per
-//! supported service.
-
-#[cfg(feature = "block_storage")]
-pub mod block_storage;
-
-#[cfg(feature = "compute")]
-pub mod compute;
-
-#[cfg(feature = "image")]
-pub mod image;
-
-#[cfg(feature = "network")]
-pub mod network;
+mod full_scenario;
+mod helpers;
