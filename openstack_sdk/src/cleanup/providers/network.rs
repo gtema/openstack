@@ -158,6 +158,23 @@ impl CleanupProvider for NetworkCleanupProvider {
                 },
                 effect: RelationEffect::Blocks,
             },
+            // `NETWORK Blocks SUBNET` and `NETWORK Blocks ROUTER_INTERFACE`
+            // above only order both against their shared network — they
+            // don't order the subnet and the interface against each
+            // other, so without this rule the engine can place them in the
+            // same layer and delete them concurrently. On a real cloud the
+            // router-interface port still holds an IP allocation on the
+            // subnet until its `remove_router_interface` call completes,
+            // so a concurrent subnet delete races it and fails with
+            // `SubnetInUse`.
+            RelationRule {
+                parent_kind: SUBNET,
+                child_kind: ROUTER_INTERFACE,
+                matches: |child, parent| {
+                    value_str(&child.raw, "subnet_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::Blocks,
+            },
             RelationRule {
                 parent_kind: NETWORK,
                 child_kind: PORT,
@@ -315,6 +332,60 @@ impl CleanupProvider for NetworkCleanupProvider {
                 .await
                 .map_err(|e| err(e.into()))?;
         } else if resource.kind == SUBNET {
+            // `discover()` deliberately never turns a `network:dhcp` port
+            // into a node (Neutron/the DHCP agent owns its lifecycle, and
+            // most clouds refuse an explicit delete of one), so nothing
+            // upstream ever removes it before this point. On real clouds
+            // (unlike devstack, where the agent tends to already be gone by
+            // the time cleanup runs) that lingering DHCP port still holds an
+            // IP allocation on this subnet, and the delete below fails with
+            // `SubnetInUse`. Disabling DHCP on the subnet makes Neutron
+            // reclaim that port itself; poll for it to actually disappear
+            // before deleting the subnet.
+            if let Some(network_id) = value_str(&resource.raw, "network_id") {
+                let update_req = subnet::set::Request::builder()
+                    .id(resource.id.clone())
+                    .subnet(
+                        subnet::set::SubnetBuilder::default()
+                            .enable_dhcp(false)
+                            .build()
+                            .map_err(|e| {
+                                CleanupError::Engine(format!(
+                                    "failed to build subnet update body: {e}"
+                                ))
+                            })?,
+                    )
+                    .build()
+                    .map_err(|e| {
+                        CleanupError::Engine(format!("failed to build subnet update request: {e}"))
+                    })?;
+                raw(update_req)
+                    .query_async(ctx.client)
+                    .await
+                    .map_err(|e| err(e.into()))?;
+
+                for _ in 0..30 {
+                    let list_req = port::list::Request::builder()
+                        .network_id(network_id.to_string())
+                        .device_owner("network:dhcp")
+                        .build()
+                        .map_err(|e| {
+                            CleanupError::Engine(format!("failed to build port list request: {e}"))
+                        })?;
+                    let dhcp_ports: Vec<Value> = paged(list_req, Pagination::All)
+                        .query_async(ctx.client)
+                        .await
+                        .map_err(|e| err(e.into()))?;
+                    let still_on_subnet = dhcp_ports
+                        .iter()
+                        .any(|p| first_fixed_ip_subnet_id(p).as_deref() == Some(&resource.id));
+                    if !still_on_subnet {
+                        break;
+                    }
+                    tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+                }
+            }
+
             let req = subnet::delete::Request::builder()
                 .id(resource.id.clone())
                 .build()
