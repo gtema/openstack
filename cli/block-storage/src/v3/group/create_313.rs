@@ -20,7 +20,7 @@
 //! Wraps invoking of the `v3/groups` with `POST` method
 
 use clap::Args;
-use eyre::WrapErr;
+use eyre::{OptionExt, WrapErr};
 use tracing::info;
 
 use openstack_cli_core::cli::CliArgs;
@@ -30,6 +30,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::block_storage::v3::group::create_313;
+use openstack_sdk::api::block_storage::v3::group::get_313 as get;
+use openstack_sdk::api::wait_for_status_typed;
 use openstack_types::block_storage::v3::group::response;
 
 /// Create a new group.
@@ -46,6 +48,14 @@ pub struct GroupCommand {
     /// A group object.
     #[command(flatten)]
     group: Group,
+
+    /// Wait for the resource to reach its target status (or, for delete, to disappear) before
+    /// returning. Uses client-side status polling.
+    #[arg(long)]
+    wait: bool,
+    /// Maximum time to wait, in seconds. Only meaningful with `--wait`.
+    #[arg(long, default_value_t = 600)]
+    wait_timeout: u64,
 }
 
 /// Query parameters
@@ -149,8 +159,28 @@ impl GroupCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: serde_json::Value = ep.query_async(client).await?;
+        if self.wait {
+            let wait_id = data
+                .pointer("/group/id")
+                .and_then(serde_json::Value::as_str)
+                .ok_or_eyre("create response is missing /group/id, cannot wait")?
+                .to_string();
+            let wait_ep = get::Request::builder()
+                .id(&wait_id)
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let wait_outcome = wait_for_status_typed(wait_ep, &["available"], &["error"])
+                .timeout(std::time::Duration::from_secs(self.wait_timeout))
+                .query_async(client)
+                .await?;
+            let data: serde_json::Value = wait_outcome
+                .into_present()
+                .unwrap_or(serde_json::Value::Null);
 
-        op.output_single::<response::create::GroupResponse>(data.clone())?;
+            op.output_single::<response::create::GroupResponse>(data.clone())?;
+        } else {
+            op.output_single::<response::create::GroupResponse>(data.clone())?;
+        }
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

@@ -158,9 +158,7 @@ pub struct NetworkResponse {
     /// Defines whether the network may be used for creation of floating IPs.
     /// Only networks with this flag may be an external gateway for routers.
     /// The network must have an external routing facility that is not managed
-    /// by the networking service. If the network is updated from external to
-    /// internal the unused floating IPs of this network are automatically
-    /// deleted when extension `floatingip-autodelete-internal` is present.
+    /// by the networking service.
     #[serde(
         default,
         deserialize_with = "openstack_types_core::common::deser_bool_str_opt",
