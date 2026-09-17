@@ -21,8 +21,14 @@ pub mod block_storage;
 #[cfg(feature = "compute")]
 pub mod compute;
 
+#[cfg(feature = "dns")]
+pub mod dns;
+
 #[cfg(feature = "image")]
 pub mod image;
 
 #[cfg(feature = "network")]
 pub mod network;
+
+#[cfg(feature = "object_store")]
+pub mod object_store;
