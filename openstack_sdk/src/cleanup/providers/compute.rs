@@ -36,6 +36,7 @@ use serde_json::Value;
 
 use crate::api::compute::v2::keypair;
 use crate::api::compute::v2::server;
+use crate::api::compute::v2::server_group;
 use crate::api::{Pagination, QueryAsync, paged, raw};
 
 use crate::cleanup::provider::{CleanupContext, CleanupDependency, CleanupError, CleanupProvider};
@@ -46,6 +47,7 @@ use crate::cleanup::types::{PlannedResource, ResourceKind};
 
 pub const SERVER: ResourceKind = ResourceKind::new("compute", "server");
 pub const KEYPAIR: ResourceKind = ResourceKind::new("compute", "keypair");
+pub const SERVER_GROUP: ResourceKind = ResourceKind::new("compute", "server_group");
 
 fn value_str<'a>(v: &'a Value, key: &str) -> Option<&'a str> {
     v.get(key).and_then(|x| x.as_str())
@@ -208,6 +210,34 @@ impl CleanupProvider for ComputeCleanupProvider {
             });
         }
 
+        let server_groups: Vec<Value> = paged(
+            server_group::list_20::Request::builder()
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!("failed to build server group list request: {e}"))
+                })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        .map_err(|e| list_err(SERVER_GROUP)(e.into()))?;
+        for v in server_groups {
+            // Mirrors the python SDK proxy's own cleanup, which skips
+            // (`if sg_obj.member_ids: continue`) any group that still has
+            // members rather than planning it for deletion and failing:
+            // Nova does allow deleting a non-empty group, but a group
+            // still holding live server memberships is never this
+            // provider's cleanup candidate.
+            let has_members = v
+                .get("members")
+                .and_then(|m| m.as_array())
+                .is_some_and(|arr| !arr.is_empty());
+            if has_members {
+                continue;
+            }
+            nodes.push(to_planned(SERVER_GROUP, v));
+        }
+
         Ok(nodes)
     }
 
@@ -275,6 +305,21 @@ impl CleanupProvider for ComputeCleanupProvider {
                 .build()
                 .map_err(|e| {
                     CleanupError::Engine(format!("failed to build keypair delete request: {e}"))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+
+            Ok(())
+        } else if resource.kind == SERVER_GROUP {
+            let req = server_group::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build server group delete request: {e}"
+                    ))
                 })?;
             raw(req)
                 .query_async(ctx.client)
@@ -373,6 +418,12 @@ mod tests {
             then.status(200)
                 .json_body(serde_json::json!({"keypairs": []}));
         });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.1/os-server-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"server_groups": []}));
+        });
 
         let cleanup = ProjectCleanupBuilder::new(&client)
             .with_provider(ComputeCleanupProvider)
@@ -403,6 +454,12 @@ mod tests {
             when.method(httpmock::Method::GET).path("/v2.1/os-keypairs");
             then.status(200)
                 .json_body(serde_json::json!({"keypairs": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.1/os-server-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"server_groups": []}));
         });
         server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
@@ -464,6 +521,12 @@ mod tests {
                 {"keypair": {"id": "test-key", "name": "test-key"}}
             ]}));
         });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.1/os-server-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"server_groups": []}));
+        });
 
         let cleanup = ProjectCleanupBuilder::new(&client)
             .with_provider(ComputeCleanupProvider)
@@ -495,6 +558,12 @@ mod tests {
             ]}));
         });
         server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.1/os-server-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"server_groups": []}));
+        });
+        server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
                 .path("/v2.1/os-keypairs/test-key");
             then.status(202);
@@ -518,6 +587,97 @@ mod tests {
             result.errors
         );
         assert!(result.deleted_ids.contains(&"test-key".to_string()));
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn discover_maps_empty_server_group_and_skips_group_with_members() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/servers");
+            then.status(200)
+                .json_body(serde_json::json!({"servers": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/os-keypairs");
+            then.status(200)
+                .json_body(serde_json::json!({"keypairs": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.1/os-server-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"server_groups": [
+                    {"id": "sg-empty", "name": "empty-group", "members": []},
+                    {"id": "sg-busy", "name": "busy-group", "members": ["server-1"]}
+                ]}));
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(ComputeCleanupProvider)
+            .build();
+
+        let plan = cleanup
+            .discover(HashMap::new(), None)
+            .await
+            .expect("discover failed");
+
+        let empty = plan.nodes.iter().find(|n| n.id == "sg-empty").unwrap();
+        assert_eq!(empty.kind, SERVER_GROUP);
+        assert!(
+            plan.nodes.iter().all(|n| n.id != "sg-busy"),
+            "server group with members must never become a node"
+        );
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn delete_issues_server_group_delete_request() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/servers");
+            then.status(200)
+                .json_body(serde_json::json!({"servers": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.1/os-keypairs");
+            then.status(200)
+                .json_body(serde_json::json!({"keypairs": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.1/os-server-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"server_groups": [
+                    {"id": "sg-empty", "name": "empty-group", "members": []}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.1/os-server-groups/sg-empty");
+            then.status(204);
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(ComputeCleanupProvider)
+            .build();
+
+        let eval: crate::cleanup::provider::EvaluationFn =
+            std::sync::Arc::new(|r: &PlannedResource| r.kind == SERVER_GROUP);
+        let plan = cleanup
+            .discover(HashMap::new(), Some(eval))
+            .await
+            .expect("discover failed");
+        let result = cleanup.apply(plan).await.expect("apply failed");
+
+        assert!(
+            result.errors.is_empty(),
+            "unexpected errors: {:?}",
+            result.errors
+        );
+        assert!(result.deleted_ids.contains(&"sg-empty".to_string()));
     }
 
     #[cfg(feature = "network")]

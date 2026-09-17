@@ -54,6 +54,9 @@ use crate::api::network::v2::router::remove_router_interface;
 use crate::api::network::v2::security_group;
 use crate::api::network::v2::security_group_rule;
 use crate::api::network::v2::subnet;
+use crate::api::network::v2::vpn::{
+    endpoint_group, ikepolicy, ipsec_site_connection, ipsecpolicy, vpnservice,
+};
 use crate::api::{Pagination, QueryAsync, RestClient, paged, raw};
 
 use crate::cleanup::provider::{CleanupContext, CleanupDependency, CleanupError, CleanupProvider};
@@ -68,6 +71,12 @@ pub const PORT: ResourceKind = ResourceKind::new("network", "port");
 pub const FLOATINGIP: ResourceKind = ResourceKind::new("network", "floatingip");
 pub const SECURITY_GROUP: ResourceKind = ResourceKind::new("network", "security_group");
 pub const SECURITY_GROUP_RULE: ResourceKind = ResourceKind::new("network", "security_group_rule");
+pub const VPN_IPSEC_SITE_CONNECTION: ResourceKind =
+    ResourceKind::new("network", "vpn_ipsec_site_connection");
+pub const VPN_SERVICE: ResourceKind = ResourceKind::new("network", "vpn_service");
+pub const VPN_ENDPOINT_GROUP: ResourceKind = ResourceKind::new("network", "vpn_endpoint_group");
+pub const VPN_IKE_POLICY: ResourceKind = ResourceKind::new("network", "vpn_ike_policy");
+pub const VPN_IPSEC_POLICY: ResourceKind = ResourceKind::new("network", "vpn_ipsec_policy");
 
 const ROUTER_INTERFACE_OWNERS: [&str; 3] = [
     "network:router_interface",
@@ -240,6 +249,44 @@ impl CleanupProvider for NetworkCleanupProvider {
                                 .iter()
                                 .any(|g| g.as_str() == value_str(&parent.raw, "id"))
                         })
+                },
+                effect: RelationEffect::Blocks,
+            },
+            // A VPN service, IKE/IPsec policy, or endpoint group cannot be
+            // deleted while an ipsec-site-connection still references it -
+            // the connection must go first. `Blocks` orders `child_kind`
+            // before `parent_kind`, so the connection (which holds the
+            // references) is the child in each of these rules.
+            RelationRule {
+                parent_kind: VPN_SERVICE,
+                child_kind: VPN_IPSEC_SITE_CONNECTION,
+                matches: |child, parent| {
+                    value_str(&child.raw, "vpnservice_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::Blocks,
+            },
+            RelationRule {
+                parent_kind: VPN_IKE_POLICY,
+                child_kind: VPN_IPSEC_SITE_CONNECTION,
+                matches: |child, parent| {
+                    value_str(&child.raw, "ikepolicy_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::Blocks,
+            },
+            RelationRule {
+                parent_kind: VPN_IPSEC_POLICY,
+                child_kind: VPN_IPSEC_SITE_CONNECTION,
+                matches: |child, parent| {
+                    value_str(&child.raw, "ipsecpolicy_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::Blocks,
+            },
+            RelationRule {
+                parent_kind: VPN_ENDPOINT_GROUP,
+                child_kind: VPN_IPSEC_SITE_CONNECTION,
+                matches: |child, parent| {
+                    value_str(&child.raw, "local_ep_group_id") == value_str(&parent.raw, "id")
+                        || value_str(&child.raw, "peer_ep_group_id") == value_str(&parent.raw, "id")
                 },
                 effect: RelationEffect::Blocks,
             },
@@ -451,6 +498,111 @@ impl CleanupProvider for NetworkCleanupProvider {
             nodes.push(to_planned(SECURITY_GROUP_RULE, v));
         }
 
+        // VPNaaS is a Neutron extension: a cloud without it enabled (or
+        // without `neutron-vpnaas` installed at all) 404s on every one of
+        // these `vpn/...` endpoints. Treat that 404 as "extension absent"
+        // - an empty result, not a failure of the whole cleanup run - and
+        // only propagate any other kind of error.
+        match paged(
+            ipsec_site_connection::list::Request::builder()
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build vpn ipsec site connection list request: {e}"
+                    ))
+                })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        {
+            Ok(items) => {
+                for v in items {
+                    nodes.push(to_planned(VPN_IPSEC_SITE_CONNECTION, v));
+                }
+            }
+            Err(e) if e.is_not_found() => {}
+            Err(e) => return Err(list_err(VPN_IPSEC_SITE_CONNECTION)(e.into())),
+        }
+
+        match paged(
+            vpnservice::list::Request::builder().build().map_err(|e| {
+                CleanupError::Engine(format!("failed to build vpn service list request: {e}"))
+            })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        {
+            Ok(items) => {
+                for v in items {
+                    nodes.push(to_planned(VPN_SERVICE, v));
+                }
+            }
+            Err(e) if e.is_not_found() => {}
+            Err(e) => return Err(list_err(VPN_SERVICE)(e.into())),
+        }
+
+        match paged(
+            endpoint_group::list::Request::builder()
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build vpn endpoint group list request: {e}"
+                    ))
+                })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        {
+            Ok(items) => {
+                for v in items {
+                    nodes.push(to_planned(VPN_ENDPOINT_GROUP, v));
+                }
+            }
+            Err(e) if e.is_not_found() => {}
+            Err(e) => return Err(list_err(VPN_ENDPOINT_GROUP)(e.into())),
+        }
+
+        match paged(
+            ikepolicy::list::Request::builder().build().map_err(|e| {
+                CleanupError::Engine(format!("failed to build vpn ike policy list request: {e}"))
+            })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        {
+            Ok(items) => {
+                for v in items {
+                    nodes.push(to_planned(VPN_IKE_POLICY, v));
+                }
+            }
+            Err(e) if e.is_not_found() => {}
+            Err(e) => return Err(list_err(VPN_IKE_POLICY)(e.into())),
+        }
+
+        match paged(
+            ipsecpolicy::list::Request::builder().build().map_err(|e| {
+                CleanupError::Engine(format!(
+                    "failed to build vpn ipsec policy list request: {e}"
+                ))
+            })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        {
+            Ok(items) => {
+                for v in items {
+                    nodes.push(to_planned(VPN_IPSEC_POLICY, v));
+                }
+            }
+            Err(e) if e.is_not_found() => {}
+            Err(e) => return Err(list_err(VPN_IPSEC_POLICY)(e.into())),
+        }
+
         Ok(nodes)
     }
 
@@ -615,6 +767,69 @@ impl CleanupProvider for NetworkCleanupProvider {
                 .map_err(|e| {
                     CleanupError::Engine(format!(
                         "failed to build security group delete request: {e}"
+                    ))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+        } else if resource.kind == VPN_IPSEC_SITE_CONNECTION {
+            let req = ipsec_site_connection::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build vpn ipsec site connection delete request: {e}"
+                    ))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+        } else if resource.kind == VPN_SERVICE {
+            let req = vpnservice::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!("failed to build vpn service delete request: {e}"))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+        } else if resource.kind == VPN_ENDPOINT_GROUP {
+            let req = endpoint_group::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build vpn endpoint group delete request: {e}"
+                    ))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+        } else if resource.kind == VPN_IKE_POLICY {
+            let req = ikepolicy::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build vpn ike policy delete request: {e}"
+                    ))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+        } else if resource.kind == VPN_IPSEC_POLICY {
+            let req = ipsecpolicy::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build vpn ipsec policy delete request: {e}"
                     ))
                 })?;
             raw(req)
@@ -1363,6 +1578,195 @@ mod tests {
         assert!(
             rule_pos < sg_pos,
             "rule must delete before its security group"
+        );
+    }
+
+    /// Mocks every core network endpoint with an empty collection, so a
+    /// test only needs to add mocks for what it actually cares about.
+    fn mock_empty_core_endpoints(server: &MockServer) {
+        for (path, key) in [
+            ("/v2.0/networks", "networks"),
+            ("/v2.0/subnets", "subnets"),
+            ("/v2.0/routers", "routers"),
+            ("/v2.0/ports", "ports"),
+            ("/v2.0/floatingips", "floatingips"),
+            ("/v2.0/security-groups", "security_groups"),
+            ("/v2.0/security-group-rules", "security_group_rules"),
+        ] {
+            server.mock(|when, then| {
+                when.method(httpmock::Method::GET).path(path);
+                then.status(200).json_body(serde_json::json!({key: []}));
+            });
+        }
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn discover_treats_vpn_extension_absent_as_empty_not_an_error() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        mock_empty_core_endpoints(&server);
+        // Deliberately no mocks for any `/v2.0/vpn/...` endpoint - httpmock
+        // 404s any unmatched route, which the provider must treat as
+        // "VPNaaS extension not enabled" rather than a discovery failure.
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(NetworkCleanupProvider)
+            .build();
+
+        let plan = cleanup
+            .discover(HashMap::new(), None)
+            .await
+            .expect("discover must not fail when the VPNaaS extension is absent");
+        assert!(
+            !plan.nodes.iter().any(|n| {
+                n.kind == VPN_IPSEC_SITE_CONNECTION
+                    || n.kind == VPN_SERVICE
+                    || n.kind == VPN_ENDPOINT_GROUP
+                    || n.kind == VPN_IKE_POLICY
+                    || n.kind == VPN_IPSEC_POLICY
+            }),
+            "no VPN nodes expected when the extension 404s"
+        );
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn discover_and_delete_vpn_resources_in_dependency_order() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        mock_empty_core_endpoints(&server);
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/vpn/ipsec-site-connections");
+            then.status(200)
+                .json_body(serde_json::json!({"ipsec_site_connections": [
+                    {"id": "conn-1", "name": "conn", "vpnservice_id": "vpnsvc-1",
+                     "ikepolicy_id": "ike-1", "ipsecpolicy_id": "ipsecpol-1",
+                     "local_ep_group_id": "epg-local", "peer_ep_group_id": "epg-peer"}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/vpn/vpnservices");
+            then.status(200)
+                .json_body(serde_json::json!({"vpnservices": [
+                    {"id": "vpnsvc-1", "name": "vpnsvc"}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/vpn/endpoint-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"endpoint_groups": [
+                    {"id": "epg-local", "name": "epg-local"},
+                    {"id": "epg-peer", "name": "epg-peer"}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/vpn/ikepolicies");
+            then.status(200)
+                .json_body(serde_json::json!({"ikepolicies": [
+                    {"id": "ike-1", "name": "ike"}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/vpn/ipsecpolicies");
+            then.status(200)
+                .json_body(serde_json::json!({"ipsecpolicies": [
+                    {"id": "ipsecpol-1", "name": "ipsecpol"}
+                ]}));
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(NetworkCleanupProvider)
+            .build();
+
+        let plan = cleanup
+            .discover(HashMap::new(), None)
+            .await
+            .expect("discover failed");
+
+        for id in [
+            "conn-1",
+            "vpnsvc-1",
+            "epg-local",
+            "epg-peer",
+            "ike-1",
+            "ipsecpol-1",
+        ] {
+            assert!(
+                plan.nodes.iter().any(|n| n.id == id && n.selected),
+                "{id} must be discovered and selected"
+            );
+        }
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/vpn/ipsec-site-connections/conn-1");
+            then.status(204);
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/vpn/vpnservices/vpnsvc-1");
+            then.status(204);
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/vpn/endpoint-groups/epg-local");
+            then.status(204);
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/vpn/endpoint-groups/epg-peer");
+            then.status(204);
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/vpn/ikepolicies/ike-1");
+            then.status(204);
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/vpn/ipsecpolicies/ipsecpol-1");
+            then.status(204);
+        });
+
+        let result = cleanup.apply(plan).await.expect("apply failed");
+        assert!(
+            result.errors.is_empty(),
+            "unexpected errors: {:?}",
+            result.errors
+        );
+
+        let pos = |id: &str| {
+            result
+                .deleted_ids
+                .iter()
+                .position(|d| d == id)
+                .unwrap_or_else(|| panic!("{id} missing from deleted_ids"))
+        };
+        assert!(
+            pos("conn-1") < pos("vpnsvc-1"),
+            "connection must delete before its vpn service"
+        );
+        assert!(
+            pos("conn-1") < pos("ike-1"),
+            "connection must delete before its ike policy"
+        );
+        assert!(
+            pos("conn-1") < pos("ipsecpol-1"),
+            "connection must delete before its ipsec policy"
+        );
+        assert!(
+            pos("conn-1") < pos("epg-local"),
+            "connection must delete before its local endpoint group"
+        );
+        assert!(
+            pos("conn-1") < pos("epg-peer"),
+            "connection must delete before its peer endpoint group"
         );
     }
 }

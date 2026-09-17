@@ -36,8 +36,14 @@ pub use providers::block_storage::BlockStorageCleanupProvider;
 #[cfg(feature = "compute")]
 pub use providers::compute::ComputeCleanupProvider;
 
+#[cfg(feature = "dns")]
+pub use providers::dns::DnsCleanupProvider;
+
 #[cfg(feature = "image")]
 pub use providers::image::ImageCleanupProvider;
 
 #[cfg(feature = "network")]
 pub use providers::network::NetworkCleanupProvider;
+
+#[cfg(feature = "object_store")]
+pub use providers::object_store::ObjectStoreCleanupProvider;
