@@ -37,7 +37,12 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
             test_args: ""
-            rust_ver: 1.91
+            # Must match cli/config/Cargo.toml's `rust-version` (pinned
+            # there for yamlpatch/yamlpath, comment/anchor-preserving YAML
+            # edits). The workspace default build (no -p filter below)
+            # includes cli/config, so bumping either value without the
+            # other breaks this job.
+            rust_ver: 1.97
           # - target: x86_64-unknown-linux-musl
           #   os: ubuntu-latest
           # - target: x86_64-apple-darwin

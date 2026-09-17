@@ -1,0 +1,28 @@
+[package]
+name = "openstack-cli-config"
+description = "OpenStack CLI config commands"
+version = "0.13.8"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+# `yamlpatch`/`yamlpath` (see src/yaml_edit.rs) require a newer toolchain
+# than the rest of the workspace. Scoped to this crate only: nothing else
+# in the workspace depends on `openstack-cli-config`, so SDK-only consumers
+# never pull this requirement in. See CONTRIBUTING.md / the PR description
+# for context.
+# Keep in sync with .github/workflows/ci.yml's `rust_ver` — the workspace
+# default build includes this crate, so a mismatch breaks CI.
+rust-version = "1.97"
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+indexmap.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+yaml_serde.workspace = true
+yamlpatch.workspace = true
+yamlpath.workspace = true
+
+[lints]
+workspace = true
