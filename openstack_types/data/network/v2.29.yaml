@@ -16620,9 +16620,7 @@ components:
                 Defines whether the network may be used for creation of floating IPs. Only
                 networks with this flag may be an external gateway for routers.
                 The network must have an external routing facility that is not managed by
-                the networking service. If the network is updated from external to internal
-                the unused floating IPs of this network are automatically deleted when
-                extension `floatingip-autodelete-internal` is present.
+                the networking service.
               type:
                 - boolean
                 - string
@@ -16932,9 +16930,7 @@ components:
                 Defines whether the network may be used for creation of floating IPs. Only
                 networks with this flag may be an external gateway for routers.
                 The network must have an external routing facility that is not managed by
-                the networking service. If the network is updated from external to internal
-                the unused floating IPs of this network are automatically deleted when
-                extension `floatingip-autodelete-internal` is present.
+                the networking service.
               type:
                 - boolean
                 - string
@@ -17775,9 +17771,7 @@ components:
                 Defines whether the network may be used for creation of floating IPs. Only
                 networks with this flag may be an external gateway for routers.
                 The network must have an external routing facility that is not managed by
-                the networking service. If the network is updated from external to internal
-                the unused floating IPs of this network are automatically deleted when
-                extension `floatingip-autodelete-internal` is present.
+                the networking service.
               type:
                 - boolean
                 - string
@@ -17997,9 +17991,7 @@ components:
                   Defines whether the network may be used for creation of floating IPs. Only
                   networks with this flag may be an external gateway for routers.
                   The network must have an external routing facility that is not managed by
-                  the networking service. If the network is updated from external to internal
-                  the unused floating IPs of this network are automatically deleted when
-                  extension `floatingip-autodelete-internal` is present.
+                  the networking service.
                 type:
                   - boolean
                   - string
