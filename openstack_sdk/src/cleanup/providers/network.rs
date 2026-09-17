@@ -46,12 +46,15 @@
 use async_trait::async_trait;
 use serde_json::Value;
 
+use crate::api::network::v2::floatingip;
 use crate::api::network::v2::network;
 use crate::api::network::v2::port;
 use crate::api::network::v2::router;
 use crate::api::network::v2::router::remove_router_interface;
+use crate::api::network::v2::security_group;
+use crate::api::network::v2::security_group_rule;
 use crate::api::network::v2::subnet;
-use crate::api::{Pagination, QueryAsync, paged, raw};
+use crate::api::{Pagination, QueryAsync, RestClient, paged, raw};
 
 use crate::cleanup::provider::{CleanupContext, CleanupDependency, CleanupError, CleanupProvider};
 use crate::cleanup::relations::{RelationEffect, RelationRule};
@@ -62,6 +65,9 @@ pub const SUBNET: ResourceKind = ResourceKind::new("network", "subnet");
 pub const ROUTER: ResourceKind = ResourceKind::new("network", "router");
 pub const ROUTER_INTERFACE: ResourceKind = ResourceKind::new("network", "router_interface");
 pub const PORT: ResourceKind = ResourceKind::new("network", "port");
+pub const FLOATINGIP: ResourceKind = ResourceKind::new("network", "floatingip");
+pub const SECURITY_GROUP: ResourceKind = ResourceKind::new("network", "security_group");
+pub const SECURITY_GROUP_RULE: ResourceKind = ResourceKind::new("network", "security_group_rule");
 
 const ROUTER_INTERFACE_OWNERS: [&str; 3] = [
     "network:router_interface",
@@ -158,6 +164,20 @@ impl CleanupProvider for NetworkCleanupProvider {
                 },
                 effect: RelationEffect::Blocks,
             },
+            // Neutron refuses `remove_router_interface` for a subnet while
+            // any floating IP is still bound to that subnet's router
+            // (`RouterInterfaceInUseByFloatingIP`), even though the
+            // floating IP has no direct reference to the interface port
+            // itself - only to the router (`router_id`) the interface
+            // belongs to (`device_id`).
+            RelationRule {
+                parent_kind: ROUTER_INTERFACE,
+                child_kind: FLOATINGIP,
+                matches: |child, parent| {
+                    value_str(&child.raw, "router_id") == value_str(&parent.raw, "device_id")
+                },
+                effect: RelationEffect::Blocks,
+            },
             // `NETWORK Blocks SUBNET` and `NETWORK Blocks ROUTER_INTERFACE`
             // above only order both against their shared network — they
             // don't order the subnet and the interface against each
@@ -191,6 +211,38 @@ impl CleanupProvider for NetworkCleanupProvider {
                 },
                 effect: RelationEffect::CascadeGroup,
             },
+            RelationRule {
+                parent_kind: SECURITY_GROUP,
+                child_kind: SECURITY_GROUP_RULE,
+                matches: |child, parent| {
+                    value_str(&child.raw, "security_group_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::Blocks,
+            },
+            RelationRule {
+                parent_kind: SECURITY_GROUP,
+                child_kind: SECURITY_GROUP_RULE,
+                matches: |child, parent| {
+                    value_str(&child.raw, "security_group_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::CascadeGroup,
+            },
+            RelationRule {
+                parent_kind: SECURITY_GROUP,
+                child_kind: PORT,
+                matches: |child, parent| {
+                    child
+                        .raw
+                        .get("security_groups")
+                        .and_then(|v| v.as_array())
+                        .is_some_and(|groups| {
+                            groups
+                                .iter()
+                                .any(|g| g.as_str() == value_str(&parent.raw, "id"))
+                        })
+                },
+                effect: RelationEffect::Blocks,
+            },
         ]
     }
 
@@ -211,10 +263,26 @@ impl CleanupProvider for NetworkCleanupProvider {
 
         let mut nodes = Vec::new();
 
+        // Unlike subnets, routers, ports, security groups, and floating
+        // IPs (all project-scoped by Neutron's own default policy), an
+        // unscoped network list also returns networks *shared* with this
+        // project and external networks marked `shared` - neither of
+        // which this project owns or may delete. Scope explicitly to
+        // `tenant_id` (same approach `ImageCleanupProvider` uses for
+        // `owner`) so a devstack/real-cloud external network never gets
+        // planned for deletion.
+        let project_id = ctx
+            .client
+            .get_current_project()
+            .and_then(|p| p.id)
+            .ok_or_else(|| CleanupError::Engine("failed to determine current project id".into()))?;
         let networks: Vec<Value> = paged(
-            network::list::Request::builder().build().map_err(|e| {
-                CleanupError::Engine(format!("failed to build network list request: {e}"))
-            })?,
+            network::list::Request::builder()
+                .tenant_id(project_id)
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!("failed to build network list request: {e}"))
+                })?,
             Pagination::All,
         )
         .query_async(ctx.client)
@@ -304,6 +372,83 @@ impl CleanupProvider for NetworkCleanupProvider {
                 // endpoint.
                 nodes.push(to_planned(PORT, port_v));
             }
+        }
+
+        let floatingips: Vec<Value> = paged(
+            floatingip::list::Request::builder().build().map_err(|e| {
+                CleanupError::Engine(format!("failed to build floating ip list request: {e}"))
+            })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        .map_err(|e| list_err(FLOATINGIP)(e.into()))?;
+        for v in floatingips {
+            // Floating IPs have no `name` attribute at all (unlike every
+            // other resource kind this provider discovers) - `description`
+            // is the only user-settable label, so it doubles as `name`
+            // here. Without this, a name-prefix `evaluation_fn` (the
+            // marker-matching pattern this crate's own functional test and
+            // any caller filtering "my resources by name" would use) can
+            // never select a floating IP.
+            let mut node = to_planned(FLOATINGIP, v);
+            if node.name.is_none() {
+                node.name = value_str(&node.raw, "description").map(str::to_string);
+            }
+            nodes.push(node);
+        }
+
+        // Neutron auto-creates exactly one security group per project named
+        // "default" and refuses to delete it (400 SecurityGroupCannotRemoveDefault)
+        // — it must never become a cleanup candidate.
+        let security_groups: Vec<Value> = paged(
+            security_group::list::Request::builder()
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build security group list request: {e}"
+                    ))
+                })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        .map_err(|e| list_err(SECURITY_GROUP)(e.into()))?;
+        let mut default_sg_ids: Vec<String> = Vec::new();
+        for v in security_groups {
+            if value_str(&v, "name") == Some("default") {
+                if let Some(id) = value_str(&v, "id") {
+                    default_sg_ids.push(id.to_string());
+                }
+                continue;
+            }
+            nodes.push(to_planned(SECURITY_GROUP, v));
+        }
+
+        let security_group_rules: Vec<Value> = paged(
+            security_group_rule::list::Request::builder()
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build security group rule list request: {e}"
+                    ))
+                })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        .map_err(|e| list_err(SECURITY_GROUP_RULE)(e.into()))?;
+        for v in security_group_rules {
+            // A rule of the (undeletable, never-discovered) default security
+            // group must not be a node either — deleting it would strip the
+            // project's default egress/ingress policy while leaving the
+            // protected default SG shell behind.
+            if value_str(&v, "security_group_id")
+                .is_some_and(|id| default_sg_ids.iter().any(|d| d == id))
+            {
+                continue;
+            }
+            nodes.push(to_planned(SECURITY_GROUP_RULE, v));
         }
 
         Ok(nodes)
@@ -439,6 +584,43 @@ impl CleanupProvider for NetworkCleanupProvider {
                 .query_async(ctx.client)
                 .await
                 .map_err(|e| err(e.into()))?;
+        } else if resource.kind == FLOATINGIP {
+            let req = floatingip::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!("failed to build floating ip delete request: {e}"))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+        } else if resource.kind == SECURITY_GROUP_RULE {
+            let req = security_group_rule::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build security group rule delete request: {e}"
+                    ))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+        } else if resource.kind == SECURITY_GROUP {
+            let req = security_group::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!(
+                        "failed to build security group delete request: {e}"
+                    ))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
         } else {
             return Err(CleanupError::Engine(format!(
                 "NetworkCleanupProvider cannot delete resource kind {:?}",
@@ -537,6 +719,23 @@ mod tests {
             when.method(httpmock::Method::GET).path("/v2.0/ports");
             then.status(200).json_body(serde_json::json!({"ports": []}));
         });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/floatingips");
+            then.status(200)
+                .json_body(serde_json::json!({"floatingips": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"security_groups": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-group-rules");
+            then.status(200)
+                .json_body(serde_json::json!({"security_group_rules": []}));
+        });
 
         let cleanup = ProjectCleanupBuilder::new(&client)
             .with_provider(NetworkCleanupProvider)
@@ -600,6 +799,117 @@ mod tests {
     }
 
     #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn discover_marks_router_interface_blocked_until_floatingip_selected() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/networks");
+            then.status(200).json_body(serde_json::json!({"networks": [
+                {"id": "net-1", "name": "private"}
+            ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/subnets");
+            then.status(200)
+                .json_body(serde_json::json!({"subnets": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/routers");
+            then.status(200).json_body(serde_json::json!({"routers": [
+                {"id": "router-1", "name": "private-router"}
+            ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/ports");
+            then.status(200).json_body(serde_json::json!({"ports": [
+                {"id": "iface-1", "network_id": "net-1",
+                 "device_owner": "network:router_interface",
+                 "device_id": "router-1",
+                 "fixed_ips": [{"subnet_id": "subnet-1"}]}
+            ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/floatingips");
+            then.status(200)
+                .json_body(serde_json::json!({"floatingips": [
+                    {"id": "fip-1", "floating_ip_address": "203.0.113.5",
+                     "router_id": "router-1"}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"security_groups": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-group-rules");
+            then.status(200)
+                .json_body(serde_json::json!({"security_group_rules": []}));
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(NetworkCleanupProvider)
+            .build();
+
+        // There is no `CascadeGroup` for this pair (unlike e.g.
+        // `NETWORK`/`ROUTER_INTERFACE`) - a real caller selects the
+        // floating IP itself by its own marker, same as the full
+        // functional scenario does. Select all three directly here to
+        // isolate the ordering assertion below from cascade behavior.
+        let eval: std::sync::Arc<dyn Fn(&PlannedResource) -> bool + Send + Sync> =
+            std::sync::Arc::new(|r: &PlannedResource| {
+                r.kind == ROUTER_INTERFACE || r.kind == ROUTER || r.kind == FLOATINGIP
+            });
+
+        let plan = cleanup
+            .discover(HashMap::new(), Some(eval))
+            .await
+            .expect("discover failed");
+
+        let fip = plan.nodes.iter().find(|n| n.id == "fip-1").unwrap();
+        let iface = plan.nodes.iter().find(|n| n.id == "iface-1").unwrap();
+        assert!(fip.selected);
+        assert!(iface.selected);
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/floatingips/fip-1");
+            then.status(204);
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::PUT)
+                .path("/v2.0/routers/router-1/remove_router_interface");
+            then.status(200).json_body(serde_json::json!({}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/routers/router-1");
+            then.status(204);
+        });
+
+        let result = cleanup.apply(plan).await.expect("apply failed");
+        assert!(
+            result.errors.is_empty(),
+            "unexpected errors: {:?}",
+            result.errors
+        );
+        let pos = |id: &str| {
+            result
+                .deleted_ids
+                .iter()
+                .position(|d| d == id)
+                .unwrap_or_else(|| panic!("{id} missing from deleted_ids"))
+        };
+        assert!(
+            pos("fip-1") < pos("iface-1"),
+            "floating ip must delete before the router interface it holds"
+        );
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
     async fn discover_classifies_ports_correctly() {
         let server = MockServer::start_async().await;
         let client = mock_client(&server).await;
@@ -630,6 +940,23 @@ mod tests {
                  "fixed_ips": [{"subnet_id": "subnet-1"}]},
                 {"id": "port-tenant", "network_id": "net-1", "device_owner": "compute:nova"}
             ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/floatingips");
+            then.status(200)
+                .json_body(serde_json::json!({"floatingips": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"security_groups": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-group-rules");
+            then.status(200)
+                .json_body(serde_json::json!({"security_group_rules": []}));
         });
 
         let cleanup = ProjectCleanupBuilder::new(&client)
@@ -689,6 +1016,353 @@ mod tests {
                     && e.child == port_idx
                     && e.parent == net_idx),
             "expected a CascadeGroup edge from port-tenant to net-1"
+        );
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn discover_maps_floating_ips_to_planned_resources() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/networks");
+            then.status(200)
+                .json_body(serde_json::json!({"networks": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/subnets");
+            then.status(200)
+                .json_body(serde_json::json!({"subnets": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/routers");
+            then.status(200)
+                .json_body(serde_json::json!({"routers": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/ports");
+            then.status(200).json_body(serde_json::json!({"ports": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/floatingips");
+            then.status(200)
+                .json_body(serde_json::json!({"floatingips": [
+                    {"id": "fip-1", "floating_ip_address": "203.0.113.5", "name": null}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"security_groups": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-group-rules");
+            then.status(200)
+                .json_body(serde_json::json!({"security_group_rules": []}));
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(NetworkCleanupProvider)
+            .build();
+
+        let plan = cleanup
+            .discover(HashMap::new(), None)
+            .await
+            .expect("discover failed");
+
+        let node = plan.nodes.iter().find(|n| n.id == "fip-1").unwrap();
+        assert_eq!(node.kind, FLOATINGIP);
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn delete_issues_floatingip_delete_request() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/networks");
+            then.status(200)
+                .json_body(serde_json::json!({"networks": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/subnets");
+            then.status(200)
+                .json_body(serde_json::json!({"subnets": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/routers");
+            then.status(200)
+                .json_body(serde_json::json!({"routers": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/ports");
+            then.status(200).json_body(serde_json::json!({"ports": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/floatingips");
+            then.status(200)
+                .json_body(serde_json::json!({"floatingips": [
+                    {"id": "fip-1", "floating_ip_address": "203.0.113.5", "name": null}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"security_groups": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-group-rules");
+            then.status(200)
+                .json_body(serde_json::json!({"security_group_rules": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/floatingips/fip-1");
+            then.status(204);
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(NetworkCleanupProvider)
+            .build();
+
+        let eval: crate::cleanup::provider::EvaluationFn =
+            std::sync::Arc::new(|r: &PlannedResource| r.kind == FLOATINGIP);
+        let plan = cleanup
+            .discover(HashMap::new(), Some(eval))
+            .await
+            .expect("discover failed");
+        let result = cleanup.apply(plan).await.expect("apply failed");
+
+        assert!(
+            result.errors.is_empty(),
+            "unexpected errors: {:?}",
+            result.errors
+        );
+        assert!(result.deleted_ids.contains(&"fip-1".to_string()));
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn discover_excludes_default_security_group_and_cascades_rules() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/networks");
+            then.status(200)
+                .json_body(serde_json::json!({"networks": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/subnets");
+            then.status(200)
+                .json_body(serde_json::json!({"subnets": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/routers");
+            then.status(200)
+                .json_body(serde_json::json!({"routers": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/ports");
+            then.status(200).json_body(serde_json::json!({"ports": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/floatingips");
+            then.status(200)
+                .json_body(serde_json::json!({"floatingips": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"security_groups": [
+                    {"id": "sg-default", "name": "default"},
+                    {"id": "sg-custom", "name": "web"}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-group-rules");
+            then.status(200)
+                .json_body(serde_json::json!({"security_group_rules": [
+                    {"id": "rule-1", "security_group_id": "sg-custom"}
+                ]}));
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(NetworkCleanupProvider)
+            .build();
+
+        let eval: crate::cleanup::provider::EvaluationFn =
+            std::sync::Arc::new(|r: &PlannedResource| {
+                r.kind == SECURITY_GROUP && r.name.as_deref() == Some("web")
+            });
+
+        let plan = cleanup
+            .discover(HashMap::new(), Some(eval))
+            .await
+            .expect("discover failed");
+
+        assert!(
+            plan.nodes.iter().all(|n| n.id != "sg-default"),
+            "default security group must never be a node"
+        );
+        let sg = plan.nodes.iter().find(|n| n.id == "sg-custom").unwrap();
+        let rule = plan.nodes.iter().find(|n| n.id == "rule-1").unwrap();
+        assert!(sg.selected);
+        assert!(rule.selected, "rule must be pulled in by the cascade group");
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn discover_excludes_default_security_group_rules_with_no_eval_fn() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/networks");
+            then.status(200)
+                .json_body(serde_json::json!({"networks": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/subnets");
+            then.status(200)
+                .json_body(serde_json::json!({"subnets": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/routers");
+            then.status(200)
+                .json_body(serde_json::json!({"routers": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/ports");
+            then.status(200).json_body(serde_json::json!({"ports": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/floatingips");
+            then.status(200)
+                .json_body(serde_json::json!({"floatingips": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"security_groups": [
+                    {"id": "sg-default", "name": "default"}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-group-rules");
+            then.status(200)
+                .json_body(serde_json::json!({"security_group_rules": [
+                    {"id": "rule-default", "security_group_id": "sg-default"}
+                ]}));
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(NetworkCleanupProvider)
+            .build();
+
+        let plan = cleanup
+            .discover(HashMap::new(), None)
+            .await
+            .expect("discover failed");
+
+        assert!(
+            plan.nodes.iter().all(|n| n.id != "rule-default"),
+            "default security group's rule must never become a node"
+        );
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn delete_issues_security_group_and_rule_delete_requests() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/networks");
+            then.status(200)
+                .json_body(serde_json::json!({"networks": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/subnets");
+            then.status(200)
+                .json_body(serde_json::json!({"subnets": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/routers");
+            then.status(200)
+                .json_body(serde_json::json!({"routers": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/ports");
+            then.status(200).json_body(serde_json::json!({"ports": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/v2.0/floatingips");
+            then.status(200)
+                .json_body(serde_json::json!({"floatingips": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-groups");
+            then.status(200)
+                .json_body(serde_json::json!({"security_groups": [
+                    {"id": "sg-custom", "name": "web"}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v2.0/security-group-rules");
+            then.status(200)
+                .json_body(serde_json::json!({"security_group_rules": [
+                    {"id": "rule-1", "security_group_id": "sg-custom"}
+                ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/security-group-rules/rule-1");
+            then.status(204);
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v2.0/security-groups/sg-custom");
+            then.status(204);
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(NetworkCleanupProvider)
+            .build();
+
+        let eval: crate::cleanup::provider::EvaluationFn =
+            std::sync::Arc::new(|r: &PlannedResource| r.kind == SECURITY_GROUP);
+        let plan = cleanup
+            .discover(HashMap::new(), Some(eval))
+            .await
+            .expect("discover failed");
+        let result = cleanup.apply(plan).await.expect("apply failed");
+
+        assert!(
+            result.errors.is_empty(),
+            "unexpected errors: {:?}",
+            result.errors
+        );
+        let rule_pos = result
+            .deleted_ids
+            .iter()
+            .position(|id| id == "rule-1")
+            .unwrap();
+        let sg_pos = result
+            .deleted_ids
+            .iter()
+            .position(|id| id == "sg-custom")
+            .unwrap();
+        assert!(
+            rule_pos < sg_pos,
+            "rule must delete before its security group"
         );
     }
 }

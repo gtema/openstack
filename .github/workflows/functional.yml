@@ -69,7 +69,12 @@ jobs:
         uses: EmilienM/devstack-action@60ca1042045c0c9e3e001c64575d381654ffcba1 # v0.19
         with:
           branch: ${{ matrix.openstack_version }}
-          enabled_services: swift
+          # `c-bak` (cinder-backup) is not in devstack's default service
+          # set - without it, backup creates never get a worker to process
+          # them and eventually hit a Cinder bug that leaves the source
+          # volume's `status` as `None`, breaking any later attach/boot of
+          # that volume. The functional test exercises volume backups.
+          enabled_services: swift,c-bak
           log_dir: /tmp/devstack-logs
 
       - name: Install Rust
@@ -87,6 +92,13 @@ jobs:
           OS_CLOUD: devstack
         run: cargo nextest run --test functional
 
-      - name: Dump glance logs on failure
+      - name: Dump service logs on failure
         if: failure()
-        run: journalctl -u devstack@g-api --no-pager
+        run: |
+          for unit in g-api \
+                      c-api c-sch c-vol c-bak \
+                      n-api n-cond n-sch n-cpu; do
+            echo "::group::journalctl -u devstack@${unit}"
+            journalctl -u "devstack@${unit}" --no-pager || true
+            echo "::endgroup::"
+          done

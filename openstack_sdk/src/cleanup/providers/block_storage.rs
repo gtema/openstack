@@ -27,6 +27,7 @@
 use async_trait::async_trait;
 use serde_json::Value;
 
+use crate::api::block_storage::v3::backup;
 use crate::api::block_storage::v3::snapshot;
 use crate::api::block_storage::v3::volume;
 use crate::api::{Pagination, QueryAsync, paged, raw};
@@ -37,6 +38,7 @@ use crate::cleanup::types::{PlannedResource, ResourceKind};
 
 pub const VOLUME: ResourceKind = ResourceKind::new("block-storage", "volume");
 pub const SNAPSHOT: ResourceKind = ResourceKind::new("block-storage", "snapshot");
+pub const BACKUP: ResourceKind = ResourceKind::new("block-storage", "backup");
 
 fn value_str<'a>(v: &'a Value, key: &str) -> Option<&'a str> {
     v.get(key).and_then(|x| x.as_str())
@@ -100,6 +102,41 @@ impl CleanupProvider for BlockStorageCleanupProvider {
                 },
                 effect: RelationEffect::CascadeGroup,
             },
+            RelationRule {
+                parent_kind: VOLUME,
+                child_kind: BACKUP,
+                matches: |child, parent| {
+                    value_str(&child.raw, "volume_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::Blocks,
+            },
+            RelationRule {
+                parent_kind: VOLUME,
+                child_kind: BACKUP,
+                matches: |child, parent| {
+                    value_str(&child.raw, "volume_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::CascadeGroup,
+            },
+            // A backup taken from a snapshot (rather than directly from a
+            // volume) carries that snapshot's id - delete it before its
+            // source snapshot, same as it deletes before its volume.
+            RelationRule {
+                parent_kind: SNAPSHOT,
+                child_kind: BACKUP,
+                matches: |child, parent| {
+                    value_str(&child.raw, "snapshot_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::Blocks,
+            },
+            RelationRule {
+                parent_kind: SNAPSHOT,
+                child_kind: BACKUP,
+                matches: |child, parent| {
+                    value_str(&child.raw, "snapshot_id") == value_str(&parent.raw, "id")
+                },
+                effect: RelationEffect::CascadeGroup,
+            },
         ];
 
         #[cfg(feature = "compute")]
@@ -127,10 +164,16 @@ impl CleanupProvider for BlockStorageCleanupProvider {
 
         let mut nodes = Vec::new();
 
+        // `list` (non-detailed) only returns `id`/`name`/`links` - the
+        // relation rules below need `attachments` (volume), `volume_id`
+        // (snapshot/backup) and `snapshot_id` (backup), which only
+        // `list_detailed` provides.
         let volumes: Vec<Value> = paged(
-            volume::list::Request::builder().build().map_err(|e| {
-                CleanupError::Engine(format!("failed to build volume list request: {e}"))
-            })?,
+            volume::list_detailed::Request::builder()
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!("failed to build volume list request: {e}"))
+                })?,
             Pagination::All,
         )
         .query_async(ctx.client)
@@ -141,9 +184,11 @@ impl CleanupProvider for BlockStorageCleanupProvider {
         }
 
         let snapshots: Vec<Value> = paged(
-            snapshot::list::Request::builder().build().map_err(|e| {
-                CleanupError::Engine(format!("failed to build snapshot list request: {e}"))
-            })?,
+            snapshot::list_detailed::Request::builder()
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!("failed to build snapshot list request: {e}"))
+                })?,
             Pagination::All,
         )
         .query_async(ctx.client)
@@ -151,6 +196,21 @@ impl CleanupProvider for BlockStorageCleanupProvider {
         .map_err(|e| list_err(SNAPSHOT)(e.into()))?;
         for v in snapshots {
             nodes.push(to_planned(SNAPSHOT, v));
+        }
+
+        let backups: Vec<Value> = paged(
+            backup::list_detailed::Request::builder()
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!("failed to build backup list request: {e}"))
+                })?,
+            Pagination::All,
+        )
+        .query_async(ctx.client)
+        .await
+        .map_err(|e| list_err(BACKUP)(e.into()))?;
+        for v in backups {
+            nodes.push(to_planned(BACKUP, v));
         }
 
         Ok(nodes)
@@ -184,6 +244,17 @@ impl CleanupProvider for BlockStorageCleanupProvider {
                 .build()
                 .map_err(|e| {
                     CleanupError::Engine(format!("failed to build snapshot delete request: {e}"))
+                })?;
+            raw(req)
+                .query_async(ctx.client)
+                .await
+                .map_err(|e| err(e.into()))?;
+        } else if resource.kind == BACKUP {
+            let req = backup::delete::Request::builder()
+                .id(resource.id.clone())
+                .build()
+                .map_err(|e| {
+                    CleanupError::Engine(format!("failed to build backup delete request: {e}"))
                 })?;
             raw(req)
                 .query_async(ctx.client)
@@ -270,17 +341,23 @@ mod tests {
 
         server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/test-project/volumes");
+                .path("/v3/test-project/volumes/detail");
             then.status(200).json_body(serde_json::json!({"volumes": [
                 {"id": "vol-1", "name": "data"}
             ]}));
         });
         server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/test-project/snapshots");
+                .path("/v3/test-project/snapshots/detail");
             then.status(200).json_body(serde_json::json!({"snapshots": [
                 {"id": "snap-1", "name": "data-snap", "volume_id": "vol-1"}
             ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v3/test-project/backups/detail");
+            then.status(200)
+                .json_body(serde_json::json!({"backups": []}));
         });
 
         let cleanup = ProjectCleanupBuilder::new(&client)
@@ -333,6 +410,166 @@ mod tests {
             .position(|id| id == "vol-1")
             .unwrap();
         assert!(snap_pos < vol_pos, "snapshot must delete before its volume");
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn discover_marks_volume_with_backup_blocked_until_backup_selected() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v3/test-project/volumes/detail");
+            then.status(200).json_body(serde_json::json!({"volumes": [
+                {"id": "vol-1", "name": "data"}
+            ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v3/test-project/snapshots/detail");
+            then.status(200)
+                .json_body(serde_json::json!({"snapshots": []}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v3/test-project/backups/detail");
+            then.status(200).json_body(serde_json::json!({"backups": [
+                {"id": "backup-1", "name": "data-backup", "volume_id": "vol-1"}
+            ]}));
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(BlockStorageCleanupProvider)
+            .build();
+
+        let eval: crate::cleanup::provider::EvaluationFn =
+            std::sync::Arc::new(|r: &PlannedResource| {
+                r.kind == VOLUME && r.name.as_deref() == Some("data")
+            });
+
+        let plan = cleanup
+            .discover(HashMap::new(), Some(eval))
+            .await
+            .expect("discover failed");
+
+        let vol = plan.nodes.iter().find(|n| n.id == "vol-1").unwrap();
+        let backup = plan.nodes.iter().find(|n| n.id == "backup-1").unwrap();
+        assert!(vol.selected);
+        assert!(
+            backup.selected,
+            "backup must be pulled in by the cascade group"
+        );
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/test-project/backups/backup-1");
+            then.status(202);
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/test-project/volumes/vol-1");
+            then.status(202);
+        });
+
+        let result = cleanup.apply(plan).await.expect("apply failed");
+        assert!(
+            result.errors.is_empty(),
+            "unexpected errors: {:?}",
+            result.errors
+        );
+        let backup_pos = result
+            .deleted_ids
+            .iter()
+            .position(|id| id == "backup-1")
+            .unwrap();
+        let vol_pos = result
+            .deleted_ids
+            .iter()
+            .position(|id| id == "vol-1")
+            .unwrap();
+        assert!(backup_pos < vol_pos, "backup must delete before its volume");
+    }
+
+    #[tokio::test]
+    async fn discover_marks_snapshot_with_backup_blocked_until_backup_selected() {
+        let server = MockServer::start_async().await;
+        let client = mock_client(&server).await;
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v3/test-project/volumes/detail");
+            then.status(200).json_body(serde_json::json!({"volumes": [
+                {"id": "vol-1", "name": "data"}
+            ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v3/test-project/snapshots/detail");
+            then.status(200).json_body(serde_json::json!({"snapshots": [
+                {"id": "snap-1", "name": "data-snap", "volume_id": "vol-1"}
+            ]}));
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/v3/test-project/backups/detail");
+            then.status(200).json_body(serde_json::json!({"backups": [
+                {"id": "backup-1", "name": "snap-backup", "volume_id": "vol-1", "snapshot_id": "snap-1"}
+            ]}));
+        });
+
+        let cleanup = ProjectCleanupBuilder::new(&client)
+            .with_provider(BlockStorageCleanupProvider)
+            .build();
+
+        let eval: crate::cleanup::provider::EvaluationFn =
+            std::sync::Arc::new(|r: &PlannedResource| {
+                r.kind == SNAPSHOT && r.name.as_deref() == Some("data-snap")
+            });
+
+        let plan = cleanup
+            .discover(HashMap::new(), Some(eval))
+            .await
+            .expect("discover failed");
+
+        let snap = plan.nodes.iter().find(|n| n.id == "snap-1").unwrap();
+        let backup = plan.nodes.iter().find(|n| n.id == "backup-1").unwrap();
+        assert!(snap.selected);
+        assert!(
+            backup.selected,
+            "backup must be pulled in by the cascade group"
+        );
+
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/test-project/backups/backup-1");
+            then.status(202);
+        });
+        server.mock(|when, then| {
+            when.method(httpmock::Method::DELETE)
+                .path("/v3/test-project/snapshots/snap-1");
+            then.status(202);
+        });
+
+        let result = cleanup.apply(plan).await.expect("apply failed");
+        assert!(
+            result.errors.is_empty(),
+            "unexpected errors: {:?}",
+            result.errors
+        );
+        let backup_pos = result
+            .deleted_ids
+            .iter()
+            .position(|id| id == "backup-1")
+            .unwrap();
+        let snap_pos = result
+            .deleted_ids
+            .iter()
+            .position(|id| id == "snap-1")
+            .unwrap();
+        assert!(
+            backup_pos < snap_pos,
+            "backup must delete before its source snapshot"
+        );
     }
 
     #[cfg(feature = "compute")]
