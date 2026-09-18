@@ -154,17 +154,21 @@ impl OutputProcessor {
             Some(OutputFormat::Wide) => OutputFor::Human,
             _ => OutputFor::Machine,
         };
-        let mut hints: Vec<String> = args.config().hints.clone();
+        let mut hints: Vec<String> = Vec::new();
 
-        if let (Some(resource_key), Some(action)) = (&resource_key, &action) {
-            args.config()
-                .command_hints
-                .get(resource_key.as_ref())
-                .and_then(|cmd_hints| {
-                    cmd_hints.get(action.as_ref()).map(|val| {
-                        hints.extend(val.clone());
-                    })
-                });
+        if args.config().enable_hints {
+            hints.extend(args.config().hints.clone());
+
+            if let (Some(resource_key), Some(action)) = (&resource_key, &action) {
+                args.config()
+                    .command_hints
+                    .get(resource_key.as_ref())
+                    .and_then(|cmd_hints| {
+                        cmd_hints.get(action.as_ref()).map(|val| {
+                            hints.extend(val.clone());
+                        })
+                    });
+            }
         }
 
         Self {
@@ -913,5 +917,51 @@ mod tests {
             ]),
             op.hints
         );
+    }
+
+    #[test]
+    fn test_output_processor_from_args_hints_disabled() {
+        let mut config_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+
+        const CONFIG_DATA: &str = r#"
+            command_hints:
+              res:
+                cmd:
+                  - cmd_hint1
+            hints:
+              - hint1
+            enable_hints: false
+        "#;
+
+        write!(config_file, "{CONFIG_DATA}").unwrap();
+
+        #[derive(Parser)]
+        struct Cli {
+            #[command(flatten)]
+            global_opts: GlobalOpts,
+            #[arg(long("cli-config"), value_parser = parse_config, default_value_t = Config::new().unwrap())]
+            config: Config,
+        }
+
+        impl CliArgs for Cli {
+            fn global_opts(&self) -> &GlobalOpts {
+                &self.global_opts
+            }
+
+            fn config(&self) -> &Config {
+                &self.config
+            }
+        }
+
+        let op = OutputProcessor::from_args(
+            &Cli::parse_from([
+                "osc",
+                "--cli-config",
+                &config_file.path().as_os_str().to_string_lossy(),
+            ]),
+            Some("res"),
+            Some("cmd"),
+        );
+        assert_eq!(Some(Vec::<String>::new()), op.hints);
     }
 }

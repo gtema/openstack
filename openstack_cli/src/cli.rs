@@ -16,7 +16,7 @@ use clap::Parser;
 
 use openstack_cli_core::cli::{
     CliArgs, CompletionCommand, ConnectionRequirements, ConnectionRequirementsProvider, GlobalOpts,
-    parse_config, styles,
+    styles,
 };
 use openstack_cli_core::config::Config;
 use openstack_cli_core::error::OpenStackCliError;
@@ -95,9 +95,8 @@ pub struct Cli {
 
     /// CLI configuration
     ///
-    /// This does not accept parameters at the moment and will always get config from default
-    /// location.
-    #[arg(hide = true, long("cli-config"), value_parser = parse_config, default_value_t = Config::new().unwrap_or_default())]
+    /// This does not accept parameters and always gets config from the default location.
+    #[arg(skip = Config::new().unwrap_or_default())]
     pub config: Config,
 }
 
