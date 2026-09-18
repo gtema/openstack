@@ -17,9 +17,15 @@ homepage.workspace = true
 repository.workspace = true
 
 [dependencies]
+clap.workspace = true
+eyre.workspace = true
 indexmap.workspace = true
+openstack-cli-core.workspace = true
 serde.workspace = true
+serde_json.workspace = true
+structable = { workspace = true }
 thiserror.workspace = true
+tracing.workspace = true
 yaml_serde.workspace = true
 yamlpatch.workspace = true
 yamlpath.workspace = true

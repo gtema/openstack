@@ -30,7 +30,7 @@
 //! ```
 
 use eyre::Result;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
     fmt,
@@ -107,7 +107,7 @@ pub enum ConfigBuilderError {
 /// Output configuration
 ///
 /// This structure is controlling how the table table is being built for a structure.
-#[derive(Clone, Debug, Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct ViewConfig {
     /// Limit fields (their titles) to be returned
     #[serde(default)]
@@ -121,7 +121,7 @@ pub struct ViewConfig {
 }
 
 /// Field output configuration
-#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialOrd, PartialEq)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, Ord, PartialOrd, PartialEq, Serialize)]
 pub struct FieldConfig {
     /// Attribute name
     pub name: String,
@@ -150,7 +150,7 @@ const fn _default_true() -> bool {
 }
 
 /// OpenStackClient configuration
-#[derive(Clone, Debug, Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Config {
     /// Map of views with the key being the resource key `<SERVICE_TYPE>.<RESOURCE>[/<SUBRESOURCE>]`)
     /// and the value being an `[OutputConfig]`
