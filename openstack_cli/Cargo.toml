@@ -69,6 +69,7 @@ openstack-cli-auth.workspace = true
 openstack-cli-block-storage.workspace = true
 openstack-cli-catalog.workspace = true
 openstack-cli-compute.workspace = true
+openstack-cli-config.workspace = true
 openstack-cli-container-infrastructure-management.workspace = true
 openstack-cli-core.workspace = true
 openstack-cli-dns.workspace = true

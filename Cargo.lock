@@ -3794,9 +3794,15 @@ dependencies = [
 name = "openstack-cli-config"
 version = "0.13.8"
 dependencies = [
+ "clap",
+ "eyre",
  "indexmap",
+ "openstack-cli-core",
  "serde",
+ "serde_json",
+ "structable",
  "thiserror 2.0.20",
+ "tracing",
  "yaml_serde",
  "yamlpatch",
  "yamlpath",
@@ -4602,6 +4608,7 @@ dependencies = [
  "openstack-cli-block-storage",
  "openstack-cli-catalog",
  "openstack-cli-compute",
+ "openstack-cli-config",
  "openstack-cli-container-infrastructure-management",
  "openstack-cli-core",
  "openstack-cli-dns",

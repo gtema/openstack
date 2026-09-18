@@ -77,6 +77,12 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         return args.take_action(&cli).await;
     }
 
+    if let TopLevelCommands::Config(args) = &cli.command {
+        // `osc config` commands edit/read local configuration files and
+        // must not trigger cloud authentication.
+        return args.take_action(&cli).await;
+    }
+
     if let TopLevelCommands::Auth(args) = &cli.command
         && let Some(cmd) = args.as_offline_cache_clear_all()
     {
