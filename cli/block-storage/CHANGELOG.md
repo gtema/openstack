@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.9](https://github.com/gtema/openstack/compare/openstack-cli-block-storage-v0.13.8...openstack-cli-block-storage-v0.13.9) - 2026-09-19
+
+### Added
+
+- *(rust)* Roll out --wait to block-storage/manila ([#2001](https://github.com/gtema/openstack/pull/2001))
+
 ## [0.13.8](https://github.com/gtema/openstack/compare/openstack-cli-block-storage-v0.13.7...openstack-cli-block-storage-v0.13.8) - 2026-09-07
 
 ### Added

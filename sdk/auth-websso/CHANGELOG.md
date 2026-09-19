@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.8](https://github.com/gtema/openstack/compare/openstack-sdk-auth-websso-v0.22.7...openstack-sdk-auth-websso-v0.22.8) - 2026-09-19
+
+### Other
+
+- update Cargo.toml dependencies
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-sdk-auth-websso-v0.22.6...openstack-sdk-auth-websso-v0.22.7) - 2026-09-07
 
 ### Added

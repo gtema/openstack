@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1](https://github.com/gtema/openstack/compare/openstack-sdk-plugin-wasm-v0.1.0...openstack-sdk-plugin-wasm-v0.1.1) - 2026-09-19
+
+### Other
+
+- update Cargo.toml dependencies
+
 ## [0.1.0](https://github.com/gtema/openstack/releases/tag/openstack-sdk-plugin-wasm-v0.1.0) - 2026-09-07
 
 ### Added
