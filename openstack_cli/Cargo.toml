@@ -94,8 +94,8 @@ md5 = "^0.8.1"
 rand = "^0.10"
 reqwest.workspace = true
 serde_json.workspace = true
-yaml_serde.workspace = true
 tempfile.workspace = true
+yaml_serde.workspace = true
 
 [[test]]
 name = "functional"
