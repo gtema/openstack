@@ -13,19 +13,19 @@
 // SPDX-License-Identifier: Apache-2.0
 //! Local client configuration file operations.
 //!
-//! This crate is the foundation for `osc config` commands. It currently
-//! provides:
+//! This crate backs the `osc config` commands. It currently provides:
 //!
 //!  * [`show`], displaying the effective local CLI configuration
 //!    (`$XDG_CONFIG_HOME/osc/config.yaml`).
-//!  * [`yaml_edit`], a comment- and anchor-preserving YAML editor for
-//!    `clouds.yaml`/`secure.yaml`; command implementations built on top of
-//!    it (e.g. `clouds add`) land separately.
+//!  * [`clouds`], editing cloud entries in `clouds.yaml`/`secure.yaml`.
+//!  * [`yaml_edit`], the comment- and anchor-preserving YAML editing
+//!    primitives the `clouds` commands are built on.
 
 use clap::{Parser, Subcommand};
 
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
+pub mod clouds;
 pub mod show;
 pub mod yaml_edit;
 
@@ -40,6 +40,7 @@ pub struct ConfigCommand {
 #[allow(missing_docs)]
 #[derive(Debug, Subcommand)]
 pub enum ConfigCommands {
+    Clouds(clouds::CloudsCommand),
     Show(show::ShowCommand),
 }
 
@@ -47,6 +48,7 @@ impl ConfigCommand {
     /// Perform command action.
     pub async fn take_action<C: CliArgs>(&self, parsed_args: &C) -> Result<(), OpenStackCliError> {
         match &self.command {
+            ConfigCommands::Clouds(cmd) => cmd.take_action(parsed_args),
             ConfigCommands::Show(cmd) => cmd.take_action(parsed_args).await,
         }
     }
