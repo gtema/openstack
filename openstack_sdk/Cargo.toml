@@ -101,7 +101,7 @@ openstack-sdk-auth-totp = { version = "0.22", path = "../sdk/auth-totp/" }
 openstack-sdk-auth-websso = { version = "0.22", path = "../sdk/auth-websso/" }
 openstack_sdk_core.workspace = true
 parking_lot = "0.12"
-petgraph = "0.6"
+petgraph = "0.8"
 openstack-sdk-block-storage = { path = "../sdk/block-storage/", version = "^0.22", optional = true }
 openstack-sdk-compute = { path = "../sdk/compute/", version = "^0.22", optional = true }
 openstack-sdk-container-infrastructure-management = { path = "../sdk/container-infrastructure-management/", version = "^0.22", optional = true }
