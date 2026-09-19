@@ -24,8 +24,8 @@ const SOURCE_CLOUDS: &str = r#"clouds:
 
 const CREATE_RESPONSE: &str = r#"{"id": "cid", "secret": "sec", "name": "deploy"}"#;
 
-fn add_cmd(source: &std::path::Path) -> Command {
-    let mut cmd = Command::cargo_bin("osc").expect("osc binary");
+fn add_cmd(source: &std::path::Path) -> Result<Command, Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("osc")?;
     cmd.arg("--os-cloud")
         .arg("src")
         .arg("--os-client-config-file")
@@ -33,7 +33,7 @@ fn add_cmd(source: &std::path::Path) -> Command {
         .arg("config")
         .arg("clouds")
         .arg("add");
-    cmd
+    Ok(cmd)
 }
 
 #[test]
@@ -53,7 +53,7 @@ fn add_writes_new_file() -> Result<(), Box<dyn std::error::Error>> {
     std::fs::write(&source, SOURCE_CLOUDS)?;
     let target = dir.path().join("out/clouds.yaml");
 
-    add_cmd(&source)
+    add_cmd(&source)?
         .arg("--cloud-name")
         .arg("prod")
         .arg("--file")
@@ -96,7 +96,7 @@ fn add_split_writes_secure_sibling() -> Result<(), Box<dyn std::error::Error>> {
     std::fs::write(&source, SOURCE_CLOUDS)?;
     let target = dir.path().join("out/clouds.yaml");
 
-    add_cmd(&source)
+    add_cmd(&source)?
         .arg("--split")
         .arg("--file")
         .arg(&target)
@@ -120,7 +120,7 @@ fn add_same_name_needs_overwrite() -> Result<(), Box<dyn std::error::Error>> {
     let target = dir.path().join("clouds.yaml");
     std::fs::write(&target, "clouds:\n  openstack:\n    auth: {}\n")?;
 
-    let output = add_cmd(&source)
+    let output = add_cmd(&source)?
         .arg("--file")
         .arg(&target)
         .write_stdin(CREATE_RESPONSE)
@@ -131,13 +131,123 @@ fn add_same_name_needs_overwrite() -> Result<(), Box<dyn std::error::Error>> {
         "collision error must point at --overwrite"
     );
 
-    add_cmd(&source)
+    add_cmd(&source)?
         .arg("--file")
         .arg(&target)
         .arg("--overwrite")
         .write_stdin(CREATE_RESPONSE)
         .assert()
         .success();
+
+    Ok(())
+}
+
+/// A hand-maintained clouds.yaml must come back out with everything the
+/// user wrote still in it. This is the whole reason the command splices
+/// rather than re-serializing.
+#[test]
+fn add_preserves_comments_anchors_and_formatting() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempfile::tempdir()?;
+    let source = dir.path().join("src-clouds.yaml");
+    std::fs::write(&source, SOURCE_CLOUDS)?;
+
+    let target = dir.path().join("clouds.yaml");
+    let original = "\
+# Managed by hand - keep the comments!
+clouds:
+  base: &base
+    region_name: RegionOne  # our only region
+    interface: internal
+  # the production cloud
+  devstack:
+    <<: *base
+    auth_url: https://devstack:5000
+# end of file
+";
+    std::fs::write(&target, original)?;
+
+    add_cmd(&source)?
+        .arg("--cloud-name")
+        .arg("prod")
+        .arg("--file")
+        .arg(&target)
+        .write_stdin(CREATE_RESPONSE)
+        .assert()
+        .success();
+
+    let out = std::fs::read_to_string(&target)?;
+    for expected in [
+        "# Managed by hand - keep the comments!",
+        "  base: &base\n    region_name: RegionOne  # our only region\n",
+        "# the production cloud",
+        "  devstack:\n    <<: *base\n    auth_url: https://devstack:5000\n",
+        "# end of file",
+    ] {
+        assert!(out.contains(expected), "{expected:?} must survive:\n{out}");
+    }
+
+    let doc: yaml_serde::Value = yaml_serde::from_str(&out)?;
+    assert_eq!(
+        doc["clouds"]["prod"]["auth"]["application_credential_id"].as_str(),
+        Some("cid")
+    );
+
+    Ok(())
+}
+
+/// `--overwrite` must keep the file's comments and any key on the entry
+/// that this command does not manage.
+#[test]
+fn overwrite_keeps_comments_and_hand_set_keys() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempfile::tempdir()?;
+    let source = dir.path().join("src-clouds.yaml");
+    std::fs::write(&source, SOURCE_CLOUDS)?;
+
+    let target = dir.path().join("clouds.yaml");
+    std::fs::write(
+        &target,
+        "\
+clouds:
+  # the one we rotate
+  openstack:
+    auth_type: v3password
+    cacert: /etc/ssl/corp.pem
+    auth:
+      auth_url: https://old:5000
+      username: admin
+      password: hunter2
+  # leave me alone
+  other:
+    auth_url: https://other:5000
+",
+    )?;
+
+    add_cmd(&source)?
+        .arg("--file")
+        .arg(&target)
+        .arg("--overwrite")
+        .write_stdin(CREATE_RESPONSE)
+        .assert()
+        .success();
+
+    let out = std::fs::read_to_string(&target)?;
+    assert!(out.contains("# the one we rotate"), "{out}");
+    assert!(out.contains("# leave me alone"), "{out}");
+    // The superseded password credential must be gone, not merged.
+    assert!(!out.contains("username"), "stale username:\n{out}");
+    assert!(!out.contains("hunter2"), "stale password:\n{out}");
+    // A key the user set by hand and this command does not manage is kept.
+    assert!(out.contains("cacert: /etc/ssl/corp.pem"), "{out}");
+
+    let doc: yaml_serde::Value = yaml_serde::from_str(&out)?;
+    assert_eq!(
+        doc["clouds"]["openstack"]["auth"]["application_credential_id"].as_str(),
+        Some("cid")
+    );
+    assert_eq!(
+        doc["clouds"]["openstack"]["auth_type"].as_str(),
+        Some("v3applicationcredential")
+    );
 
     Ok(())
 }
