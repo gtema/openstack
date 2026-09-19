@@ -28,6 +28,8 @@ use zeroize::{ZeroizeOnDrop, Zeroizing};
 
 use openstack_cli_core::cli::CliArgs;
 use openstack_cli_core::error::OpenStackCliError;
+
+use crate::yaml_edit;
 use openstack_sdk_core::config::{CloudConfig, find_clouds_file, find_secure_file};
 
 /// Add a cloud entry built from an application credential.
@@ -38,8 +40,9 @@ use openstack_sdk_core::config::{CloudConfig, find_clouds_file, find_secure_file
 /// entry inherits connection settings (auth_url, region, TLS options) from
 /// the cloud selected with `--os-cloud`; no authentication is performed.
 ///
-/// An existing target file is merged into, but rewritten: comments and
-/// formatting are not preserved.
+/// An existing target file is edited in place: the new entry is spliced in
+/// and everything else (comments, `&anchor`/`<<: *anchor` merge keys,
+/// formatting) is left byte-for-byte as it was.
 #[derive(Args)]
 #[command(about = "Add a cloud entry from an application credential")]
 pub struct AddCommand {
@@ -58,7 +61,11 @@ pub struct AddCommand {
     #[arg(action = clap::ArgAction::SetTrue, long)]
     split: bool,
 
-    /// Replace an existing cloud entry of the same name.
+    /// Update an existing cloud entry of the same name.
+    ///
+    /// The credential and the settings this command manages are replaced;
+    /// any other key you have set on the entry by hand (e.g. `interface`,
+    /// `cacert`) is kept, as are all comments in the file.
     #[arg(action = clap::ArgAction::SetTrue, long)]
     overwrite: bool,
 }
@@ -283,43 +290,67 @@ fn build_entries(
     Ok((clouds_entry, secure_entry))
 }
 
-/// Produce the final YAML for a target file. `existing` carries the current
-/// file content when merging into it; comments in it are not preserved.
+/// Produce the final YAML for a target file.
+///
+/// `existing` carries the current file content when editing one in place.
+/// The edit is a splice via [`yaml_edit`], so comments, `&anchor`/`<<:
+/// *anchor` merge keys and formatting elsewhere in the file survive
+/// byte-for-byte; only the targeted entry is rewritten.
 fn render_target(
     existing: Option<&str>,
     cloud_name: &str,
     entry: &CloudEntry,
     overwrite_entry: bool,
 ) -> Result<String, eyre::Report> {
-    match existing {
-        None => {
-            let mut clouds = serde_yaml::Mapping::new();
-            clouds.insert(cloud_name.into(), serde_yaml::to_value(entry)?);
-            let mut root = serde_yaml::Mapping::new();
-            root.insert("clouds".into(), serde_yaml::Value::Mapping(clouds));
-            Ok(serde_yaml::to_string(&serde_yaml::Value::Mapping(root))?)
+    // A file with no YAML node at all - absent, empty, or nothing but
+    // comments - has nothing to splice into. Build the block ourselves and
+    // keep whatever was there as a prefix, so a comment-only file keeps its
+    // header instead of tripping the parser.
+    let Some(current) = existing.filter(|c| has_yaml_content(c)) else {
+        let mut block = format!("clouds:\n  {cloud_name}:\n");
+        for line in yaml_serde::to_string(entry)?.lines() {
+            block.push_str("    ");
+            block.push_str(line);
+            block.push('\n');
         }
-        Some(current) => {
-            let mut doc: serde_yaml::Value =
-                serde_yaml::from_str(current).wrap_err("the target file is not valid YAML")?;
-            let root = doc
-                .as_mapping_mut()
-                .ok_or_eyre("the target file is not a YAML mapping")?;
-            let clouds = root
-                .entry("clouds".into())
-                .or_insert_with(|| serde_yaml::Value::Mapping(Default::default()))
-                .as_mapping_mut()
-                .ok_or_eyre("`clouds` in the target file is not a mapping")?;
-            let name_key: serde_yaml::Value = cloud_name.into();
-            if clouds.contains_key(&name_key) && !overwrite_entry {
-                return Err(eyre!(
-                    "cloud `{cloud_name}` already exists in the target file; pass --overwrite to replace it"
-                ));
+        return Ok(match existing {
+            Some(preamble) if !preamble.trim().is_empty() => {
+                format!("{}\n{block}", preamble.trim_end())
             }
-            clouds.insert(name_key, serde_yaml::to_value(entry)?);
-            Ok(serde_yaml::to_string(&doc)?)
+            _ => block,
+        });
+    };
+
+    let mut doc =
+        yaml_edit::YamlDocument::parse(current).wrap_err("the target file is not valid YAML")?;
+
+    if doc.contains_key("clouds", cloud_name) {
+        if !overwrite_entry {
+            return Err(eyre!(
+                "cloud `{cloud_name}` already exists in the target file; pass --overwrite to replace it"
+            ));
         }
+        // Merge rather than replace: `upsert_mapping_entry` would drop the
+        // comment attached to the next cloud entry. See
+        // `merge_mapping_entry`'s doc comment for the trade-off - keys of
+        // the old entry that this one does not set are kept, which for a
+        // credential rotation is what the user wants.
+        doc.merge_mapping_entry("clouds", cloud_name, entry)
+            .wrap_err_with(|| format!("could not update cloud `{cloud_name}`"))?;
+    } else {
+        doc.upsert_mapping_entry("clouds", cloud_name, entry)
+            .wrap_err_with(|| format!("could not add cloud `{cloud_name}`"))?;
     }
+
+    Ok(doc.source().to_string())
+}
+
+/// Whether `text` holds any YAML node, as opposed to being empty or only
+/// blank lines and comments.
+fn has_yaml_content(text: &str) -> bool {
+    text.lines()
+        .map(str::trim)
+        .any(|line| !line.is_empty() && !line.starts_with('#'))
 }
 
 /// Read the current content of a target file; `None` when it does not
@@ -517,14 +548,14 @@ mod tests {
         )
         .unwrap();
         let out = render_target(None, "mycloud", &entry, false).unwrap();
-        let doc: serde_yaml::Value = serde_yaml::from_str(&out).unwrap();
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
         assert_eq!(
             doc["clouds"]["mycloud"]["auth"]["application_credential_id"],
-            serde_yaml::Value::String("cid".into())
+            yaml_serde::Value::String("cid".into())
         );
         assert_eq!(
             doc["clouds"]["mycloud"]["auth_type"],
-            serde_yaml::Value::String("v3applicationcredential".into())
+            yaml_serde::Value::String("v3applicationcredential".into())
         );
     }
 
@@ -539,10 +570,10 @@ mod tests {
         )
         .unwrap();
         let out = render_target(Some(existing), "mycloud", &entry, false).unwrap();
-        let doc: serde_yaml::Value = serde_yaml::from_str(&out).unwrap();
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
         assert_eq!(
             doc["clouds"]["other"]["auth"]["auth_url"],
-            serde_yaml::Value::String("https://other:5000".into())
+            yaml_serde::Value::String("https://other:5000".into())
         );
         assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
     }
@@ -559,10 +590,10 @@ mod tests {
         .unwrap();
         assert!(render_target(Some(existing), "mycloud", &entry, false).is_err());
         let out = render_target(Some(existing), "mycloud", &entry, true).unwrap();
-        let doc: serde_yaml::Value = serde_yaml::from_str(&out).unwrap();
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
         assert_eq!(
             doc["clouds"]["mycloud"]["auth"]["application_credential_id"],
-            serde_yaml::Value::String("cid".into())
+            yaml_serde::Value::String("cid".into())
         );
     }
 
@@ -604,5 +635,159 @@ mod tests {
             let mode = std::fs::metadata(&path).unwrap().permissions().mode();
             assert_eq!(mode & 0o777, 0o600);
         }
+    }
+
+    /// A realistic hand-maintained clouds.yaml: header comment, an
+    /// `&anchor` base entry, a `<<: *anchor` consumer, inline comments and
+    /// a trailing comment.
+    fn handwritten_clouds_yaml() -> &'static str {
+        "\
+# Managed by hand - please keep the comments!
+clouds:
+  base: &base
+    region_name: RegionOne  # our only region
+    interface: internal
+  # the production cloud
+  devstack:
+    <<: *base
+    auth_url: https://devstack:5000
+# end of file
+"
+    }
+
+    #[test]
+    fn render_preserves_comments_and_anchors() {
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        let out = render_target(Some(handwritten_clouds_yaml()), "mycloud", &entry, false).unwrap();
+
+        for expected in [
+            "# Managed by hand - please keep the comments!",
+            "&base",
+            "# our only region",
+            "# the production cloud",
+            "<<: *base",
+            "# end of file",
+        ] {
+            assert!(out.contains(expected), "{expected} must survive:\n{out}");
+        }
+        // The anchored entries must be byte-identical, not re-serialized
+        // with the anchor expanded into inline keys.
+        assert!(
+            out.contains("  base: &base\n    region_name: RegionOne  # our only region\n"),
+            "anchor block must be untouched:\n{out}"
+        );
+        assert!(
+            out.contains("  devstack:\n    <<: *base\n    auth_url: https://devstack:5000\n"),
+            "merge-key block must be untouched:\n{out}"
+        );
+        // And the new entry really landed.
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+        assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
+    }
+
+    #[test]
+    fn overwrite_preserves_comments_and_keeps_hand_set_keys() {
+        let existing = "\
+clouds:
+  # my cloud
+  mycloud:
+    auth_type: v3password
+    interface: internal
+    auth:
+      auth_url: https://old:5000
+      username: admin
+      password: hunter2
+  # the other one
+  other:
+    auth_url: https://other:5000
+";
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        let out = render_target(Some(existing), "mycloud", &entry, true).unwrap();
+
+        // Comments on both the edited entry and its neighbour survive.
+        assert!(out.contains("# my cloud"), "{out}");
+        assert!(out.contains("# the other one"), "{out}");
+        // The old password credential is gone, not merged with the new one.
+        assert!(!out.contains("username"), "stale username:\n{out}");
+        assert!(!out.contains("hunter2"), "stale password:\n{out}");
+        // A hand-set connection setting the new entry does not carry is kept.
+        assert!(out.contains("interface: internal"), "{out}");
+
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+        assert_eq!(
+            doc["clouds"]["mycloud"]["auth"]["application_credential_id"],
+            yaml_serde::Value::String("cid".into())
+        );
+        assert_eq!(
+            doc["clouds"]["mycloud"]["auth_type"],
+            yaml_serde::Value::String("v3applicationcredential".into())
+        );
+    }
+
+    #[test]
+    fn render_into_empty_clouds_key() {
+        // `clouds:` with nothing under it - `MergeInto` cannot handle this,
+        // so `yaml_edit` falls back to building the mapping wholesale.
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        let out = render_target(Some("# my clouds\nclouds:\n"), "mycloud", &entry, false).unwrap();
+
+        assert!(out.contains("# my clouds"), "{out}");
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+        assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
+    }
+
+    #[test]
+    fn render_into_comment_only_file_keeps_the_header() {
+        // Nothing to splice into, but the user's comments must not be lost
+        // and the parser must not be handed a document with no root node.
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        let out = render_target(Some("# just a header\n"), "mycloud", &entry, false).unwrap();
+
+        assert!(out.starts_with("# just a header"), "{out}");
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+        assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
+    }
+
+    #[test]
+    fn render_into_blank_file_is_block_style() {
+        // An existing but empty file behaves like a fresh one, and must not
+        // come out in flow style (`clouds: { ... }`).
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        let out = render_target(Some("\n  \n"), "mycloud", &entry, false).unwrap();
+
+        assert!(out.starts_with("clouds:\n  mycloud:\n"), "{out}");
+        assert!(!out.contains('{'), "must not be flow style:\n{out}");
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+        assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
     }
 }

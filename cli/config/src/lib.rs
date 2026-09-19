@@ -25,3 +25,34 @@ use openstack_sdk_core::config::CloudConfig;
 
 pub mod clouds;
 pub mod yaml_edit;
+
+/// Manage local OpenStack client configuration files
+///
+/// This command provides operations editing the local `clouds.yaml` and
+/// `secure.yaml` files. The commands operate on local files only and never
+/// authenticate against the cloud.
+#[derive(Parser)]
+pub struct ConfigCommand {
+    /// Configuration commands
+    #[command(subcommand)]
+    pub command: ConfigCommands,
+}
+
+#[allow(missing_docs)]
+#[derive(Subcommand)]
+pub enum ConfigCommands {
+    Clouds(clouds::CloudsCommand),
+}
+
+impl ConfigCommand {
+    /// Perform command action
+    pub fn take_action<C: CliArgs>(
+        &self,
+        parsed_args: &C,
+        cloud_config: &CloudConfig,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ConfigCommands::Clouds(cmd) => cmd.take_action(parsed_args, cloud_config),
+        }
+    }
+}
