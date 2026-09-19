@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.9](https://github.com/gtema/openstack/compare/openstack-cli-core-v0.13.8...openstack-cli-core-v0.13.9) - 2026-09-19
+
+### Added
+
+- *(config)* Add osc config command scaffolding ([#2007](https://github.com/gtema/openstack/pull/2007))
+
+### Fixed
+
+- *(cli)* Respect enable_hints config option ([#2006](https://github.com/gtema/openstack/pull/2006))
+
 ## [0.13.8](https://github.com/gtema/openstack/compare/openstack-cli-core-v0.13.7...openstack-cli-core-v0.13.8) - 2026-09-07
 
 ### Added

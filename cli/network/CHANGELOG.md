@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.9](https://github.com/gtema/openstack/compare/openstack-cli-network-v0.13.8...openstack-cli-network-v0.13.9) - 2026-09-19
+
+### Added
+
+- *(rust)* Roll out --wait to some resources ([#1998](https://github.com/gtema/openstack/pull/1998))
+
+### Fixed
+
+- *(rust)* Lowercase header names ([#1991](https://github.com/gtema/openstack/pull/1991))
+
 ## [0.13.8](https://github.com/gtema/openstack/compare/openstack-cli-network-v0.13.7...openstack-cli-network-v0.13.8) - 2026-09-07
 
 ### Added
