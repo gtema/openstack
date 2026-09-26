@@ -75,7 +75,7 @@ hyper-util = { version = "^0.1" }
 indexmap = { version = "^2.14" }
 inventory = { version = "0.3" }
 itertools = { version = "^0.15" }
-jsonschema = { version = "0.53", default-features = false }
+jsonschema = { version = "0.58", default-features = false }
 json-patch = { version = "^4.2" }
 lazy_static = { version = "^1.5" }
 open = { version = "^5.4" }
