@@ -96,6 +96,8 @@ pub enum Action {
     ApiRequestSelect,
     /// Refresh data
     Refresh,
+    /// Start searching (narrowing) the rows of the current view
+    Search,
 
     /// AuthHelper
     AuthDataRequired {
