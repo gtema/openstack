@@ -79,6 +79,10 @@ where
         self.base.set_command_tx(tx)
     }
 
+    fn captures_input(&self) -> bool {
+        self.base.is_searching()
+    }
+
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.base.handle_key_events(key)
     }
@@ -92,6 +96,13 @@ where
             }
             Action::Render => {
                 self.base.render_tick()?;
+                return Ok(None);
+            }
+            Action::Search => {
+                // Broadcast reaches every view, only the one on the screen starts searching
+                if current_mode == B::mode() {
+                    self.base.start_search()?;
+                }
                 return Ok(None);
             }
             Action::DescribeApiResponse => {
@@ -110,6 +121,7 @@ where
         // --- Connect to a (possibly different) cloud: clear stale data and any filter value
         // that's only valid for the previous cloud's identity (e.g. a seeded/selected user_id) ---
         if let Action::ConnectToCloud(_) = &action {
+            self.base.clear_search()?;
             self.base.set_loading(true);
             self.base.set_data(Vec::new())?;
             let filter = B::reset_filter_on_cloud_switch(self.base.get_filters().clone());
@@ -162,7 +174,13 @@ where
                 self.base.get_filters(),
             ))));
         }
+        if let Action::PrevMode = &action {
+            self.base.clear_search()?;
+            return Ok(None);
+        }
         if let Action::Mode { mode, .. } = &action {
+            // Navigating between views starts them without a stale search
+            self.base.clear_search()?;
             if *mode == B::mode() {
                 self.base.set_loading(true);
             }
@@ -345,6 +363,17 @@ mod tests {
         let result = comp.update(Action::Render, Mode::Resource(crate::mode::COMPUTE_SERVER));
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), None);
+    }
+
+    #[test]
+    fn search_starts_only_in_the_active_view() {
+        let mut comp: ComputeServers = GenericResourceView::new();
+        assert_eq!(comp.update(Action::Search, Mode::Home).unwrap(), None);
+        assert!(!comp.captures_input());
+
+        let result = comp.update(Action::Search, Mode::Resource(crate::mode::COMPUTE_SERVER));
+        assert_eq!(result.unwrap(), None);
+        assert!(comp.captures_input());
     }
 
     #[test]

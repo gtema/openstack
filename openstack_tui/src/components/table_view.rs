@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::{KeyCode, KeyEvent};
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use eyre::Result;
 use itertools::Itertools;
 use openstack_sdk::types::EntryStatus;
@@ -24,15 +24,27 @@ use tracing::{debug, instrument};
 
 use crate::{
     action::Action,
-    components::{Component, Frame, describe::Describe},
+    components::{
+        Component, Frame,
+        describe::Describe,
+        search_input::{SEARCH_INPUT_HEIGHT, SearchInput},
+    },
     config::{Config, ViewConfig},
     error::TuiError,
     mode::Mode,
 };
 
 const ITEM_HEIGHT: usize = 1;
-const INFO_TEXT: &str = "(↑) move up | (↓) move down | (r) refresh | (tab) switch to describe";
+const INFO_TEXT: &str =
+    "(↑) move up | (↓) move down | (r) refresh | (/) search | (tab) switch to describe";
+const INFO_TEXT_SEARCH: &str =
+    "(enter) keep search | (esc) clear search | (↑) move up | (↓) move down";
 const INFO_TEXT_DESCRIBE: &str = "(↑) move up | (↓) move down | (tab) switch to table";
+
+/// Identifier of the entry used to match records between data updates
+fn row_id(item: &Value) -> Option<&Value> {
+    item.get("id").or(item.get("uuid"))
+}
 
 #[derive(Hash, Eq, PartialEq)]
 enum Focus {
@@ -52,7 +64,19 @@ where
     scroll_state: ScrollbarState,
 
     raw_items: Vec<Value>,
+    /// Indices into `raw_items` of the entries shown in the table (all of them unless a search
+    /// query narrows the list). Table selection is a position in this list.
+    visible: Vec<usize>,
     filter: F,
+    /// Case-insensitive substring that at least one visible column of a row must contain
+    search: SearchInput,
+
+    /// Rendered headers, rows and statuses of all `raw_items` (before the search is applied)
+    all_headers: Vec<String>,
+    all_rows: Vec<Vec<String>>,
+    all_statuses: Vec<Option<String>>,
+    /// Lowercased text of every row in `all_rows` the search query is looked up in
+    search_index: Vec<String>,
 
     column_widths: Vec<u16>,
     content_size: Size,
@@ -77,8 +101,14 @@ where
             view_key,
             state: TableState::default().with_selected(0),
             raw_items: Vec::new(),
+            visible: Vec::new(),
             filter: F::default(),
+            search: SearchInput::default(),
             scroll_state: ScrollbarState::new(0),
+            all_headers: Vec::new(),
+            all_rows: Vec::new(),
+            all_statuses: Vec::new(),
+            search_index: Vec::new(),
             column_widths: Vec::new(),
             content_size: Size::new(0, 0),
             table_headers: Row::default(),
@@ -143,7 +173,7 @@ where
         match self.focus {
             Focus::Table => {
                 self.state
-                    .select(Some(self.raw_items.len().saturating_sub(1)));
+                    .select(Some(self.visible.len().saturating_sub(1)));
                 self.scroll_state.last();
                 self.set_describe_content()?;
             }
@@ -159,7 +189,7 @@ where
             Focus::Table => {
                 let i = match self.state.selected() {
                     Some(i) => {
-                        if i < self.raw_items.len() - 1 {
+                        if i + 1 < self.visible.len() {
                             i + 1
                         } else {
                             i
@@ -202,7 +232,7 @@ where
                 let i = match self.state.selected() {
                     Some(i) => cmp::min(
                         i.saturating_add(self.content_size.height as usize),
-                        self.raw_items.len() - 1,
+                        self.visible.len().saturating_sub(1),
                     ),
                     None => 0,
                 };
@@ -268,20 +298,70 @@ where
     }
 
     pub fn set_describe_content(&mut self) -> Result<(), TuiError> {
-        if let Some(selected_idx) = self.state.selected() {
-            if selected_idx < self.raw_items.len() {
-                self.describe
-                    .set_data(self.raw_items[selected_idx].clone())?;
-            } else {
-                self.describe.set_data(Value::Null)?;
-            }
-        } else {
-            self.describe.set_data(Value::Null)?;
+        let data = self.get_selected().cloned().unwrap_or(Value::Null);
+        self.describe.set_data(data)?;
+        Ok(())
+    }
+
+    /// Start typing a search query. The already entered query is kept and can be edited.
+    pub fn start_search(&mut self) -> Result<(), TuiError> {
+        self.focus = Focus::Table;
+        self.describe.set_focus(false)?;
+        self.search.set_active(true);
+        Ok(())
+    }
+
+    /// Whether the search query is currently being typed (all keys belong to the search)
+    pub fn is_searching(&self) -> bool {
+        self.search.is_active()
+    }
+
+    /// Edit the search query and re-apply it to the table when it changed
+    fn edit_search(&mut self, edit: impl FnOnce(&mut SearchInput)) -> Result<(), TuiError> {
+        let before = self.search.value().to_string();
+        edit(&mut self.search);
+        if self.search.value() != before {
+            self.state.select_first();
+            self.apply_search()?;
         }
         Ok(())
     }
 
+    /// Drop the search query and stop typing it
+    pub fn clear_search(&mut self) -> Result<(), TuiError> {
+        self.search.set_active(false);
+        self.edit_search(SearchInput::clear)
+    }
+
+    /// Handle key while the search query is typed. Returns `true` when the key is consumed.
+    fn handle_search_key(&mut self, key: KeyEvent) -> Result<bool, TuiError> {
+        match key.code {
+            KeyCode::Esc => self.clear_search()?,
+            KeyCode::Enter => self.search.set_active(false),
+            KeyCode::Backspace => self.edit_search(SearchInput::pop)?,
+            KeyCode::Char(c)
+                if !key
+                    .modifiers
+                    .intersects(KeyModifiers::CONTROL | KeyModifiers::ALT) =>
+            {
+                self.edit_search(|search| search.push(c))?;
+            }
+            // List navigation keeps working while typing
+            KeyCode::Up
+            | KeyCode::Down
+            | KeyCode::PageUp
+            | KeyCode::PageDown
+            | KeyCode::Home
+            | KeyCode::End => return Ok(false),
+            _ => {}
+        }
+        Ok(true)
+    }
+
     pub fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
+        if self.search.is_active() && self.handle_search_key(key)? {
+            return Ok(None);
+        }
         match key.code {
             KeyCode::Down => self.cursor_down()?,
             KeyCode::Up => self.cursor_up()?,
@@ -299,11 +379,21 @@ where
 
     pub fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
         if data != self.raw_items {
+            // Keep the cursor on the same entry when it is still present
+            let selected_id = self.get_selected().and_then(row_id).cloned();
             self.raw_items = data;
             self.state.select_first();
-            self.scroll_state =
-                ScrollbarState::new(self.raw_items.len().saturating_sub(1) * ITEM_HEIGHT);
             self.sync_table_data()?;
+            if let Some(id) = selected_id
+                && let Some(pos) = self
+                    .visible
+                    .iter()
+                    .position(|&idx| row_id(&self.raw_items[idx]) == Some(&id))
+            {
+                self.state.select(Some(pos));
+                self.scroll_state = self.scroll_state.position(pos * ITEM_HEIGHT);
+                self.set_describe_content()?;
+            }
         }
         self.set_loading(false);
         Ok(())
@@ -400,6 +490,49 @@ where
         // Ensure we have as many statuses as rows to zip them properly
         statuses.resize_with(table_rows.len(), Default::default);
 
+        self.search_index = table_rows
+            .iter()
+            .map(|row| row.join("\u{1f}").to_lowercase())
+            .collect();
+        self.all_headers = table_headers;
+        self.all_rows = table_rows;
+        self.all_statuses = statuses;
+        self.apply_search()
+    }
+
+    /// Narrow the rendered rows to the ones matching the search query and refresh the table
+    fn apply_search(&mut self) -> Result<(), TuiError> {
+        let table_headers = self.all_headers.clone();
+        // Narrow the table to the rows with the search query in any of the displayed columns
+        let needle = self.search.value().to_lowercase();
+        self.visible = self
+            .search_index
+            .iter()
+            .enumerate()
+            .filter(|(_, text)| text.contains(&needle))
+            .map(|(idx, _)| idx)
+            .collect();
+        let table_rows: Vec<Vec<String>> = self
+            .visible
+            .iter()
+            .map(|&idx| self.all_rows[idx].clone())
+            .collect();
+        let statuses: Vec<Option<String>> = self
+            .visible
+            .iter()
+            .map(|&idx| self.all_statuses[idx].clone())
+            .collect();
+
+        // Keep the selection within the (possibly shrunk) list
+        match (self.visible.len(), self.state.selected()) {
+            (0, _) => self.state.select(None),
+            (len, Some(idx)) if idx >= len => self.state.select(Some(len - 1)),
+            (_, None) => self.state.select_first(),
+            _ => {}
+        }
+        self.scroll_state = ScrollbarState::new(self.visible.len().saturating_sub(1) * ITEM_HEIGHT)
+            .position(self.state.selected().unwrap_or_default() * ITEM_HEIGHT);
+
         self.column_widths = table_headers
             .clone()
             .into_iter()
@@ -448,14 +581,10 @@ where
 
     /// Update single record with the new data
     pub fn update_row_data(&mut self, data: Value) -> Result<(), TuiError> {
-        let updated_entry_id = data
-            .get("id")
-            .or(data.get("uuid"))
-            .ok_or_else(|| TuiError::EntryIdNotPresent(data.clone()))?;
+        let updated_entry_id =
+            row_id(&data).ok_or_else(|| TuiError::EntryIdNotPresent(data.clone()))?;
         for raw_item in self.raw_items.iter_mut() {
-            if let Some(row_id) = raw_item.get("id").or(raw_item.get("uuid"))
-                && row_id == updated_entry_id
-            {
+            if row_id(raw_item) == Some(updated_entry_id) {
                 *raw_item = data.clone();
                 self.sync_table_data()?;
                 break;
@@ -474,12 +603,25 @@ where
     }
 
     pub fn draw(&mut self, f: &mut Frame<'_>, area: Rect, title: &str) -> Result<(), TuiError> {
-        let areas = Layout::vertical([Constraint::Min(5), Constraint::Length(3)]).split(area);
+        let search_height = if self.search.is_active() {
+            SEARCH_INPUT_HEIGHT
+        } else {
+            0
+        };
+        let [content, search, footer] = Layout::vertical([
+            Constraint::Min(5),
+            Constraint::Length(search_height),
+            Constraint::Length(3),
+        ])
+        .areas(area);
 
         self.describe_enabled = area.as_size().width >= 140;
 
-        self.render_content(title, f, areas[0])?;
-        self.render_footer(f, areas[1])?;
+        self.render_content(title, f, content)?;
+        if self.search.is_active() {
+            self.search.draw(f, search, &self.config);
+        }
+        self.render_footer(f, footer)?;
         Ok(())
     }
 
@@ -528,7 +670,7 @@ where
 
         f.render_stateful_widget(t, area, &mut self.state);
 
-        if usize::from(self.content_size.height) < self.raw_items.len() {
+        if usize::from(self.content_size.height) < self.visible.len() {
             self.render_scrollbar(f, area)?;
         }
         Ok(())
@@ -549,9 +691,13 @@ where
     }
 
     pub fn render_footer(&mut self, f: &mut Frame, area: Rect) -> Result<()> {
-        let info_footer = Paragraph::new(Line::from(match self.focus {
-            Focus::Table => INFO_TEXT,
-            Focus::Describe => INFO_TEXT_DESCRIBE,
+        let info_footer = Paragraph::new(Line::from(if self.search.is_active() {
+            INFO_TEXT_SEARCH
+        } else {
+            match self.focus {
+                Focus::Table => INFO_TEXT,
+                Focus::Describe => INFO_TEXT_DESCRIBE,
+            }
         }))
         .style(
             Style::new()
@@ -582,8 +728,18 @@ where
             ));
         } else {
             title.push(Span::styled(
-                format!(" ({}) ", self.raw_items.len()),
+                if self.search.is_empty() {
+                    format!(" ({}) ", self.raw_items.len())
+                } else {
+                    format!(" ({}/{}) ", self.visible.len(), self.raw_items.len())
+                },
                 self.config.styles.title_details_fg,
+            ));
+        }
+        if !self.search.is_empty() {
+            title.push(Span::styled(
+                format!(" /{} ", self.search.value()),
+                self.config.styles.title_filters_fg,
             ));
         }
         let filter = self.filter.to_string();
@@ -622,7 +778,8 @@ where
     pub fn get_selected(&self) -> Option<&Value> {
         self.state
             .selected()
-            .and_then(|idx| self.raw_items.get(idx))
+            .and_then(|idx| self.visible.get(idx))
+            .and_then(|&raw_idx| self.raw_items.get(raw_idx))
     }
 
     /// Get mutable reference to the row matching resource id
@@ -714,5 +871,148 @@ mod tests {
         // Regression: table_rows is the cache render_table actually draws from --
         // deleting must resync it, not just raw_items, or the row stays visible.
         assert_eq!(base.table_rows.len(), 1);
+    }
+
+    fn key(code: KeyCode) -> KeyEvent {
+        KeyEvent::new(code, KeyModifiers::NONE)
+    }
+
+    fn type_text(base: &mut TableViewComponentBase<'_, String>, text: &str) {
+        for c in text.chars() {
+            base.handle_key_events(key(KeyCode::Char(c))).unwrap();
+        }
+    }
+
+    fn search_base() -> TableViewComponentBase<'static, String> {
+        let mut base: TableViewComponentBase<'_, String> = TableViewComponentBase::new("test_view");
+        base.get_output_config().default_fields = vec!["id".into(), "name".into()];
+        base.set_data(vec![
+            json!({"id": "a", "name": "Foo"}),
+            json!({"id": "b", "name": "bar"}),
+            json!({"id": "c", "name": "food"}),
+        ])
+        .unwrap();
+        base
+    }
+
+    #[test]
+    fn search_narrows_rows_case_insensitively() {
+        let mut base = search_base();
+        base.start_search().unwrap();
+        assert!(base.is_searching());
+        type_text(&mut base, "FOO");
+
+        assert_eq!(base.table_rows.len(), 2);
+        assert_eq!(base.raw_items.len(), 3);
+        assert_eq!(base.get_selected().unwrap()["id"], "a");
+        base.cursor_down().unwrap();
+        assert_eq!(base.get_selected().unwrap()["id"], "c");
+    }
+
+    #[test]
+    fn search_matches_any_displayed_column() {
+        let mut base = search_base();
+        base.start_search().unwrap();
+        type_text(&mut base, "b");
+        // "b" is the id of the second row and part of the "bar" name
+        assert_eq!(base.table_rows.len(), 1);
+        assert_eq!(base.get_selected().unwrap()["id"], "b");
+    }
+
+    #[test]
+    fn search_ignores_columns_that_are_not_displayed() {
+        let mut base = search_base();
+        base.set_data(vec![json!({"id": "a", "name": "foo", "hidden": "secret"})])
+            .unwrap();
+        base.start_search().unwrap();
+        type_text(&mut base, "secret");
+        assert!(base.table_rows.is_empty());
+    }
+
+    #[test]
+    fn search_without_matches_is_safe_to_navigate() {
+        let mut base = search_base();
+        base.start_search().unwrap();
+        type_text(&mut base, "zzz");
+        assert!(base.table_rows.is_empty());
+        assert!(base.get_selected().is_none());
+        for code in [KeyCode::Down, KeyCode::PageDown, KeyCode::End, KeyCode::Up] {
+            base.handle_key_events(key(code)).unwrap();
+        }
+        // Backspacing restores the rows and a selection
+        for _ in 0..3 {
+            base.handle_key_events(key(KeyCode::Backspace)).unwrap();
+        }
+        assert_eq!(base.table_rows.len(), 3);
+        assert!(base.get_selected().is_some());
+    }
+
+    #[test]
+    fn search_enter_keeps_and_esc_clears_query() {
+        let mut base = search_base();
+        base.start_search().unwrap();
+        type_text(&mut base, "bar");
+        base.handle_key_events(key(KeyCode::Enter)).unwrap();
+        assert!(!base.is_searching());
+        assert_eq!(base.table_rows.len(), 1);
+
+        base.start_search().unwrap();
+        base.handle_key_events(key(KeyCode::Esc)).unwrap();
+        assert!(!base.is_searching());
+        assert_eq!(base.table_rows.len(), 3);
+    }
+
+    #[test]
+    fn search_survives_data_refresh_and_row_update() {
+        let mut base = search_base();
+        base.start_search().unwrap();
+        type_text(&mut base, "foo");
+        base.set_data(vec![
+            json!({"id": "a", "name": "foo"}),
+            json!({"id": "b", "name": "bar"}),
+        ])
+        .unwrap();
+        assert_eq!(base.table_rows.len(), 1);
+        base.update_row_data(json!({"id": "b", "name": "foobar"}))
+            .unwrap();
+        assert_eq!(base.table_rows.len(), 2);
+    }
+
+    #[test]
+    fn search_keys_with_modifiers_are_not_typed() {
+        let mut base = search_base();
+        base.start_search().unwrap();
+        base.handle_key_events(KeyEvent::new(KeyCode::Char('x'), KeyModifiers::CONTROL))
+            .unwrap();
+        assert_eq!(base.table_rows.len(), 3);
+    }
+
+    #[test]
+    fn refresh_keeps_selected_entry() {
+        let mut base = search_base();
+        base.cursor_down().unwrap();
+        assert_eq!(base.get_selected().unwrap()["id"], "b");
+        base.set_data(vec![
+            json!({"id": "z", "name": "new"}),
+            json!({"id": "a", "name": "Foo"}),
+            json!({"id": "b", "name": "bar2"}),
+        ])
+        .unwrap();
+        assert_eq!(base.get_selected().unwrap()["id"], "b");
+
+        // Selected entry gone: back to the first one
+        base.set_data(vec![json!({"id": "z", "name": "new"})])
+            .unwrap();
+        assert_eq!(base.get_selected().unwrap()["id"], "z");
+    }
+
+    #[test]
+    fn clear_search_restores_rows() {
+        let mut base = search_base();
+        base.start_search().unwrap();
+        type_text(&mut base, "bar");
+        base.clear_search().unwrap();
+        assert!(!base.is_searching());
+        assert_eq!(base.table_rows.len(), 3);
     }
 }

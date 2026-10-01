@@ -392,6 +392,12 @@ impl App {
             Event::Key(key) => self.handle_key_event(key)?,
             _ => {}
         }
+        self.dispatch_event(event)
+    }
+
+    /// Deliver the event to the popup (if any) or the current component and to the header
+    fn dispatch_event(&mut self, event: Event) -> Result<()> {
+        let action_tx = self.action_tx.clone();
         if let Some(popup_type) = &self.active_popup {
             if let Some(popup) = self.popups.get_mut(popup_type)
                 && let Some(action) = popup.handle_events(Some(event.clone()))?
@@ -414,7 +420,16 @@ impl App {
     fn handle_key_event(&mut self, key: KeyEvent) -> Result<()> {
         debug!("Key event received");
         let action_tx = self.action_tx.clone();
-        if self.active_popup.is_none()
+        // The current view is collecting free text (search query): every key except ctrl-c
+        // belongs to it and must not trigger keybindings (`q`, `Esc` for the mode stack, ...).
+        let input_captured = self.active_popup.is_none()
+            && self
+                .components
+                .get(&self.mode)
+                .is_some_and(|component| component.captures_input());
+        if input_captured && key != KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL) {
+            // Delivered to the component by `handle_events`
+        } else if self.active_popup.is_none()
             && let Some(action) = self.config.global_keybindings.get(&vec![key])
         {
             // Normal global keybinding
@@ -950,6 +965,78 @@ mod tests {
     // constructs one needs an active Tokio runtime — use `#[tokio::test]`, not `#[test]`.
     // `openstack_tui`'s dev-dependencies already enable tokio's `rt` + `macros` features
     // (see `openstack_tui/Cargo.toml`), so `#[tokio::test]` is available without changes.
+
+    /// Component stub that reports it is collecting free text input
+    struct CapturingComponent(bool, std::sync::Arc<std::sync::Mutex<Vec<KeyEvent>>>);
+
+    #[async_trait::async_trait]
+    impl Component for CapturingComponent {
+        fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+            self
+        }
+
+        fn captures_input(&self) -> bool {
+            self.0
+        }
+
+        fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
+            self.1.lock().unwrap().push(key);
+            Ok(None)
+        }
+
+        fn draw(&mut self, _f: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
+            Ok(())
+        }
+    }
+
+    fn drain_actions(app: &mut App) -> Vec<Action> {
+        std::iter::from_fn(|| app.action_rx.try_recv().ok()).collect()
+    }
+
+    #[test]
+    fn keybindings_are_suspended_while_component_captures_input() {
+        let quit = KeyEvent::new(KeyCode::Char('q'), KeyModifiers::NONE);
+        let mut app = make_test_app();
+        app.config = Config::new().expect("default config must load");
+        app.components.insert(
+            Mode::Home,
+            Box::new(CapturingComponent(true, Default::default())),
+        );
+
+        app.handle_key_event(quit).unwrap();
+        assert!(!drain_actions(&mut app).contains(&Action::Quit));
+
+        // ctrl-c still quits
+        app.handle_key_event(KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL))
+            .unwrap();
+        assert!(drain_actions(&mut app).contains(&Action::Quit));
+
+        // Without the capture the same key is a regular keybinding
+        app.components.insert(
+            Mode::Home,
+            Box::new(CapturingComponent(false, Default::default())),
+        );
+        app.handle_key_event(quit).unwrap();
+        assert!(drain_actions(&mut app).contains(&Action::Quit));
+    }
+
+    #[test]
+    fn captured_key_is_delivered_to_the_component() {
+        let quit = KeyEvent::new(KeyCode::Char('q'), KeyModifiers::NONE);
+        let received = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+        let mut app = make_test_app();
+        app.config = Config::new().expect("default config must load");
+        app.components.insert(
+            Mode::Home,
+            Box::new(CapturingComponent(true, received.clone())),
+        );
+
+        app.handle_key_event(quit).unwrap();
+        app.dispatch_event(Event::Key(quit)).unwrap();
+
+        assert_eq!(*received.lock().unwrap(), vec![quit]);
+        assert!(!drain_actions(&mut app).contains(&Action::Quit));
+    }
 
     #[tokio::test]
     async fn broadcast_reaches_inactive_mode_component() {

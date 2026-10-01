@@ -338,6 +338,9 @@ global_keybindings:
   "<ctrl-r>":
     action: Refresh
     description: Reload data
+  "/":
+    action: Search
+    description: Search
 # Mode aliases
 # <ALIAS>: <MODE>
 mode_aliases:

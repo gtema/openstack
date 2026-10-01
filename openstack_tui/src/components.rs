@@ -44,6 +44,7 @@ pub mod region_select_popup;
 pub mod resource_behaviour;
 pub mod resource_select_popup;
 pub mod resource_table;
+pub mod search_input;
 pub mod table_view;
 pub mod view_render;
 // pub mod modal; // removed – replaced by generic Popup widget
@@ -96,6 +97,12 @@ pub trait Component {
     /// * `Result<()>` - An Ok result or an error.
     fn init(&mut self, _size: Size) -> Result<(), TuiError> {
         Ok(())
+    }
+    /// Whether the component currently consumes raw text input (e.g. while typing a search
+    /// query). While `true` the application does not translate key presses into global or
+    /// mode keybinding actions, so characters such as `q` reach the component as typed.
+    fn captures_input(&self) -> bool {
+        false
     }
     /// Handle incoming events and produce actions if necessary.
     ///
