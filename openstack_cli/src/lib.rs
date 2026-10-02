@@ -29,7 +29,7 @@ use dialoguer::FuzzySelect;
 use eyre::eyre;
 use std::sync::{Arc, Mutex};
 use tracing::warn;
-use tracing_subscriber::filter::LevelFilter;
+use tracing_subscriber::filter::{LevelFilter, Targets};
 use tracing_subscriber::{Layer, prelude::*};
 
 use openstack_cli_core::cli::{ConnectionRequirementsProvider, MicroVersionStrategyArg};
@@ -96,12 +96,21 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     // fmt for console logging
     let log_layer = tracing_subscriber::fmt::layer()
         .with_writer(io::stderr)
-        .with_filter(match cli.global_opts.output.verbose {
-            0 => LevelFilter::WARN,
-            1 => LevelFilter::INFO,
-            2 => LevelFilter::DEBUG,
-            _ => LevelFilter::TRACE,
-        })
+        .with_filter(
+            // Cap noisy dependencies at INFO regardless of verbosity
+            Targets::new()
+                .with_default(match cli.global_opts.output.verbose {
+                    0 => LevelFilter::WARN,
+                    1 => LevelFilter::INFO,
+                    2 => LevelFilter::DEBUG,
+                    _ => LevelFilter::TRACE,
+                })
+                .with_target("cranelift_codegen", LevelFilter::INFO)
+                .with_target("cranelift_frontend", LevelFilter::INFO)
+                .with_target("wasmtime", LevelFilter::INFO)
+                .with_target("extism", LevelFilter::INFO)
+                .with_target("mio", LevelFilter::INFO),
+        )
         .boxed();
 
     // RequestTracingCollector for capturing http statistics

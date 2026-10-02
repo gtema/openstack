@@ -50,7 +50,18 @@ where
     {
         let is_secret = metadata["format"].as_str() == Some("password")
             || metadata["writeOnly"].as_bool().unwrap_or(false);
-        if let Some(val) = config_values[field].as_str() {
+        // Plugin specific settings are not part of the typed `auth` section: fall
+        // back to the (flattened) cloud level `options`. Scalars of any type are
+        // stringified so that i.e. an integer `callback_port` is not dropped.
+        let option_val = config
+            .options
+            .get(field)
+            .and_then(|v| v.clone().into_string().ok());
+        if let Some(val) = config_values[field]
+            .as_str()
+            .map(str::to_string)
+            .or(option_val)
+        {
             res.insert(field.to_string(), SecretString::from(val));
         } else {
             if required.contains(field) {
@@ -128,5 +139,46 @@ mod tests {
         assert!(vals.contains_key("application_credential_name"));
         assert!(vals.contains_key("application_credential_secret"));
         assert!(!vals.contains_key("application_credential_id"));
+    }
+
+    #[tokio::test]
+    async fn test_options_fallback() {
+        let auth_helper = Noop::default();
+        let mut options = std::collections::HashMap::new();
+        options.insert("callback_port".to_string(), ::config::Value::from(8080_i64));
+        options.insert(
+            "oidc_endpoint".to_string(),
+            ::config::Value::from("https://idp"),
+        );
+        options.insert(
+            "client_id".to_string(),
+            ::config::Value::from("from-options"),
+        );
+        let auth = config::Auth {
+            client_id: Some("from-auth".into()),
+            ..Default::default()
+        };
+        let vals = gather_auth_data(
+            &json!({"properties": {
+                "callback_port": {},
+                "oidc_endpoint": {},
+                "client_id": {},
+                "missing": {}
+            }}),
+            &CloudConfig {
+                auth: Some(auth),
+                options,
+                ..Default::default()
+            },
+            &auth_helper,
+        )
+        .await
+        .unwrap();
+        use secrecy::ExposeSecret;
+        assert_eq!(vals["callback_port"].expose_secret(), "8080");
+        assert_eq!(vals["oidc_endpoint"].expose_secret(), "https://idp");
+        // `auth` section wins over `options`
+        assert_eq!(vals["client_id"].expose_secret(), "from-auth");
+        assert!(!vals.contains_key("missing"));
     }
 }
