@@ -20,6 +20,7 @@ mod block_storage;
 mod catalog;
 #[cfg(feature = "compute")]
 mod compute;
+mod config;
 #[cfg(feature = "container_infra")]
 mod container_infrastructure_management;
 #[cfg(feature = "dns")]
