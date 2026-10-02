@@ -103,7 +103,13 @@ fn send_and_shape_response(
     client: &reqwest::blocking::Client,
     req: &HttpRequestMsg,
 ) -> Result<String, extism::Error> {
-    let mut builder = client.request(method, url);
+    tracing::debug!(
+        host_fn = fn_name,
+        method = %method,
+        url = %url,
+        "plugin http request"
+    );
+    let mut builder = client.request(method.clone(), url.clone());
     for (k, v) in &req.headers {
         builder = builder.header(k, v);
     }
@@ -111,10 +117,12 @@ fn send_and_shape_response(
         builder = builder.body(body.clone());
     }
 
-    let resp = builder
-        .send()
-        .map_err(|e| extism::Error::msg(format!("{fn_name}: request failed: {e}")))?;
+    let resp = builder.send().map_err(|e| {
+        tracing::debug!(host_fn = fn_name, %method, %url, error = %e, "plugin http request failed");
+        extism::Error::msg(format!("{fn_name}: {method} {url} failed: {e}"))
+    })?;
     let status = resp.status().as_u16();
+    tracing::debug!(host_fn = fn_name, %method, %url, status, "plugin http response");
     let headers = resp
         .headers()
         .iter()
@@ -123,6 +131,8 @@ fn send_and_shape_response(
     let body = resp
         .text()
         .map_err(|e| extism::Error::msg(format!("{fn_name}: reading response body failed: {e}")))?;
+
+    tracing::trace!(host_fn = fn_name, %url, status, ?headers, body = %body, "plugin http response body");
 
     Ok(serde_json::to_string(&HttpResponseMsg {
         status,

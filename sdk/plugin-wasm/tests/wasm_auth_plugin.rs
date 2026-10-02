@@ -28,7 +28,7 @@ use std::path::PathBuf;
 use httpmock::prelude::*;
 use secrecy::{ExposeSecret, SecretString};
 
-use openstack_sdk_auth_core::{Auth, OpenStackAuthType};
+use openstack_sdk_auth_core::{Auth, AuthError, OpenStackAuthType};
 use openstack_sdk_plugin_wasm::WasmAuthPlugin;
 
 fn fixture_path() -> PathBuf {
@@ -104,5 +104,64 @@ async fn auth_missing_credentials_is_rejected_without_a_network_call()
     assert!(result.is_err());
     mock.assert_calls(0);
 
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn auth_plugin_reported_error_is_surfaced() -> Result<(), Box<dyn std::error::Error>> {
+    let server = MockServer::start();
+    let mock = server.mock(|when, then| {
+        when.method(POST).path("/v3/auth/tokens");
+        then.status(404).body("not found");
+    });
+
+    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let identity_url = url::Url::parse(&server.base_url())?;
+    let http_client = reqwest::Client::new();
+    let mut values: HashMap<String, SecretString> = HashMap::new();
+    values.insert("username".to_string(), SecretString::from("demo"));
+    values.insert("password".to_string(), SecretString::from("secret"));
+
+    let err = plugin
+        .auth(&http_client, &identity_url, &values, None, None)
+        .await
+        .err()
+        .ok_or("expected error")?;
+
+    mock.assert();
+    match err {
+        AuthError::UnknownAuth { message, .. } => {
+            assert_eq!(
+                message.as_deref(),
+                Some("identity endpoint returned status 404")
+            );
+        }
+        other => return Err(format!("expected UnknownAuth, got: {other:?}").into()),
+    }
+    Ok(())
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn auth_missing_credentials_reports_plugin_message() -> Result<(), Box<dyn std::error::Error>>
+{
+    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let identity_url = url::Url::parse("http://127.0.0.1:1")?;
+    let http_client = reqwest::Client::new();
+    let values: HashMap<String, SecretString> = HashMap::new();
+
+    let err = plugin
+        .auth(&http_client, &identity_url, &values, None, None)
+        .await
+        .err()
+        .ok_or("expected error")?;
+    match err {
+        AuthError::UnknownAuth { message, .. } => {
+            assert_eq!(
+                message.as_deref(),
+                Some("username and password are required")
+            );
+        }
+        other => return Err(format!("expected UnknownAuth, got: {other:?}").into()),
+    }
     Ok(())
 }

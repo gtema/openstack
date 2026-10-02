@@ -18,6 +18,7 @@ use std::collections::HashMap;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::ops::{Deref, DerefMut};
+use std::str::FromStr;
 use std::sync::{Arc, Weak};
 use std::time::{Duration, SystemTime};
 use std::{fs::File, io::Read};
@@ -1114,8 +1115,12 @@ impl AsyncOpenStack {
     where
         A: AuthHelper + Sync + Send + 'static,
     {
-        let auth_type = AuthType::from_cloud_config(&self.config)?;
-        let force_new_auth = matches!(auth_type, AuthType::V3ApplicationCredential);
+        // The auth_type is not necessarily a built-in one: it may be provided by an
+        // external (wasm) plugin. A built-in name (or alias) is normalized to its
+        // canonical form, anything else is passed through as is.
+        let raw_auth_type = self.config.auth_type.as_deref().unwrap_or("v3password");
+        let builtin_auth_type = AuthType::from_str(raw_auth_type).ok();
+        let force_new_auth = matches!(builtin_auth_type, Some(AuthType::V3ApplicationCredential));
         let available_auth_opt = {
             let mut session = self.session_write("authorize_with_auth_helper: reauthz");
             session.state.get_any_valid_auth()
@@ -1132,13 +1137,23 @@ impl AsyncOpenStack {
         // No auth/authz information available or force_new_auth. Proceed with new auth
         trace!("No Auth already available. Proceeding with new login");
 
-        let auth_type = auth_type.as_str();
+        let auth_type: &str = match builtin_auth_type {
+            Some(t) => t.as_str(),
+            None => raw_auth_type,
+        };
         // Find authenticator supporting the auth_type: a compiled-in
         // plugin first, then (if enabled) a loaded wasm plugin as a
         // fallback.
+        // `contains` would require `auth_type` to be `'static`
+        #[allow(clippy::manual_contains)]
         let compiled_authenticator = inventory::iter::<AuthPluginRegistration>
             .into_iter()
-            .find(|x| x.method.get_supported_auth_methods().contains(&auth_type))
+            .find(|x| {
+                x.method
+                    .get_supported_auth_methods()
+                    .iter()
+                    .any(|m| *m == auth_type)
+            })
             .map(|x| x.method);
         #[cfg(feature = "wasm_plugins")]
         let wasm_authenticator: Option<Arc<dyn OpenStackAuthType>> =
@@ -1869,6 +1884,85 @@ mod tests {
             reauth_lock: Arc::new(tokio::sync::Mutex::new(())),
             microversion_strategy: MicroVersionStrategy::default(),
         }
+    }
+
+    /// Authenticator for an `auth_type` unknown to [`AuthType`]. Always fails
+    /// with a marker error so tests can tell it was actually invoked.
+    struct CustomAuthType;
+
+    static CUSTOM_AUTH_PLUGIN: CustomAuthType = CustomAuthType;
+    inventory::submit! {
+        AuthPluginRegistration { method: &CUSTOM_AUTH_PLUGIN }
+    }
+
+    #[async_trait::async_trait]
+    impl OpenStackAuthType for CustomAuthType {
+        fn get_supported_auth_methods(&self) -> Vec<&'static str> {
+            vec!["test-custom-auth"]
+        }
+
+        fn requirements(
+            &self,
+            _hints: Option<&serde_json::Value>,
+        ) -> Result<serde_json::Value, AuthError> {
+            Ok(json!({"type": "object", "properties": {}}))
+        }
+
+        fn api_version(&self) -> (u8, u8) {
+            (3, 0)
+        }
+
+        async fn auth(
+            &self,
+            _http_client: &reqwest::Client,
+            _identity_url: &url::Url,
+            _values: &HashMap<String, SecretString>,
+            _scope: Option<&AuthTokenScope>,
+            _hints: Option<&serde_json::Value>,
+        ) -> Result<Auth, AuthError> {
+            Err(AuthError::AuthValueNotSupplied(
+                "custom-auth-invoked".into(),
+            ))
+        }
+    }
+
+    /// An `auth_type` that is not a built-in [`AuthType`] must still reach a
+    /// plugin registered for it instead of failing with `IdentityMethod`.
+    #[tokio::test]
+    async fn test_login_custom_auth_type_reaches_plugin() {
+        let server = MockServer::start_async().await;
+        let mut client = create_test_client(&server, "unused", 0, None);
+        client.config.auth_type = Some("test-custom-auth".into());
+
+        let err = client
+            .login(&AuthTokenScope::Unscoped, &Noop::default())
+            .await
+            .unwrap_err();
+        assert!(
+            matches!(
+                &err,
+                OpenStackError::AuthError { source: AuthError::AuthValueNotSupplied(m) } if m == "custom-auth-invoked"
+            ),
+            "custom auth plugin was not invoked: {err:?}"
+        );
+    }
+
+    /// An `auth_type` nobody provides is still reported as `IdentityMethod`
+    /// carrying the original name.
+    #[tokio::test]
+    async fn test_login_unknown_auth_type_errors() {
+        let server = MockServer::start_async().await;
+        let mut client = create_test_client(&server, "unused", 0, None);
+        client.config.auth_type = Some("no-such-auth".into());
+
+        let err = client
+            .login(&AuthTokenScope::Unscoped, &Noop::default())
+            .await
+            .unwrap_err();
+        assert!(
+            err.to_string().contains("no-such-auth"),
+            "unexpected error: {err:?}"
+        );
     }
 
     #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

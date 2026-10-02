@@ -44,7 +44,7 @@
 //! ### `sso` flavor
 //!
 //! For interactive, browser-based (WebSSO-style) plugins. The host owns the
-//! callback listener, the anti-CSRF `state` check, and the browser-opening
+//! callback listener, the anti-CSRF `csrf` check, and the browser-opening
 //! step (via `openstack_sdk_websso_host`) — the guest never gets a socket,
 //! DNS resolver, or browser-opening capability of its own. Both exports may,
 //! like `auth`, perform outbound HTTP via the host-provided
@@ -55,7 +55,7 @@
 //!   `{"identity_url", "callback_url", "values", "scope", "hints",
 //!   "code_challenge", "code_challenge_method", "nonce"}`, where
 //!   `callback_url` is the host-bound local callback URL (with the
-//!   anti-CSRF `state` token already embedded) the guest must have the
+//!   anti-CSRF `csrf` token already embedded) the guest must have the
 //!   identity provider redirect back to, `code_challenge`/
 //!   `code_challenge_method` (always `"S256"`) are a host-generated RFC 7636
 //!   PKCE pair the guest should embed in the authorize URL's query string,
@@ -78,7 +78,7 @@
 //!   (loopback, link-local, private, multicast/reserved, unspecified).
 //! - `sso_parse_callback(callback: string) -> string` — `callback` is
 //!   `{"params": {...}, "code_verifier": "..."}`: `params` are the form
-//!   fields from the already state-validated callback POST, and
+//!   fields from the already CSRF-validated callback POST, and
 //!   `code_verifier` is the same value whose SHA256 the guest committed to
 //!   as `code_challenge` in `sso_build_request` — the guest sends it back to
 //!   the identity provider's token endpoint to complete the PKCE exchange.
@@ -145,9 +145,7 @@ enum AuthResultMsg {
         token: String,
         auth_info: Box<Option<AuthResponse>>,
     },
-    Error {
-        error: String,
-    },
+    Error(String),
 }
 
 #[derive(Serialize)]
@@ -508,17 +506,20 @@ impl WasmAuthPlugin {
             AuthResultMsg::Ok { token, auth_info } => {
                 Ok(Auth::AuthToken(Box::new(AuthToken::new(token, *auth_info))))
             }
-            AuthResultMsg::Error { error } => Err(AuthError::UnknownAuth {
-                code: 0,
-                message: Some(error),
-            }),
+            AuthResultMsg::Error(error) => {
+                tracing::debug!(plugin = %self.name, %error, "plugin reported auth error");
+                Err(AuthError::UnknownAuth {
+                    code: 0,
+                    message: Some(error),
+                })
+            }
         }
     }
 
     /// Run the `sso` ABI flavor: bind a host-owned callback listener, ask
     /// the guest (a pure computation) to build the identity-provider URL to
     /// open, validate that URL before ever opening a browser, wait for the
-    /// already state-validated callback, then hand the callback's fields
+    /// already CSRF-validated callback, then hand the callback's fields
     /// back to the guest (again pure) to turn into a token.
     ///
     /// The guest never sees a socket, a browser-opening capability, or the
@@ -675,10 +676,13 @@ impl WasmAuthPlugin {
             AuthResultMsg::Ok { token, auth_info } => {
                 Ok(Auth::AuthToken(Box::new(AuthToken::new(token, *auth_info))))
             }
-            AuthResultMsg::Error { error } => Err(AuthError::UnknownAuth {
-                code: 0,
-                message: Some(error),
-            }),
+            AuthResultMsg::Error(error) => {
+                tracing::debug!(plugin = %self.name, %error, "plugin reported auth error");
+                Err(AuthError::UnknownAuth {
+                    code: 0,
+                    message: Some(error),
+                })
+            }
         }
     }
 
@@ -867,5 +871,18 @@ mod tests {
         };
         let json = serde_json::to_string(&msg).unwrap();
         assert!(json.contains(r#""code_verifier":"verifier-xyz""#));
+    }
+
+    #[test]
+    fn auth_result_msg_parses_plugin_error() {
+        let msg: AuthResultMsg = serde_json::from_str(r#"{"error": "boom"}"#).unwrap();
+        assert!(matches!(msg, AuthResultMsg::Error(e) if e == "boom"));
+    }
+
+    #[test]
+    fn auth_result_msg_parses_ok() {
+        let msg: AuthResultMsg =
+            serde_json::from_str(r#"{"ok": {"token": "t", "auth_info": null}}"#).unwrap();
+        assert!(matches!(msg, AuthResultMsg::Ok { token, .. } if token == "t"));
     }
 }

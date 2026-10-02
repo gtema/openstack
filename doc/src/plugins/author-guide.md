@@ -82,7 +82,7 @@ into calling anything other than the identity endpoint it was invoked for.
 ## The `sso` ABI flavor
 
 For interactive, browser-based (WebSSO-style) auth methods. The host owns
-the local callback listener, the anti-CSRF `state` check, and the actual
+the local callback listener, the anti-CSRF `csrf` check, and the actual
 browser-launch step — the guest never gets a socket, DNS resolver, or
 browser-opening capability of its own. Both exports may, like `auth`,
 perform outbound HTTP through the host-provided `identity_http_request`
@@ -96,7 +96,7 @@ resolved for the configured cloud.
   ```
 
   `callback_url` is the host-bound local callback URL, with the anti-CSRF
-  `state` token already embedded — the plugin doesn't generate or see the
+  `csrf` token already embedded — the plugin doesn't generate or see the
   raw CSRF secret, it just has to make sure the identity provider redirects
   back to this exact URL. `code_challenge`/`code_challenge_method` are a
   host-generated RFC 7636 PKCE pair (`code_challenge_method` is always the
@@ -140,8 +140,8 @@ resolved for the configured cloud.
   ```
 
   `params` are the form fields from the callback POST, handed to the guest
-  only *after* the host has already validated and stripped the `state`
-  token itself — `state` is read from the callback URL's own query string,
+  only *after* the host has already validated and stripped the `csrf`
+  token itself — `csrf` is read from the callback URL's own query string,
   not the POST body, so it never appears in `params`.
   `code_verifier` is the same value whose SHA256 the host told the guest to
   commit to as `code_challenge` in `sso_build_request` — if the plugin used

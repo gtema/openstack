@@ -175,7 +175,7 @@ pub async fn get_token_auth(
 
 // Perform WebSSO by opening a browser window with tiny webserver started to capture the callback
 ///
-/// - bind the callback server (host-generated anti-CSRF `state` embedded in
+/// - bind the callback server (host-generated anti-CSRF `csrf` embedded in
 ///   its URL)
 /// - open browser pointing to the SSO url
 /// - wait for the response with the OpenStack token

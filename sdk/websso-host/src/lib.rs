@@ -20,7 +20,7 @@
 //! host-controlled primitives:
 //!
 //! - bind a local callback listener and hand out its URL,
-//! - generate and validate an anti-CSRF `state` token embedded in that URL,
+//! - generate and validate an anti-CSRF (`csrf`) token embedded in that URL,
 //! - open the user's browser, optionally enforcing `https://`.
 //!
 //! Centralizing them here means the security-sensitive parts — the CSRF
@@ -48,10 +48,10 @@ use tracing::{info, warn};
 use url::Url;
 
 const CALLBACK_PATH: &str = "/callback";
-const STATE_PARAM: &str = "state";
+const CSRF_PARAM: &str = "csrf";
 const CALLBACK_PAGE: &str = include_str!("../static/callback.html");
-/// Number of random bytes used for the anti-CSRF `state` token (256 bits).
-const STATE_BYTES: usize = 32;
+/// Number of random bytes used for the anti-CSRF (`csrf`) token (256 bits).
+const CSRF_BYTES: usize = 32;
 /// Number of random bytes used for the PKCE `code_verifier` (256 bits,
 /// base64url-no-pad-encodes to 43 characters — within RFC 7636's
 /// 43-128 character range).
@@ -153,11 +153,11 @@ pub fn open_browser(url: &Url, policy: BrowserOpenPolicy) -> Result<(), WebssoHo
     Ok(())
 }
 
-/// A bound local callback listener with a fresh anti-CSRF `state` token,
+/// A bound local callback listener with a fresh anti-CSRF (`csrf`) token,
 /// a fresh PKCE (RFC 7636) pair, and a fresh OIDC `nonce` already generated.
 pub struct CallbackServer {
     listener: TcpListener,
-    state: String,
+    csrf: String,
     callback_url: Url,
     code_verifier: String,
     code_challenge: String,
@@ -166,7 +166,7 @@ pub struct CallbackServer {
 
 impl CallbackServer {
     /// Bind a local callback listener on `port` (or an OS-assigned ephemeral
-    /// port if `None`), generating a fresh `state` token (embedded in the
+    /// port if `None`), generating a fresh `csrf` token (embedded in the
     /// returned callback URL's query string), a fresh PKCE pair (returned
     /// via [`Self::code_challenge`]/[`Self::code_verifier`], not embedded in
     /// the URL — callers thread these into the SSO ABI's request JSON
@@ -174,16 +174,16 @@ impl CallbackServer {
     pub async fn bind(port: Option<u16>) -> Result<Self, WebssoHostError> {
         let listener = TcpListener::bind(("127.0.0.1", port.unwrap_or(0))).await?;
         let addr = listener.local_addr()?;
-        let state = generate_state()?;
+        let csrf = generate_csrf_token()?;
         let (code_verifier, code_challenge) = generate_pkce_pair()?;
         let nonce = generate_nonce()?;
         let mut callback_url = Url::parse(&format!("http://{addr}{CALLBACK_PATH}"))?;
         callback_url
             .query_pairs_mut()
-            .append_pair(STATE_PARAM, &state);
+            .append_pair(CSRF_PARAM, &csrf);
         Ok(Self {
             listener,
-            state,
+            csrf,
             callback_url,
             code_verifier,
             code_challenge,
@@ -191,7 +191,7 @@ impl CallbackServer {
         })
     }
 
-    /// The full callback URL, including the embedded `state` token, that a
+    /// The full callback URL, including the embedded `csrf` token, that a
     /// caller should direct the identity provider (or SSO plugin) to POST
     /// back to.
     pub fn callback_url(&self) -> &Url {
@@ -230,15 +230,15 @@ impl CallbackServer {
     }
 
     /// Wait (up to `timeout`, cancellable with Ctrl-C) for a single POST to
-    /// the callback URL whose `state` parameter matches the one embedded in
+    /// the callback URL whose `csrf` parameter matches the one embedded in
     /// [`Self::callback_url`].
     ///
-    /// The `state` token is read from the callback URL's own query string
+    /// The `csrf` token is read from the callback URL's own query string
     /// (not the POST body — the identity provider/plugin only ever POSTs
     /// back to the exact callback URL it was given, so the query string
     /// round-trips unchanged regardless of what body fields it sends). Any
-    /// request with a missing or mismatched `state` is rejected with `403`
-    /// and does **not** satisfy the wait — a forged callback (state
+    /// request with a missing or mismatched `csrf` is rejected with `403`
+    /// and does **not** satisfy the wait — a forged callback (csrf
     /// omitted, guessed, or replayed from a previous run) can never
     /// complete the flow; the server keeps waiting for the real one until
     /// the timeout. Returns every form-encoded parameter from the accepted
@@ -257,9 +257,7 @@ impl CallbackServer {
         self,
         timeout: Duration,
     ) -> Result<HashMap<String, String>, WebssoHostError> {
-        let Self {
-            listener, state, ..
-        } = self;
+        let Self { listener, csrf, .. } = self;
         let result: Arc<Mutex<Option<HashMap<String, String>>>> = Arc::new(Mutex::new(None));
 
         loop {
@@ -267,10 +265,10 @@ impl CallbackServer {
                 accepted = listener.accept() => {
                     let (stream, _addr) = accepted?;
                     let io = TokioIo::new(stream);
-                    let state = state.clone();
+                    let csrf = csrf.clone();
                     let conn_result = result.clone();
                     let service = service_fn(move |req| {
-                        handle_callback(req, state.clone(), conn_result.clone())
+                        handle_callback(req, csrf.clone(), conn_result.clone())
                     });
                     // Single-shot server: force `Connection: close` so
                     // `serve_connection` returns as soon as the response is
@@ -306,31 +304,31 @@ impl CallbackServer {
 
 async fn handle_callback(
     req: Request<IncomingBody>,
-    expected_state: String,
+    expected_csrf: String,
     result: Arc<Mutex<Option<HashMap<String, String>>>>,
 ) -> Result<Response<BoxBody<Bytes, Infallible>>, WebssoHostError> {
     match (req.method(), req.uri().path()) {
         (&Method::POST, CALLBACK_PATH) => {
-            // The `state` token was embedded in the callback URL's query
+            // The `csrf` token was embedded in the callback URL's query
             // string (see `CallbackServer::bind`), not the POST body: the
             // identity provider (or SSO plugin) is only ever told to POST
             // back to that exact URL, so the query string round-trips
             // unchanged regardless of what body fields the provider sends.
-            let received_state = req.uri().query().and_then(|q| {
+            let received_csrf = req.uri().query().and_then(|q| {
                 form_urlencoded::parse(q.as_bytes())
-                    .find(|(k, _)| k == STATE_PARAM)
+                    .find(|(k, _)| k == CSRF_PARAM)
                     .map(|(_, v)| v.into_owned())
             });
             let b = req.collect().await?.to_bytes();
             let params: HashMap<String, String> =
                 form_urlencoded::parse(b.as_ref()).into_owned().collect();
-            let state_ok = received_state
+            let csrf_ok = received_csrf
                 .as_deref()
-                .map(|s| constant_time_eq(s.as_bytes(), expected_state.as_bytes()))
+                .map(|s| constant_time_eq(s.as_bytes(), expected_csrf.as_bytes()))
                 .unwrap_or(false);
-            if !state_ok {
+            if !csrf_ok {
                 warn!(
-                    "rejected SSO callback with a missing/invalid `state` parameter (possible forged or replayed callback)"
+                    "rejected SSO callback with a missing/invalid `csrf` parameter (possible forged or replayed callback)"
                 );
                 return Ok(Response::builder()
                     .status(StatusCode::FORBIDDEN)
@@ -351,15 +349,15 @@ async fn handle_callback(
     }
 }
 
-fn generate_state() -> Result<String, WebssoHostError> {
+fn generate_csrf_token() -> Result<String, WebssoHostError> {
     let rng = SystemRandom::new();
-    let mut bytes = [0u8; STATE_BYTES];
+    let mut bytes = [0u8; CSRF_BYTES];
     rng.fill(&mut bytes).map_err(|_| WebssoHostError::Random)?;
     Ok(bytes.iter().map(|b| format!("{b:02x}")).collect())
 }
 
 /// Generate a fresh OIDC `nonce`: 16 random bytes, hex-encoded to a
-/// 32-character string. Mirrors [`generate_state`] exactly — same RNG, same
+/// 32-character string. Mirrors [`generate_csrf_token`] exactly — same RNG, same
 /// hex-encoding approach — just a different byte count and purpose.
 fn generate_nonce() -> Result<String, WebssoHostError> {
     let rng = SystemRandom::new();
@@ -387,7 +385,7 @@ fn generate_pkce_pair() -> Result<(String, String), WebssoHostError> {
     Ok((code_verifier, code_challenge))
 }
 
-/// Constant-time byte comparison, used for the `state` check so a mismatch
+/// Constant-time byte comparison, used for the `csrf` check so a mismatch
 /// can't be timed to leak how many leading bytes matched.
 fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
     if a.len() != b.len() {
@@ -405,7 +403,7 @@ mod tests {
     use super::*;
 
     #[tokio::test]
-    async fn accepts_matching_state_and_strips_it() {
+    async fn accepts_matching_csrf_and_strips_it() {
         let server = CallbackServer::bind(None).await.expect("bind");
         let callback_url = server.callback_url().clone();
         assert_eq!(callback_url.path(), CALLBACK_PATH);
@@ -429,20 +427,20 @@ mod tests {
             Some("secret-token")
         );
         assert_eq!(params.get("extra").map(String::as_str), Some("1"));
-        assert!(!params.contains_key(STATE_PARAM));
+        assert!(!params.contains_key(CSRF_PARAM));
     }
 
     #[tokio::test]
-    async fn rejects_forged_state_then_accepts_the_real_callback() {
+    async fn rejects_forged_csrf_then_accepts_the_real_callback() {
         let server = CallbackServer::bind(None).await.expect("bind");
         let mut callback_url = server.callback_url().clone();
         let real_query = callback_url.query().unwrap_or("").to_string();
 
         let wait = tokio::spawn(server.wait_for_callback(Duration::from_secs(5)));
 
-        // A forged callback with a guessed/omitted state must not satisfy
+        // A forged callback with a guessed/omitted csrf must not satisfy
         // the wait.
-        callback_url.set_query(Some("state=forged-state-value"));
+        callback_url.set_query(Some("csrf=forged-csrf-value"));
         let client = reqwest::Client::new();
         let forged_resp = client
             .post(callback_url.as_str())
@@ -452,7 +450,7 @@ mod tests {
             .expect("post forged callback");
         assert_eq!(forged_resp.status(), reqwest::StatusCode::FORBIDDEN);
 
-        // The real callback, with the correct state, does.
+        // The real callback, with the correct csrf, does.
         callback_url.set_query(Some(&real_query));
         let real_resp = client
             .post(callback_url.as_str())
