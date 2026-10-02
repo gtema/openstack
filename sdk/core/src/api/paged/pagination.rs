@@ -98,13 +98,6 @@ impl Pagination {
     }
 }
 
-/// A query modifier that paginates an endpoint.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Paged<E> {
-    pub(in crate::api::paged) endpoint: E,
-    pub(in crate::api::paged) pagination: Pagination,
-}
-
 #[cfg(test)]
 mod tests {
     use crate::api::Pagination;

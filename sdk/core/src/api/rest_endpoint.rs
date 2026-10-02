@@ -537,7 +537,17 @@ where
     }
 
     async fn raw_query_async(&self, client: &C) -> Result<Response<Bytes>, ApiError<C::Error>> {
-        self.raw_query_async_ll(client, Some(true)).await
+        let ep = client
+            .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
+            .await?;
+        let (req, data) =
+            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self, client)?;
+
+        let query_uri = req.uri_ref().cloned();
+        let rsp = client.rest_async(req, data).await?;
+
+        check_response_error::<C>(&rsp, query_uri)?;
+        Ok(rsp)
     }
 
     #[instrument(name = "query", level = "debug", skip_all)]
