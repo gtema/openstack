@@ -63,6 +63,8 @@ use serde::{Deserialize, Serialize, Serializer};
 use thiserror::Error;
 use tracing::{debug, error, trace, warn};
 
+use crate::auth::plugin_sensitive_fields;
+
 /// Errors which may occur when dealing with OpenStack connection
 /// configuration data.
 #[derive(Debug, Error)]
@@ -94,6 +96,21 @@ pub enum ConfigError {
         /// The source of the error.
         #[from]
         source: ConfigFileBuilderError,
+    },
+
+    /// Config contains a short-lived credential which must not be persisted.
+    #[error("config contains ephemeral field `{field}` which cannot be persisted")]
+    EphemeralField {
+        /// Name of the offending field.
+        field: String,
+    },
+
+    /// Splitting the config into public and sensitive parts failed.
+    #[error("failed to split config: {}", source)]
+    Split {
+        /// The source of the error.
+        #[from]
+        source: serde_json::Error,
     },
 }
 
@@ -678,9 +695,112 @@ impl CloudConfig {
             if let Some(val) = &auth.access_token {
                 res.push(val.expose_secret());
             }
+            if let Some(val) = &auth.client_secret {
+                res.push(val.expose_secret());
+            }
+            if let Some(val) = &auth.jwt {
+                res.push(val.expose_secret());
+            }
         }
         res
     }
+
+    /// Split the config into the public and the sensitive parts.
+    ///
+    /// The result is meant to be stored in `clouds.yaml` (public) and `secure.yaml` (secure),
+    /// which are merged back on load. A key is sensitive when it is a known secret of the
+    /// [`Auth`] (`password`, `client_secret`, `application_credential_secret`) or when the
+    /// authentication plugin for the [`auth_type`](CloudConfig::auth_type) declares it as such in
+    /// its requirements schema (see [`plugin_sensitive_fields`]). Only plugins linked in are
+    /// consulted; use [`CloudConfig::split_sensitive_with`] to provide the knowledge about other
+    /// plugins (i.e. wasm).
+    ///
+    /// # Errors
+    ///
+    /// Ephemeral credentials (`token`, `access_token`, `passcode`, `jwt`) are short-lived and
+    /// must not be persisted. Splitting a config which has any of them set (in `auth` or in
+    /// `options`) fails with [`ConfigError::EphemeralField`]: it is up to the caller to remove
+    /// them explicitly.
+    pub fn split_sensitive(&self) -> Result<SplitConfig, ConfigError> {
+        self.split_sensitive_with(&plugin_sensitive_fields(self))
+    }
+
+    /// Split the config into the public and the sensitive parts treating additionally the keys
+    /// from `extra` as sensitive.
+    ///
+    /// `extra` is typically the result of
+    /// [`sensitive_fields_from_schema`](crate::auth::sensitive_fields_from_schema) of the plugin
+    /// requirements. Keys are matched in the `auth` section and in `options`. See
+    /// [`CloudConfig::split_sensitive`] for details.
+    pub fn split_sensitive_with(
+        &self,
+        extra: &HashSet<String>,
+    ) -> Result<SplitConfig, ConfigError> {
+        let is_sensitive =
+            |key: &str| PERSISTED_SECRET_AUTH_FIELDS.contains(&key) || extra.contains(key);
+
+        let mut public = self.clone();
+        let mut secure = CloudConfig::default();
+
+        if let Some(auth) = &self.auth {
+            // Auth serializes its secrets in clear text
+            let serde_json::Value::Object(values) = serde_json::to_value(auth)? else {
+                unreachable!("Auth is always serialized as an object");
+            };
+            let mut public_auth = serde_json::Map::new();
+            let mut secure_auth = serde_json::Map::new();
+            for (key, value) in values.into_iter().filter(|(_, v)| !v.is_null()) {
+                if EPHEMERAL_AUTH_FIELDS.contains(&key.as_str()) {
+                    return Err(ConfigError::EphemeralField { field: key });
+                }
+                if is_sensitive(&key) {
+                    secure_auth.insert(key, value);
+                } else {
+                    public_auth.insert(key, value);
+                }
+            }
+            public.auth = Some(serde_json::from_value(serde_json::Value::Object(
+                public_auth,
+            ))?);
+            if !secure_auth.is_empty() {
+                secure.auth = Some(serde_json::from_value(serde_json::Value::Object(
+                    secure_auth,
+                ))?);
+            }
+        }
+
+        // `options` captures all unknown keys, i.e. also secrets set by custom plugins or
+        // arriving from the environment variables.
+        public.options.clear();
+        for (key, value) in &self.options {
+            if EPHEMERAL_AUTH_FIELDS.contains(&key.as_str()) {
+                return Err(ConfigError::EphemeralField { field: key.clone() });
+            }
+            if is_sensitive(key) {
+                secure.options.insert(key.clone(), value.clone());
+            } else {
+                public.options.insert(key.clone(), value.clone());
+            }
+        }
+
+        Ok(SplitConfig { public, secure })
+    }
+}
+
+/// [`Auth`] keys which are always sensitive and need to be persisted into the secure config.
+const PERSISTED_SECRET_AUTH_FIELDS: &[&str] =
+    &["password", "client_secret", "application_credential_secret"];
+
+/// [`Auth`] keys with short-lived secrets: configs holding them are refused for splitting.
+const EPHEMERAL_AUTH_FIELDS: &[&str] = &["token", "access_token", "passcode", "jwt"];
+
+/// Result of the [`CloudConfig::split_sensitive`].
+#[derive(Debug, Clone, Default)]
+pub struct SplitConfig {
+    /// Part of the configuration without the sensitive data (`clouds.yaml`).
+    pub public: CloudConfig,
+    /// Sensitive part of the configuration only (`secure.yaml`).
+    pub secure: CloudConfig,
 }
 
 const CONFIG_SUFFIXES: &[&str] = &[".yaml", ".yml", ".json"];
@@ -1203,5 +1323,216 @@ mod tests {
 
         assert_eq!(auth.auth_url, Some(String::from("http://fake.com")));
         assert_eq!(auth.username, Some(String::from("override_me")));
+    }
+
+    /// Fails to compile when a field is added to the [`Auth`]: decide whether the new field is
+    /// sensitive/ephemeral and update `PERSISTED_SECRET_AUTH_FIELDS`, `EPHEMERAL_AUTH_FIELDS` and
+    /// [`CloudConfig::get_sensitive_values`] accordingly.
+    #[test]
+    fn test_auth_fields_classified() {
+        let Auth {
+            auth_url: _,
+            endpoint: _,
+            token: _,
+            username: _,
+            user_id: _,
+            user_domain_name: _,
+            user_domain_id: _,
+            password: _,
+            passcode: _,
+            domain_id: _,
+            domain_name: _,
+            project_id: _,
+            project_name: _,
+            project_domain_id: _,
+            project_domain_name: _,
+            protocol: _,
+            identity_provider: _,
+            attribute_mapping_name: _,
+            access_token: _,
+            access_token_type: _,
+            access_token_endpoint: _,
+            client_id: _,
+            client_secret: _,
+            discovery_endpoint: _,
+            scope: _,
+            jwt: _,
+            application_credential_id: _,
+            application_credential_name: _,
+            application_credential_secret: _,
+            system_scope: _,
+        } = Auth::default();
+    }
+
+    fn secret(val: &str) -> Option<SecretString> {
+        Some(SecretString::from(val))
+    }
+
+    #[test]
+    fn test_split_sensitive() {
+        let cfg = CloudConfig {
+            auth: Some(Auth {
+                auth_url: Some("http://foo".into()),
+                username: Some("u".into()),
+                password: secret("pass"),
+                client_secret: secret("cs"),
+                application_credential_secret: secret("acs"),
+                ..Default::default()
+            }),
+            auth_type: Some("password".into()),
+            region_name: Some("r".into()),
+            ..Default::default()
+        };
+        let split = cfg.split_sensitive_with(&HashSet::new()).unwrap();
+
+        let public = split.public.auth.unwrap();
+        assert_eq!(public.auth_url.as_deref(), Some("http://foo"));
+        assert_eq!(public.username.as_deref(), Some("u"));
+        assert!(public.password.is_none());
+        assert!(public.client_secret.is_none());
+        assert!(public.application_credential_secret.is_none());
+        assert_eq!(split.public.auth_type.as_deref(), Some("password"));
+        assert_eq!(split.public.region_name.as_deref(), Some("r"));
+
+        let secure = split.secure.auth.unwrap();
+        assert_eq!(secure.password.as_ref().unwrap().expose_secret(), "pass");
+        assert_eq!(secure.client_secret.as_ref().unwrap().expose_secret(), "cs");
+        assert_eq!(
+            secure
+                .application_credential_secret
+                .as_ref()
+                .unwrap()
+                .expose_secret(),
+            "acs"
+        );
+        assert!(secure.auth_url.is_none());
+        assert!(secure.username.is_none());
+        assert!(split.secure.auth_type.is_none());
+        assert!(split.secure.region_name.is_none());
+    }
+
+    #[test]
+    fn test_split_sensitive_refuses_ephemeral() {
+        for field in EPHEMERAL_AUTH_FIELDS {
+            let mut auth = Auth::default();
+            match *field {
+                "token" => auth.token = secret("x"),
+                "access_token" => auth.access_token = secret("x"),
+                "passcode" => auth.passcode = secret("x"),
+                "jwt" => auth.jwt = secret("x"),
+                other => panic!("unhandled ephemeral field {other}"),
+            }
+            let cfg = CloudConfig {
+                auth: Some(auth),
+                ..Default::default()
+            };
+            assert!(matches!(
+                cfg.split_sensitive_with(&HashSet::new()),
+                Err(ConfigError::EphemeralField { field: f }) if f == *field
+            ));
+        }
+        let cfg = CloudConfig {
+            options: HashMap::from([("token".to_string(), ::config::Value::from("t"))]),
+            ..Default::default()
+        };
+        assert!(matches!(
+            cfg.split_sensitive_with(&HashSet::new()),
+            Err(ConfigError::EphemeralField { .. })
+        ));
+    }
+
+    #[test]
+    fn test_split_sensitive_extra_and_options() {
+        let cfg = CloudConfig {
+            auth: Some(Auth {
+                // plugin declares a normally public field as secret
+                scope: Some("s".into()),
+                username: Some("u".into()),
+                ..Default::default()
+            }),
+            options: HashMap::from([
+                ("custom_secret".to_string(), ::config::Value::from("x")),
+                ("custom_public".to_string(), ::config::Value::from("y")),
+                // arriving from the environment
+                ("password".to_string(), ::config::Value::from("p")),
+            ]),
+            ..Default::default()
+        };
+        let extra = HashSet::from(["custom_secret".to_string(), "scope".to_string()]);
+        let split = cfg.split_sensitive_with(&extra).unwrap();
+
+        assert_eq!(
+            split.public.options.keys().collect::<Vec<_>>(),
+            ["custom_public"]
+        );
+        let mut secure_keys: Vec<_> = split.secure.options.keys().collect();
+        secure_keys.sort();
+        assert_eq!(secure_keys, ["custom_secret", "password"]);
+
+        let public_auth = split.public.auth.unwrap();
+        assert!(public_auth.scope.is_none());
+        assert_eq!(public_auth.username.as_deref(), Some("u"));
+        assert_eq!(split.secure.auth.unwrap().scope.as_deref(), Some("s"));
+    }
+
+    #[test]
+    fn test_split_sensitive_no_secrets() {
+        let cfg = CloudConfig {
+            auth: Some(Auth {
+                username: Some("u".into()),
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let split = cfg.split_sensitive_with(&HashSet::new()).unwrap();
+        assert!(split.secure.auth.is_none());
+        assert!(split.secure.options.is_empty());
+        assert_eq!(split.public.auth.unwrap().username.as_deref(), Some("u"));
+        assert!(
+            CloudConfig::default()
+                .split_sensitive()
+                .unwrap()
+                .public
+                .auth
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn test_split_sensitive_merge_roundtrip() {
+        let cfg = CloudConfig {
+            auth: Some(Auth {
+                auth_url: Some("http://foo".into()),
+                username: Some("u".into()),
+                password: secret("pass"),
+                ..Default::default()
+            }),
+            auth_type: Some("password".into()),
+            ..Default::default()
+        };
+        let split = cfg.split_sensitive_with(&HashSet::new()).unwrap();
+
+        let mut merged = split.public;
+        merged.update(&split.secure);
+        let auth = merged.auth.unwrap();
+        assert_eq!(auth.auth_url.as_deref(), Some("http://foo"));
+        assert_eq!(auth.username.as_deref(), Some("u"));
+        assert_eq!(auth.password.unwrap().expose_secret(), "pass");
+        assert_eq!(merged.auth_type.as_deref(), Some("password"));
+    }
+
+    #[test]
+    fn test_get_sensitive_values_all_secrets() {
+        let cfg = CloudConfig {
+            auth: Some(Auth {
+                client_secret: secret("cs"),
+                jwt: secret("jwt"),
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let vals = cfg.get_sensitive_values();
+        assert!(vals.contains(&"cs"));
+        assert!(vals.contains(&"jwt"));
     }
 }

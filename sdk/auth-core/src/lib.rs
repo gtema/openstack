@@ -265,7 +265,7 @@
 //!     fn requirements(&self, _hints: Option<&Value>) -> Result<Value, AuthError> {
 //!         Ok(json!({
 //!             "type": "object",
-//!             "required": ["auth_code"],  
+//!             "required": ["auth_code"],
 //!             "properties": {
 //!                 "auth_code": {
 //!                     "type": "string",
@@ -556,6 +556,23 @@ pub struct AuthPluginRegistration {
 
 // Essential: This creates the global registry for this specific struct
 inventory::collect!(AuthPluginRegistration);
+
+/// Find the compiled-in authentication plugin supporting the `auth_type`.
+///
+/// Only plugins linked into the final binary are discoverable.
+pub fn find_auth_plugin(auth_type: &str) -> Option<&'static dyn OpenStackAuthType> {
+    // `contains` would require `auth_type` to be `'static`
+    #[allow(clippy::manual_contains)]
+    inventory::iter::<AuthPluginRegistration>
+        .into_iter()
+        .find(|x| {
+            x.method
+                .get_supported_auth_methods()
+                .iter()
+                .any(|m| *m == auth_type)
+        })
+        .map(|x| x.method)
+}
 
 /// The trait for multifactor-capable authentication methods.
 pub trait OpenStackMultifactorAuthMethod: Send + Sync {
