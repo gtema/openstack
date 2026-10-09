@@ -51,3 +51,49 @@
 //! ```
 //!
 pub use openstack_sdk_core::config::*;
+
+#[cfg(test)]
+mod tests {
+    use secrecy::{ExposeSecret, SecretString};
+
+    use super::*;
+
+    #[test]
+    fn test_split_sensitive_uses_plugin_schema() {
+        let cfg = CloudConfig {
+            auth: Some(Auth {
+                username: Some("u".into()),
+                password: Some(SecretString::from("pass")),
+                ..Default::default()
+            }),
+            auth_type: Some("password".into()),
+            ..Default::default()
+        };
+        let split = cfg.split_sensitive().unwrap();
+        let public = split.public.auth.unwrap();
+        assert_eq!(public.username.as_deref(), Some("u"));
+        assert!(public.password.is_none());
+        assert_eq!(
+            split.secure.auth.unwrap().password.unwrap().expose_secret(),
+            "pass"
+        );
+    }
+
+    #[test]
+    fn test_plugin_sensitive_fields() {
+        let cfg = CloudConfig {
+            auth_type: Some("v3totp".into()),
+            ..Default::default()
+        };
+        let fields = openstack_sdk_core::auth::plugin_sensitive_fields(&cfg);
+        assert!(fields.contains("passcode"));
+        assert!(!fields.contains("username"));
+
+        // plugin not linked in: nothing is reported
+        let cfg = CloudConfig {
+            auth_type: Some("unknown".into()),
+            ..Default::default()
+        };
+        assert!(openstack_sdk_core::auth::plugin_sensitive_fields(&cfg).is_empty());
+    }
+}

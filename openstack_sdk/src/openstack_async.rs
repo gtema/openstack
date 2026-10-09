@@ -38,9 +38,10 @@ use tokio_util::compat::FuturesAsyncReadCompatExt;
 use tracing::{Level, debug, enabled, error, event, info, instrument, trace, warn};
 
 use openstack_sdk_auth_core::{
-    Auth, AuthError, AuthPluginRegistration, AuthToken, OpenStackAuthType,
+    Auth, AuthError, AuthToken, OpenStackAuthType,
     authtoken::AuthTokenError,
     authtoken_scope::AuthTokenScope,
+    find_auth_plugin,
     types::{AuthResponse, Project, ServiceEndpoints},
 };
 
@@ -1144,17 +1145,7 @@ impl AsyncOpenStack {
         // Find authenticator supporting the auth_type: a compiled-in
         // plugin first, then (if enabled) a loaded wasm plugin as a
         // fallback.
-        // `contains` would require `auth_type` to be `'static`
-        #[allow(clippy::manual_contains)]
-        let compiled_authenticator = inventory::iter::<AuthPluginRegistration>
-            .into_iter()
-            .find(|x| {
-                x.method
-                    .get_supported_auth_methods()
-                    .iter()
-                    .any(|m| *m == auth_type)
-            })
-            .map(|x| x.method);
+        let compiled_authenticator = find_auth_plugin(auth_type);
         #[cfg(feature = "wasm_plugins")]
         let wasm_authenticator: Option<Arc<dyn OpenStackAuthType>> =
             if compiled_authenticator.is_none() {
@@ -1805,6 +1796,7 @@ mod tests {
 
     use super::*;
     use crate::config::Auth as ConfigAuth;
+    use openstack_sdk_auth_core::AuthPluginRegistration;
 
     /// Create a minimal AsyncOpenStack for testing 401 retry logic.
     /// Bypasses live identity server and discovery.
