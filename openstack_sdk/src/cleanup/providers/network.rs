@@ -38,7 +38,8 @@
 //! `network:router_interface_distributed`, and
 //! `network:ha_router_replicated_interface` become `ROUTER_INTERFACE`
 //! resources; `network:dhcp` is skipped entirely (never a node, never
-//! blocking — DHCP-agent-managed ports are not deletable this way); every
+//! blocking — DHCP-agent-managed ports are not deletable this way, and
+//! neither are OVN metadata `network:distributed` ports); every
 //! other port (unowned, or owned by another service such as `compute:nova`)
 //! becomes a plain `PORT` resource that blocks and cascades with its
 //! network.
@@ -407,10 +408,13 @@ impl CleanupProvider for NetworkCleanupProvider {
                     }
                 }
                 nodes.push(to_planned(ROUTER_INTERFACE, iface));
-            } else if owner == Some("network:dhcp") {
-                // DHCP-managed ports are not treated as real ports: never
-                // blocking, never deleted directly (Neutron/the DHCP agent
-                // manages their lifecycle itself).
+            } else if matches!(owner, Some("network:dhcp" | "network:distributed")) {
+                // Backend-managed ports are not treated as real ports:
+                // never blocking, never deleted directly. Neutron/the DHCP
+                // agent manages `network:dhcp` ports; the OVN metadata
+                // agent manages `network:distributed` ones
+                // (`device_id` `ovnmeta-<network>`), and a user delete is
+                // rejected with 403 `delete_port is disallowed by policy`.
                 continue;
             } else {
                 // Any other port (unowned, or owned by another service
@@ -1149,6 +1153,9 @@ mod tests {
             when.method(httpmock::Method::GET).path("/v2.0/ports");
             then.status(200).json_body(serde_json::json!({"ports": [
                 {"id": "port-dhcp", "network_id": "net-1", "device_owner": "network:dhcp"},
+                {"id": "port-ovnmeta", "network_id": "net-1",
+                 "device_owner": "network:distributed",
+                 "device_id": "ovnmeta-net-1"},
                 {"id": "port-ha-router", "network_id": "net-1",
                  "device_owner": "network:ha_router_replicated_interface",
                  "device_id": "router-1",
@@ -1186,6 +1193,10 @@ mod tests {
         assert!(
             plan.nodes.iter().find(|n| n.id == "port-dhcp").is_none(),
             "dhcp port must not be a node"
+        );
+        assert!(
+            plan.nodes.iter().all(|n| n.id != "port-ovnmeta"),
+            "ovn metadata port must not be a node"
         );
 
         let ha_router_node = plan

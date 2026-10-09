@@ -307,6 +307,18 @@ impl<'a> ProjectCleanup<'a> {
                         result.deleted_ids.push(resource.id.clone());
                     }
                     Err(e) => {
+                        // Log the full resource body: the failure message
+                        // alone rarely says why (e.g. which `device_owner`
+                        // a policy-denied port had), and the resource is
+                        // usually gone by the time anyone investigates.
+                        tracing::warn!(
+                            kind = ?resource.kind,
+                            id = %resource.id,
+                            reason = ?resource.reason,
+                            raw = %resource.raw,
+                            error = %e,
+                            "cleanup delete failed"
+                        );
                         result.errors.push((resource.id.clone(), e.to_string()));
                         for &parent_idx in &blocks_parents_of[idx] {
                             blocked[parent_idx] = true;
