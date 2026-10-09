@@ -193,12 +193,20 @@ async fn cleanup_engine_removes_related_resources_across_all_services()
         .discover(std::collections::HashMap::new(), Some(eval))
         .await
         .expect("discover failed");
+    let planned_nodes = plan.nodes.clone();
     let result = cleanup.apply(plan).await.expect("apply failed");
 
+    // Resources are gone by the time CI output is read, so dump the full
+    // body of every resource that failed to delete.
+    let failed_resources: Vec<_> = planned_nodes
+        .iter()
+        .filter(|n| result.errors.iter().any(|(id, _)| id == &n.id))
+        .collect();
     assert!(
         result.errors.is_empty(),
-        "unexpected cleanup errors: {:?}",
-        result.errors
+        "unexpected cleanup errors: {:?}\nfailed resources: {:#?}",
+        result.errors,
+        failed_resources
     );
 
     for id in [
