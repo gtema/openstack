@@ -73,11 +73,13 @@ ignore = [
     { id = "RUSTSEC-2021-0127", reason = "serde_cbor as optional transitive dep: https://github.com/mozilla/authenticator-rs/issues/327"},
     { id = "RUSTSEC-2023-0071", reason = "rsa crate is only used on the localhost"},
     { id = "RUSTSEC-2026-0222", reason = "wasmtime as dep of extism"},
-    { id = "RUSTSEC-2026-0247", reason = "dep of wasmtime"},
-    { id = "RUSTSEC-2026-0250", reason = "dep of wasmtime"},
-    { id = "RUSTSEC-2026-0251", reason = "dep of wasmtime"},
-    { id = "RUSTSEC-2026-0255", reason = "dep of wasmtime"},
-    { id = "RUSTSEC-2026-0269", reason = "dep of wasmtime"}
+    { id = "RUSTSEC-2026-0247", reason = "dep of extism"},
+    { id = "RUSTSEC-2026-0250", reason = "dep of extism"},
+    { id = "RUSTSEC-2026-0251", reason = "dep of extism"},
+    { id = "RUSTSEC-2026-0255", reason = "dep of extism"},
+    { id = "RUSTSEC-2026-0269", reason = "dep of extism"},
+    { id = "RUSTSEC-2026-0316", reason = "dep of extism"},
+    { id = "RUSTSEC-2026-0327", reason = "dep of extism"}
 ]
 # If this is true, then cargo deny will use the git executable to fetch advisory database.
 # If this is false, then it uses a built-in git library.
