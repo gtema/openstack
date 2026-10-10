@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.9](https://github.com/gtema/openstack/compare/openstack_sdk_core-v0.22.8...openstack_sdk_core-v0.22.9) - 2026-10-10
+
+### Added
+
+- *(sdk)* Split CloudConfig to public and secure ([#2021](https://github.com/gtema/openstack/pull/2021))
+- Extend 'osc auth' commands ([#1990](https://github.com/gtema/openstack/pull/1990))
+
+### Fixed
+
+- *(auth)* Unblock external auth plugins ([#2015](https://github.com/gtema/openstack/pull/2015))
+
+### Other
+
+- *(sdk)* Drop deprecated calls and dead code ([#2016](https://github.com/gtema/openstack/pull/2016))
+
 ## [0.22.8](https://github.com/gtema/openstack/compare/openstack_sdk_core-v0.22.7...openstack_sdk_core-v0.22.8) - 2026-09-07
 
 ### Added
