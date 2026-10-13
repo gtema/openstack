@@ -24,6 +24,7 @@ eyre.workspace = true
 indexmap.workspace = true
 openstack-cli-core.workspace = true
 openstack_sdk_core.workspace = true
+secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 structable = { workspace = true }
@@ -35,6 +36,7 @@ yamlpath.workspace = true
 zeroize = { workspace = true, features = ["derive"] }
 
 [dev-dependencies]
+config.workspace = true
 tempfile.workspace = true
 
 [lints]

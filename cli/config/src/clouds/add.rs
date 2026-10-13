@@ -22,13 +22,15 @@ use std::path::{Path, PathBuf};
 
 use clap::Args;
 use eyre::{OptionExt, WrapErr, eyre};
-use serde::Serialize;
+use secrecy::SecretString;
 use tracing::info;
-use zeroize::{ZeroizeOnDrop, Zeroizing};
+use zeroize::Zeroizing;
 
 use openstack_cli_core::cli::CliArgs;
 use openstack_cli_core::error::OpenStackCliError;
-use openstack_sdk_core::config::{CloudConfig, ConfigFile, find_clouds_file, find_secure_file};
+use openstack_sdk_core::config::{
+    Auth, CloudConfig, ConfigFile, find_clouds_file, find_secure_file,
+};
 
 use crate::yaml_edit;
 
@@ -36,10 +38,10 @@ use crate::yaml_edit;
 ///
 /// Reads the JSON printed by `osc identity user application-credential
 /// create -o json` from stdin and merges a ready-to-use cloud entry into
-/// clouds.yaml (or, with --split, the credential into secure.yaml). The
-/// entry inherits connection settings (auth_url, region, TLS options) from
-/// the cloud selected with `--os-cloud`, which is required here; no
-/// authentication is performed.
+/// clouds.yaml (or, with --split, the credential secret into secure.yaml).
+/// The entry inherits the settings of the cloud selected with `--os-cloud`,
+/// which is required here (auth_url, region, TLS and any other option); of
+/// its `auth` block only `auth_url` is kept. No authentication is performed.
 ///
 /// An existing target file is edited in place: the new entry is spliced in
 /// and everything else (comments, `&anchor`/`<<: *anchor` merge keys,
@@ -57,8 +59,8 @@ pub struct AddCommand {
     #[arg(long, value_name = "PATH")]
     file: Option<PathBuf>,
 
-    /// Write the credential id and secret into a separate secure.yaml
-    /// instead of clouds.yaml.
+    /// Write the credential secret into a separate secure.yaml instead of
+    /// clouds.yaml; the credential id stays in clouds.yaml.
     #[arg(action = clap::ArgAction::SetTrue, long)]
     split: bool,
 
@@ -222,71 +224,49 @@ fn default_config_dir() -> PathBuf {
         .join("openstack")
 }
 
-/// One entry under the `clouds:` key of a clouds.yaml/secure.yaml file.
-#[derive(Debug, Default, Serialize)]
-struct CloudEntry {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    auth_type: Option<String>,
-    auth: AuthBlock,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    region_name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    interface: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    cacert: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    verify: Option<bool>,
-}
-
-/// The `auth` block of a cloud entry. The block holds the credential;
-/// [`ZeroizeOnDrop`] wipes it from memory on drop.
-#[derive(Debug, Default, Serialize, ZeroizeOnDrop)]
-struct AuthBlock {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    auth_url: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    application_credential_id: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    application_credential_secret: Option<String>,
-}
-
-/// Build the clouds.yaml entry and, in split mode, the secure.yaml entry
-/// carrying the credential id and secret.
+/// Build the cloud entry and, in split mode, the secure.yaml entry.
+///
+/// The entry is the source cloud with its credential swapped for the
+/// application credential: every non-credential setting (region, TLS
+/// options, `*_api_version` and other extra keys) is inherited, while the
+/// old `auth` block is dropped except for `auth_url` - an application
+/// credential is already scoped, so a project/domain would be rejected.
+///
+/// The source is always run through [`CloudConfig::split_sensitive`], also
+/// without `--split`, to refuse a source carrying a short-lived secret
+/// (e.g. `token`) that would otherwise be persisted.
 fn build_entries(
-    config: &CloudConfig,
+    source: &CloudConfig,
     credential_id: &str,
     secret: &str,
     split: bool,
-) -> Result<(CloudEntry, Option<CloudEntry>), eyre::Report> {
-    let auth_url = config
+) -> Result<(CloudConfig, Option<CloudConfig>), eyre::Report> {
+    let auth_url = source
         .auth
         .as_ref()
         .and_then(|auth| auth.auth_url.clone())
         .ok_or_eyre("cannot determine the auth_url of the current cloud")?;
 
-    let clouds_entry = CloudEntry {
-        auth_type: Some("v3applicationcredential".into()),
-        auth: AuthBlock {
-            auth_url: Some(auth_url),
-            application_credential_id: (!split).then(|| credential_id.into()),
-            application_credential_secret: (!split).then(|| secret.into()),
-        },
-        region_name: config.region_name.clone(),
-        // `interface` is serde-defaulted to "public" on config load; only a
-        // non-default value is worth exporting.
-        interface: config.interface.clone().filter(|i| i != "public"),
-        cacert: config.cacert.clone(),
-        verify: config.verify,
-    };
-    let secure_entry = split.then(|| CloudEntry {
-        auth: AuthBlock {
-            auth_url: None,
-            application_credential_id: Some(credential_id.into()),
-            application_credential_secret: Some(secret.into()),
-        },
+    let mut entry = source.clone();
+    entry.auth = Some(Auth {
+        auth_url: Some(auth_url),
+        application_credential_id: Some(credential_id.into()),
+        application_credential_secret: Some(SecretString::from(secret)),
         ..Default::default()
     });
-    Ok((clouds_entry, secure_entry))
+    entry.auth_type = Some("v3applicationcredential".into());
+    entry.auth_methods = None;
+    entry.name = None;
+    // `interface` is serde-defaulted to "public" on config load, so every
+    // loaded config has it; only a non-default value is worth exporting.
+    entry.interface = entry.interface.filter(|i| i != "public");
+
+    let split_config = entry.split_sensitive()?;
+    Ok(if split {
+        (split_config.public, Some(split_config.secure))
+    } else {
+        (entry, None)
+    })
 }
 
 /// Resolve the cloud whose connection settings the new entry inherits.
@@ -336,7 +316,7 @@ fn resolve_source_cloud<C: CliArgs>(parsed_args: &C) -> Result<CloudConfig, eyre
 fn render_target(
     existing: Option<&str>,
     cloud_name: &str,
-    entry: &CloudEntry,
+    entry: &CloudConfig,
     overwrite_entry: bool,
 ) -> Result<String, eyre::Report> {
     // A file with no YAML node at all - absent, empty, or nothing but
@@ -435,6 +415,8 @@ fn write_yaml_file(path: &Path, content: &str, contains_secret: bool) -> Result<
 
 #[cfg(test)]
 mod tests {
+    use secrecy::ExposeSecret;
+
     use super::*;
 
     fn config_with(auth_url: Option<&str>) -> CloudConfig {
@@ -499,6 +481,10 @@ mod tests {
         );
     }
 
+    fn auth(entry: &CloudConfig) -> &Auth {
+        entry.auth.as_ref().expect("entry has an auth block")
+    }
+
     #[test]
     fn single_file_entry_carries_secret() {
         let (clouds, secure) = build_entries(
@@ -510,22 +496,25 @@ mod tests {
         .unwrap();
         assert_eq!(clouds.auth_type.as_deref(), Some("v3applicationcredential"));
         assert_eq!(
-            clouds.auth.auth_url.as_deref(),
+            auth(&clouds).auth_url.as_deref(),
             Some("https://keystone:5000")
         );
         assert_eq!(
-            clouds.auth.application_credential_id.as_deref(),
+            auth(&clouds).application_credential_id.as_deref(),
             Some("cid")
         );
         assert_eq!(
-            clouds.auth.application_credential_secret.as_deref(),
+            auth(&clouds)
+                .application_credential_secret
+                .as_ref()
+                .map(ExposeSecret::expose_secret),
             Some("sec")
         );
         assert!(secure.is_none());
     }
 
     #[test]
-    fn split_moves_credentials_to_secure_entry() {
+    fn split_moves_only_the_secret_to_secure_entry() {
         let (clouds, secure) = build_entries(
             &config_with(Some("https://keystone:5000")),
             "cid",
@@ -533,40 +522,70 @@ mod tests {
             true,
         )
         .unwrap();
-        assert!(clouds.auth.application_credential_secret.is_none());
-        assert!(clouds.auth.application_credential_id.is_none());
-        let secure = secure.expect("secure entry in split mode");
+        assert!(auth(&clouds).application_credential_secret.is_none());
         assert_eq!(
-            secure.auth.application_credential_secret.as_deref(),
-            Some("sec")
-        );
-        assert_eq!(
-            secure.auth.application_credential_id.as_deref(),
+            auth(&clouds).application_credential_id.as_deref(),
             Some("cid")
         );
-        assert!(secure.auth.auth_url.is_none());
+        let secure = secure.expect("secure entry in split mode");
+        assert_eq!(
+            auth(&secure)
+                .application_credential_secret
+                .as_ref()
+                .map(ExposeSecret::expose_secret),
+            Some("sec")
+        );
+        assert!(auth(&secure).application_credential_id.is_none());
+        assert!(auth(&secure).auth_url.is_none());
         assert!(secure.auth_type.is_none());
+
+        let yaml = yaml_serde::to_string(&secure).unwrap();
+        assert_eq!(yaml, "auth:\n  application_credential_secret: sec\n");
     }
 
     #[test]
-    fn inherits_allowlist_but_skips_default_interface() {
+    fn inherits_settings_but_not_the_old_credential() {
         let mut config = config_with(Some("https://keystone:5000"));
+        config.auth.as_mut().unwrap().username = Some("admin".into());
+        config.auth.as_mut().unwrap().password = Some(SecretString::from("hunter2"));
+        config.auth.as_mut().unwrap().project_name = Some("demo".into());
+        config.auth_type = Some("v3password".into());
+        config.name = Some("src".into());
         config.region_name = Some("RegionOne".into());
         config.cacert = Some("/etc/ssl/custom.pem".into());
         config.verify = Some(false);
         config.interface = Some("public".into());
+        config
+            .options
+            .insert("identity_api_version".into(), config::Value::from("3"));
         let (clouds, _) = build_entries(&config, "cid", "sec", false).unwrap();
         assert_eq!(clouds.region_name.as_deref(), Some("RegionOne"));
         assert_eq!(clouds.cacert.as_deref(), Some("/etc/ssl/custom.pem"));
         assert_eq!(clouds.verify, Some(false));
+        assert!(clouds.options.contains_key("identity_api_version"));
+        assert!(clouds.name.is_none());
         assert!(
             clouds.interface.is_none(),
             "default interface must be omitted"
         );
+        let yaml = yaml_serde::to_string(&clouds).unwrap();
+        for stale in ["admin", "hunter2", "demo", "v3password"] {
+            assert!(!yaml.contains(stale), "stale `{stale}` leaked:\n{yaml}");
+        }
 
         config.interface = Some("internal".into());
         let (clouds, _) = build_entries(&config, "cid", "sec", false).unwrap();
         assert_eq!(clouds.interface.as_deref(), Some("internal"));
+    }
+
+    #[test]
+    fn source_with_ephemeral_secret_is_refused() {
+        let mut config = config_with(Some("https://keystone:5000"));
+        config
+            .options
+            .insert("token".into(), config::Value::from("tok"));
+        assert!(build_entries(&config, "cid", "sec", false).is_err());
+        assert!(build_entries(&config, "cid", "sec", true).is_err());
     }
 
     #[test]
