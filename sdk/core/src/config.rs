@@ -259,84 +259,114 @@ pub struct ConfigFile {
 #[derive(Clone, Default, Deserialize, Serialize)]
 pub struct Auth {
     /// Authentication URL.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub auth_url: Option<String>,
     /// Authentication endpoint type (public/internal/admin).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub endpoint: Option<String>,
     /// Auth Token.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "serialize_secret_string")]
     #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub token: Option<SecretString>,
 
     /// Auth User.Name.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub username: Option<String>,
     /// Auth User.ID.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub user_id: Option<String>,
     /// Auth User.Domain.Name.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub user_domain_name: Option<String>,
     /// Auth User.Domain.ID.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub user_domain_id: Option<String>,
     /// Auth User password.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "serialize_secret_string")]
     #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub password: Option<SecretString>,
 
     /// Auth (totp) MFA passcode.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "serialize_secret_string")]
     #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub passcode: Option<SecretString>,
 
     /// `Domain` scope Domain.ID.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub domain_id: Option<String>,
     /// `Domain` scope Domain.Name.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub domain_name: Option<String>,
     /// `Project` scope Project.ID.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub project_id: Option<String>,
     /// `Project` scope Project.Name.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub project_name: Option<String>,
     /// `Project` scope Project.Domain.ID.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub project_domain_id: Option<String>,
     /// `Project` scope Project.Domain.Name.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub project_domain_name: Option<String>,
 
     /// `Federation` protocol.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub protocol: Option<String>,
     /// `Federation` identity provider.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub identity_provider: Option<String>,
     /// `Federation` attribute mapping name to be applied.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub attribute_mapping_name: Option<String>,
     /// OIDC access token.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "serialize_secret_string")]
     #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub access_token: Option<SecretString>,
     /// OIDC access token type (when not access_token).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub access_token_type: Option<String>,
     /// OIDC/Discovery endpoint URL.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub access_token_endpoint: Option<String>,
     /// OIDC client ID.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub client_id: Option<String>,
     /// OIDC client secret.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "serialize_secret_string")]
     #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub client_secret: Option<SecretString>,
     /// OIDC discovery document endpoint URL.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub discovery_endpoint: Option<String>,
     /// OIDC scope.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub scope: Option<String>,
     /// JWT token.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "serialize_secret_string")]
     #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub jwt: Option<SecretString>,
 
     /// `Application Credential` ID.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub application_credential_id: Option<String>,
     /// `Application Credential` Name.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub application_credential_name: Option<String>,
     /// `Application Credential` Secret.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "serialize_secret_string")]
     #[cfg_attr(feature = "json-schema", schemars(with = "Option<String>"))]
     pub application_credential_secret: Option<SecretString>,
 
     /// `System scope`.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub system_scope: Option<String>,
 }
 
@@ -389,32 +419,45 @@ impl fmt::Debug for Auth {
 /// Configuration object representing a single connection to the concrete cloud.
 ///
 /// Connection to the cloud uses this object.
+///
+/// Serializing produces a `clouds.yaml` (or `secure.yaml`) cloud entry: unset fields are omitted,
+/// and secrets in [`Auth`] are written in clear text. [`name`](CloudConfig::name) is not
+/// serialized, since in a config file the name is the key of the entry.
 #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
-#[derive(Deserialize, Default, Clone)]
+#[derive(Deserialize, Serialize, Default, Clone)]
 pub struct CloudConfig {
     /// Authorization data.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub auth: Option<Auth>,
     /// Authorization type. While it can be enum it would make hard to extend SDK with custom implementations.
     /// Known values: `password`, `v3password`, `multifactor`, `application_credential`, `token`, `v2password`, `jwt`, `websso`, `applicationcredential`, `tokenv3`, `federation`.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub auth_type: Option<String>,
     /// Authorization methods (in the case when auth_type = `multifactor`).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub auth_methods: Option<Vec<String>>,
 
     /// Vendor Profile (by name from clouds-public.yaml or TBD: URL).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub profile: Option<String>,
     /// Interface name to be used for endpoints selection.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default = "default_public")]
     pub interface: Option<String>,
     /// Region name.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub region_name: Option<String>,
 
     /// Alternative connection name which is may be used to provide some meaningful name when
     /// [CloudConfig] is constructed directly without `clouds.yaml` file.
+    #[serde(skip_serializing)]
     pub name: Option<String>,
 
     /// Custom CA Certificate.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cacert: Option<String>,
     /// Verify SSL Certificates.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub verify: Option<bool>,
 
     /// Override for authentication caching.
@@ -422,13 +465,57 @@ pub struct CloudConfig {
     /// If `Some(true)`, enables; if `Some(false)`, disables.
     /// If `None`, falls back to the global `cache.auth` setting in the
     /// `clouds.yaml` ConfigFile (default: `true`).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub auth_cache: Option<bool>,
 
     /// Catch-all for additional configuration fields not explicitly typed.
     /// Any extra YAML keys at this level are captured here.
-    #[serde(flatten)]
+    #[serde(flatten, serialize_with = "serialize_options")]
     #[cfg_attr(feature = "json-schema", schemars(skip))]
     pub options: HashMap<String, config::Value>,
+}
+
+/// Serialize the [`CloudConfig::options`] with sorted keys, since [`config::Value`] does not
+/// implement [`Serialize`].
+fn serialize_options<S>(
+    options: &HashMap<String, config::Value>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let mut entries: Vec<_> = options.iter().collect();
+    entries.sort_by_key(|(key, _)| *key);
+    serializer.collect_map(entries.into_iter().map(|(k, v)| (k, ConfigValue(v))))
+}
+
+/// [`Serialize`] adapter for the [`config::Value`].
+struct ConfigValue<'a>(&'a config::Value);
+
+impl Serialize for ConfigValue<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match &self.0.kind {
+            config::ValueKind::Nil => serializer.serialize_none(),
+            config::ValueKind::Boolean(val) => serializer.serialize_bool(*val),
+            config::ValueKind::I64(val) => serializer.serialize_i64(*val),
+            config::ValueKind::I128(val) => serializer.serialize_i128(*val),
+            config::ValueKind::U64(val) => serializer.serialize_u64(*val),
+            config::ValueKind::U128(val) => serializer.serialize_u128(*val),
+            config::ValueKind::Float(val) => serializer.serialize_f64(*val),
+            config::ValueKind::String(val) => serializer.serialize_str(val),
+            config::ValueKind::Table(table) => {
+                let mut entries: Vec<_> = table.iter().collect();
+                entries.sort_by_key(|(key, _)| *key);
+                serializer.collect_map(entries.into_iter().map(|(k, v)| (k, ConfigValue(v))))
+            }
+            config::ValueKind::Array(items) => {
+                serializer.collect_seq(items.iter().map(ConfigValue))
+            }
+        }
+    }
 }
 
 fn default_public() -> Option<String> {
@@ -1534,5 +1621,119 @@ mod tests {
         let vals = cfg.get_sensitive_values();
         assert!(vals.contains(&"cs"));
         assert!(vals.contains(&"jwt"));
+    }
+
+    #[test]
+    fn test_serialize_omits_unset_fields() {
+        let cfg = CloudConfig {
+            auth: Some(Auth {
+                auth_url: Some("http://foo".into()),
+                application_credential_secret: secret("acs"),
+                ..Default::default()
+            }),
+            auth_type: Some("v3applicationcredential".into()),
+            name: Some("runtime_name".into()),
+            verify: Some(false),
+            options: HashMap::from([
+                ("z_opt".to_string(), ::config::Value::from(1)),
+                ("a_opt".to_string(), ::config::Value::from("x")),
+            ]),
+            ..Default::default()
+        };
+        assert_eq!(
+            serde_json::to_string(&cfg).unwrap(),
+            r#"{"auth":{"auth_url":"http://foo","application_credential_secret":"acs"},"auth_type":"v3applicationcredential","verify":false,"a_opt":"x","z_opt":1}"#
+        );
+        assert_eq!(
+            serde_json::to_string(&CloudConfig::default()).unwrap(),
+            "{}"
+        );
+    }
+
+    #[test]
+    fn test_serialize_nested_options() {
+        let cfg = CloudConfig {
+            options: HashMap::from([
+                (
+                    "table".to_string(),
+                    ::config::Value::from(::config::Map::from([
+                        ("b".to_string(), ::config::Value::from(true)),
+                        ("a".to_string(), ::config::Value::from(1.5)),
+                    ])),
+                ),
+                (
+                    "list".to_string(),
+                    ::config::Value::from(vec![
+                        ::config::Value::from("x"),
+                        ::config::Value::from(2),
+                    ]),
+                ),
+            ]),
+            ..Default::default()
+        };
+        assert_eq!(
+            serde_json::to_string(&cfg).unwrap(),
+            r#"{"list":["x",2],"table":{"a":1.5,"b":true}}"#
+        );
+    }
+
+    /// The split config written into the clouds and secure files loads back into the original.
+    #[test]
+    fn test_split_sensitive_serialize_roundtrip() {
+        let cfg = CloudConfig {
+            auth: Some(Auth {
+                auth_url: Some("http://foo".into()),
+                username: Some("u".into()),
+                password: secret("pass-1"),
+                ..Default::default()
+            }),
+            auth_type: Some("password".into()),
+            region_name: Some("r".into()),
+            options: HashMap::from([
+                ("custom_secret".to_string(), ::config::Value::from("cs-1")),
+                ("custom_port".to_string(), ::config::Value::from(8080)),
+            ]),
+            ..Default::default()
+        };
+        let extra = HashSet::from(["custom_secret".to_string()]);
+        let split = cfg.split_sensitive_with(&extra).unwrap();
+
+        // JSON is valid YAML: no YAML serializer is needed to write the files
+        let mut cloud_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+        let mut secure_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+        let public = serde_json::to_string(&split.public).unwrap();
+        let secure = serde_json::to_string(&split.secure).unwrap();
+        assert!(!public.contains("pass-1") && !public.contains("cs-1"));
+        write!(cloud_file, r#"{{"clouds": {{"c": {public}}}}}"#).unwrap();
+        write!(secure_file, r#"{{"clouds": {{"c": {secure}}}}}"#).unwrap();
+
+        let loaded = ConfigFile::builder()
+            .add_source(cloud_file.path())
+            .unwrap()
+            .add_source(secure_file.path())
+            .unwrap()
+            .build()
+            .unwrap()
+            .get_cloud_config("c")
+            .unwrap()
+            .expect("cloud exists");
+
+        let auth = loaded.auth.unwrap();
+        assert_eq!(auth.auth_url.as_deref(), Some("http://foo"));
+        assert_eq!(auth.username.as_deref(), Some("u"));
+        assert_eq!(auth.password.unwrap().expose_secret(), "pass-1");
+        assert_eq!(loaded.auth_type.as_deref(), Some("password"));
+        assert_eq!(loaded.region_name.as_deref(), Some("r"));
+        assert_eq!(
+            loaded.options["custom_secret"]
+                .clone()
+                .into_string()
+                .unwrap(),
+            "cs-1"
+        );
+        assert_eq!(
+            loaded.options["custom_port"].clone().into_int().unwrap(),
+            8080
+        );
     }
 }
