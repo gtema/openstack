@@ -3700,11 +3700,13 @@ name = "openstack-cli-config"
 version = "0.13.8"
 dependencies = [
  "clap",
+ "config",
  "dirs",
  "eyre",
  "indexmap",
  "openstack-cli-core",
  "openstack_sdk_core",
+ "secrecy",
  "serde",
  "serde_json",
  "structable",

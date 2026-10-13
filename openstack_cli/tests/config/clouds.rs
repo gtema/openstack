@@ -106,8 +106,11 @@ fn add_split_writes_secure_sibling() -> Result<(), Box<dyn std::error::Error>> {
 
     let clouds = std::fs::read_to_string(&target)?;
     assert!(!clouds.contains("sec"), "secret must not be in clouds.yaml");
+    assert!(clouds.contains("application_credential_id: cid"));
+    assert!(!clouds.contains("interface"), "default interface: {clouds}");
     let secure = std::fs::read_to_string(dir.path().join("out/secure.yaml"))?;
     assert!(secure.contains("application_credential_secret: sec"));
+    assert!(!secure.contains("cid"), "only the secret is sensitive");
 
     Ok(())
 }
