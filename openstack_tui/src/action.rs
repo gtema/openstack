@@ -291,18 +291,18 @@ mod tests {
     use super::*;
     use crate::mode::NETWORK_SECURITY_GROUP_RULE;
 
-    /// serde_yaml 0.9 serializes/deserializes non-unit enum variants using a
+    /// yaml_serde 0.9 serializes/deserializes non-unit enum variants using a
     /// YAML tag (`!VariantName`) by default, not the `{VariantName: ...}`
     /// mapping form that `serde_json`/`toml` use for externally tagged
     /// enums. Parsing that mapping form (which is what our config files and
-    /// these tests use) requires opting into `serde_yaml`'s
+    /// these tests use) requires opting into `yaml_serde`'s
     /// `singleton_map_recursive` adapter, which walks the whole value tree
     /// applying the "single-key map" convention to every nested enum too
     /// (`Action`'s content contains further enums like `ResourceOp`). See
-    /// https://docs.rs/serde_yaml/latest/serde_yaml/with/singleton_map_recursive/index.html.
-    fn action_from_yaml_str(yaml: &str) -> Result<Action, serde_yaml::Error> {
-        let deserializer = serde_yaml::Deserializer::from_str(yaml);
-        serde_yaml::with::singleton_map_recursive::deserialize(deserializer)
+    /// https://docs.rs/yaml_serde/latest/yaml_serde/with/singleton_map_recursive/index.html.
+    fn action_from_yaml_str(yaml: &str) -> Result<Action, yaml_serde::Error> {
+        let deserializer = yaml_serde::Deserializer::from_str(yaml);
+        yaml_serde::with::singleton_map_recursive::deserialize(deserializer)
     }
 
     #[test]
@@ -341,7 +341,7 @@ mod tests {
 
     #[test]
     fn unit_variant_action_deserializes_from_bare_string() {
-        let action: Action = serde_yaml::from_str("Quit").unwrap();
+        let action: Action = yaml_serde::from_str("Quit").unwrap();
         assert_eq!(action, Action::Quit);
     }
 }

@@ -370,7 +370,7 @@ mod tests {
 
     #[test]
     fn deserialize_edit_result_builds_create_request() {
-        let edited = serde_yaml::from_str::<serde_json::Value>(
+        let edited = yaml_serde::from_str::<serde_json::Value>(
             r#"
 security_group:
   name: web-servers
@@ -407,7 +407,7 @@ security_group:
         .expect("editor_template should return a template");
         let original_action = Action::PerformApiRequest(original_request);
 
-        let edited = serde_yaml::from_str::<serde_json::Value>(&template).unwrap();
+        let edited = yaml_serde::from_str::<serde_json::Value>(&template).unwrap();
         let request =
             NetworkSecurityGroupsBehaviour::deserialize_edit_result(&edited, &original_action)
                 .expect("valid YAML should deserialize");
