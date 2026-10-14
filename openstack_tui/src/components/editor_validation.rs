@@ -14,7 +14,7 @@
 
 //! Post-YAML-parse validation for the create/edit-via-external-editor flow.
 //!
-//! Plain `serde_yaml`/`serde_json` parsing (already looped-on-failure in
+//! Plain `yaml_serde`/`serde_json` parsing (already looped-on-failure in
 //! `app.rs`) only catches syntax errors. This module adds the next stage:
 //! checking the parsed buffer against a resource's `BODY_SCHEMA` (when it
 //! has one, via `ResourceBehaviour::editor_schema`) -- required fields,

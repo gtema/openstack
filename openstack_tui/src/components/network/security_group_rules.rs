@@ -367,7 +367,7 @@ mod tests {
 
     #[test]
     fn deserialize_edit_result_builds_create_request() {
-        let edited = serde_yaml::from_str::<serde_json::Value>(
+        let edited = yaml_serde::from_str::<serde_json::Value>(
             r#"
 security_group_rule:
   security_group_id: sg-1

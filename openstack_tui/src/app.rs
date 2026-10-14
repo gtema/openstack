@@ -635,7 +635,7 @@ impl App {
                             break None;
                         }
 
-                        match serde_yaml::from_str::<serde_json::Value>(&content) {
+                        match yaml_serde::from_str::<serde_json::Value>(&content) {
                             Ok(value) => {
                                 // Blank optional fields parse as explicit YAML `null`, but
                                 // BODY_SCHEMA property types are rarely declared nullable

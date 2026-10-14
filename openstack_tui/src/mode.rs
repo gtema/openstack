@@ -358,28 +358,28 @@ mod tests {
 
     #[test]
     fn deserializes_unit_variant_from_bare_string() {
-        let mode: Mode = serde_yaml::from_str("Home").unwrap();
+        let mode: Mode = yaml_serde::from_str("Home").unwrap();
         assert_eq!(mode, Mode::Home);
     }
 
     #[test]
     fn deserializes_resource_variant_from_parenthesised_string() {
-        let mode: Mode = serde_yaml::from_str("Resource(network.security_group)").unwrap();
+        let mode: Mode = yaml_serde::from_str("Resource(network.security_group)").unwrap();
         assert_eq!(mode, Mode::Resource(NETWORK_SECURITY_GROUP));
 
-        let mode: Mode = serde_yaml::from_str("Resource(network.security_group_rule)").unwrap();
+        let mode: Mode = yaml_serde::from_str("Resource(network.security_group_rule)").unwrap();
         assert_eq!(mode, Mode::Resource(NETWORK_SECURITY_GROUP_RULE));
     }
 
     #[test]
     fn rejects_unknown_resource_view_key() {
-        let result: Result<Mode, _> = serde_yaml::from_str("Resource(bogus.key)");
+        let result: Result<Mode, _> = yaml_serde::from_str("Resource(bogus.key)");
         assert!(result.is_err());
     }
 
     #[test]
     fn rejects_unknown_mode_name() {
-        let result: Result<Mode, _> = serde_yaml::from_str("TotallyNotAMode");
+        let result: Result<Mode, _> = yaml_serde::from_str("TotallyNotAMode");
         assert!(result.is_err());
     }
 
@@ -390,7 +390,7 @@ mod tests {
             if *name == "Resource" {
                 continue;
             }
-            let result: Result<Mode, _> = serde_yaml::from_str(name);
+            let result: Result<Mode, _> = yaml_serde::from_str(name);
             assert!(
                 result.is_ok(),
                 "variant name {name:?} failed to deserialize"
@@ -429,7 +429,7 @@ mod tests {
     #[test]
     fn config_yaml_mode_keybindings_match_all_view_keys() {
         let config_yaml = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/.config/config.yaml"));
-        let doc: serde_yaml::Value = serde_yaml::from_str(config_yaml).unwrap();
+        let doc: yaml_serde::Value = yaml_serde::from_str(config_yaml).unwrap();
         let keybindings = doc
             .get("mode_keybindings")
             .and_then(|v| v.as_mapping())
