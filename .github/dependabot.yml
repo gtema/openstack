@@ -21,3 +21,10 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
+    groups:
+      wasmtime:
+        patterns:
+          - "wasmtime*"
+      rustls:
+        patterns:
+          - "rustls*"
