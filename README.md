@@ -140,16 +140,26 @@ with a dedicated installer in every release and can be retrieved with the
 following command:
 
 ```console
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/latest/download/openstack_cli-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://gtema.github.io/openstack/install.sh | sh
 ```
 
 TUI can be installed similarly:
 
 ```console
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/latest/download/openstack_tui-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://gtema.github.io/openstack/install.sh | INSTALLER_TOOL=openstack_tui sh
 ```
 
-### Build locally
+### Build and install using `cargo`
+
+When Rust toolchain is installed it is possible to use it to install the project.
+
+```console
+cargo install openstack_cli
+cargo install openstack_tui
+```
+
+### Build locally directly from sources
+
 Alternatively it is possible to compile project from sources. Since the project
 is a pure `Rust` it requires having a Rust compile suite.
 
