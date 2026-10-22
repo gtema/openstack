@@ -49,8 +49,9 @@ use crate::yaml_edit;
 #[derive(Debug, Args)]
 #[command(about = "Add a cloud entry from an application credential")]
 pub struct AddCommand {
-    /// Name of the cloud entry to add.
-    #[arg(default_value = "openstack", long)]
+    /// Name of the cloud entry to add. Letters, digits, `.`, `_` and `-`
+    /// only.
+    #[arg(default_value = "openstack", long, value_parser = parse_cloud_name)]
     cloud_name: String,
 
     /// Target clouds.yaml path. Defaults to `--os-client-config-file`, else
@@ -69,6 +70,11 @@ pub struct AddCommand {
     /// The credential and the settings this command manages are replaced;
     /// any other key you have set on the entry by hand (e.g. `interface`,
     /// `cacert`) is kept, as are all comments in the file.
+    ///
+    /// An entry of the same name in secure.yaml counts too, as it is
+    /// merged over clouds.yaml on load. Without --split its old credential
+    /// is removed from there, so the one written to clouds.yaml takes
+    /// effect.
     #[arg(action = clap::ArgAction::SetTrue, long)]
     overwrite: bool,
 }
@@ -88,22 +94,18 @@ impl AddCommand {
             self.file.as_deref(),
             connection.os_client_config_file.as_deref(),
         );
-        let secure_path = self.split.then(|| {
-            resolve_secure_path(
-                self.file.as_deref(),
-                connection.os_client_secure_file.as_deref(),
-                &clouds_path,
-            )
-        });
+        // Resolved also without --split: a credential already in
+        // secure.yaml would override the one written to clouds.yaml.
+        let secure_path = resolve_secure_path(
+            self.file.as_deref(),
+            connection.os_client_secure_file.as_deref(),
+            &clouds_path,
+        );
 
         // Merge is the default: an existing target is read and the entry
         // added to it.
         let clouds_existing = read_existing(&clouds_path)?;
-        let secure_existing = secure_path
-            .as_deref()
-            .map(read_existing)
-            .transpose()?
-            .flatten();
+        let secure_existing = read_existing(&secure_path)?;
 
         let (clouds_entry, secure_entry) =
             build_entries(&cloud_config, &credential_id, &secret, self.split)?;
@@ -111,36 +113,72 @@ impl AddCommand {
         // Render everything before writing anything: a same-name collision
         // or malformed target aborts with no file touched. The rendered
         // contents carry the credential; wipe them on drop.
-        let clouds_content = Zeroizing::new(render_target(
-            clouds_existing.as_deref(),
+        let clouds_content = Zeroizing::new(
+            render_target(
+                clouds_existing.as_deref(),
+                &self.cloud_name,
+                &clouds_entry,
+                self.overwrite,
+                CLEARED_KEYS,
+            )
+            .wrap_err_with(|| format!("cannot update {}", clouds_path.display()))?,
+        );
+        let secure_content = render_secure(
+            secure_existing.as_deref(),
             &self.cloud_name,
-            &clouds_entry,
+            secure_entry.as_ref(),
             self.overwrite,
-        )?);
-        let secure_content = secure_entry
-            .as_ref()
-            .map(|entry| {
-                render_target(
-                    secure_existing.as_deref(),
-                    &self.cloud_name,
-                    entry,
-                    self.overwrite,
-                )
-                .map(Zeroizing::new)
-            })
+        )
+        .wrap_err_with(|| format!("cannot update {}", secure_path.display()))?
+        .map(Zeroizing::new);
+
+        // Stage both files before moving either into place, so a failure
+        // writing one does not leave the pair half-updated.
+        let clouds_file = StagedFile::new(&clouds_path, &clouds_content, !self.split)?;
+        let secure_file = secure_content
+            .as_deref()
+            .map(|content| StagedFile::new(&secure_path, content, true))
             .transpose()?;
 
-        write_yaml_file(&clouds_path, &clouds_content, !self.split)?;
+        clouds_file.commit()?;
         println!(
             "Added cloud `{}` to {}",
             self.cloud_name,
             clouds_path.display()
         );
-        if let (Some(path), Some(content)) = (&secure_path, &secure_content) {
-            write_yaml_file(path, content, true)?;
-            println!("Added cloud `{}` to {}", self.cloud_name, path.display());
+        if let Some(file) = secure_file {
+            file.commit()?;
+            if self.split {
+                println!(
+                    "Added cloud `{}` to {}",
+                    self.cloud_name,
+                    secure_path.display()
+                );
+            } else {
+                println!(
+                    "Removed the old credential of cloud `{}` from {}",
+                    self.cloud_name,
+                    secure_path.display()
+                );
+            }
         }
         Ok(())
+    }
+}
+
+/// Accept a cloud name only from a conservative character set, so it can
+/// be written as a plain YAML key without quoting or escaping.
+fn parse_cloud_name(name: &str) -> Result<String, String> {
+    if !name.is_empty()
+        && name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-'))
+    {
+        Ok(name.to_string())
+    } else {
+        Err(String::from(
+            "the cloud name must be non-empty and contain only ASCII letters, digits, `.`, `_` and `-`",
+        ))
     }
 }
 
@@ -255,6 +293,7 @@ fn build_entries(
         ..Default::default()
     });
     entry.auth_type = Some("v3applicationcredential".into());
+    // Keep in sync with `CLEARED_KEYS`.
     entry.auth_methods = None;
     entry.name = None;
     // `interface` is serde-defaulted to "public" on config load, so every
@@ -268,6 +307,20 @@ fn build_entries(
         (entry, None)
     })
 }
+
+/// Top-level keys [`build_entries`] clears. An unset field is not
+/// serialized, so merging the entry over an existing one would keep the old
+/// value; [`render_target`] removes them explicitly.
+const CLEARED_KEYS: &[&str] = &["auth_methods"];
+
+/// Keys selecting a cloud's credential. secure.yaml is merged over
+/// clouds.yaml on load, so any of them left in a secure.yaml entry would
+/// override the new one.
+const CREDENTIAL_KEYS: &[&str] = &["auth_type", "auth_methods", "auth"];
+
+/// The [`CREDENTIAL_KEYS`] a split secure entry does not set: it carries
+/// only `auth`, so a stale `auth_type` or `auth_methods` must go.
+const SECURE_CLEARED_KEYS: &[&str] = &["auth_type", "auth_methods"];
 
 /// Resolve the cloud whose connection settings the new entry inherits.
 ///
@@ -313,11 +366,15 @@ fn resolve_source_cloud<C: CliArgs>(parsed_args: &C) -> Result<CloudConfig, eyre
 /// The edit is a splice via [`yaml_edit`], so comments, `&anchor`/`<<:
 /// *anchor` merge keys and formatting elsewhere in the file survive
 /// byte-for-byte; only the targeted entry is rewritten.
+///
+/// On overwrite the `cleared` keys of the old entry are removed first;
+/// see [`CLEARED_KEYS`].
 fn render_target(
     existing: Option<&str>,
     cloud_name: &str,
     entry: &CloudConfig,
     overwrite_entry: bool,
+    cleared: &[&str],
 ) -> Result<String, eyre::Report> {
     // A file with no YAML node at all - absent, empty, or nothing but
     // comments - has nothing to splice into. Build the block ourselves and
@@ -351,7 +408,12 @@ fn render_target(
         // comment attached to the next cloud entry. See
         // `merge_mapping_entry`'s doc comment for the trade-off - keys of
         // the old entry that this one does not set are kept, which for a
-        // credential rotation is what the user wants.
+        // credential rotation is what the user wants. The keys this command
+        // clears are the exception: dropped, not kept.
+        for field in cleared {
+            doc.remove_entry_field("clouds", cloud_name, field)
+                .wrap_err_with(|| format!("could not update cloud `{cloud_name}`"))?;
+        }
         doc.merge_mapping_entry("clouds", cloud_name, entry)
             .wrap_err_with(|| format!("could not update cloud `{cloud_name}`"))?;
     } else {
@@ -360,6 +422,51 @@ fn render_target(
     }
 
     Ok(doc.source().to_string())
+}
+
+/// Produce the final YAML for secure.yaml, or `None` when it stays as is.
+///
+/// With `--split` (`entry` is set) the secure entry is rendered like any
+/// target. Without it, a same-name entry there is still a collision: it
+/// would override the credential written to clouds.yaml, so on overwrite
+/// its [`CREDENTIAL_KEYS`] are removed. An entry left with no keys is
+/// removed as a whole; either way `yamlpatch` drops a comment directly
+/// following a removed block (see the `yaml_edit` tests).
+fn render_secure(
+    existing: Option<&str>,
+    cloud_name: &str,
+    entry: Option<&CloudConfig>,
+    overwrite_entry: bool,
+) -> Result<Option<String>, eyre::Report> {
+    if let Some(entry) = entry {
+        return render_target(
+            existing,
+            cloud_name,
+            entry,
+            overwrite_entry,
+            SECURE_CLEARED_KEYS,
+        )
+        .map(Some);
+    }
+
+    let Some(current) = existing.filter(|c| has_yaml_content(c)) else {
+        return Ok(None);
+    };
+    let mut doc =
+        yaml_edit::YamlDocument::parse(current).wrap_err("the target file is not valid YAML")?;
+    if !doc.contains_key("clouds", cloud_name) {
+        return Ok(None);
+    }
+    if !overwrite_entry {
+        return Err(eyre!(
+            "cloud `{cloud_name}` already exists in the secure file; pass --overwrite to replace it"
+        ));
+    }
+    for field in CREDENTIAL_KEYS {
+        doc.remove_entry_field("clouds", cloud_name, field)
+            .wrap_err_with(|| format!("could not update cloud `{cloud_name}`"))?;
+    }
+    Ok(Some(doc.source().to_string()))
 }
 
 /// Whether `text` holds any YAML node, as opposed to being empty or only
@@ -381,36 +488,76 @@ fn read_existing(path: &Path) -> Result<Option<String>, eyre::Report> {
     })?))
 }
 
-/// Write a YAML file, creating parent directories; files carrying the
-/// credential secret get 0600.
-fn write_yaml_file(path: &Path, content: &str, contains_secret: bool) -> Result<(), eyre::Report> {
-    if let Some(parent) = path
-        .parent()
-        .filter(|parent| !parent.as_os_str().is_empty())
-    {
+/// A target file's new content, written to a temporary sibling and not yet
+/// moved into place.
+///
+/// The temporary file is created 0600 on unix, so a secret never sits in a
+/// file readable by others, and the target is only replaced by a rename
+/// once the content is fully on disk: a failed write leaves the original
+/// untouched. Dropping it without [`commit`](Self::commit) removes the
+/// temporary file.
+struct StagedFile {
+    temp: tempfile::NamedTempFile,
+    target: PathBuf,
+}
+
+impl StagedFile {
+    /// Write `content` next to `path`, creating parent directories. Files
+    /// carrying the credential secret end up 0600; any other file keeps
+    /// the permissions of the one it replaces.
+    fn new(path: &Path, content: &str, contains_secret: bool) -> Result<Self, eyre::Report> {
+        // Rename onto the file a symlink points at, not over the link itself.
+        let target = match std::fs::canonicalize(path) {
+            Ok(target) => target,
+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => path.to_path_buf(),
+            Err(err) => {
+                return Err(err).wrap_err_with(|| format!("cannot resolve {}", path.display()));
+            }
+        };
+        let parent = target
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or(Path::new("."));
         std::fs::create_dir_all(parent)
             .wrap_err_with(|| format!("cannot create {}", parent.display()))?;
+
+        let existing_permissions = std::fs::metadata(&target).ok().map(|m| m.permissions());
+        let file_name = target
+            .file_name()
+            .map(|name| name.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        let prefix = format!(".{file_name}.");
+        let mut builder = tempfile::Builder::new();
+        builder.prefix(&prefix).suffix(".tmp");
+        // A new file without the secret gets the usual umask-derived mode.
+        #[cfg(unix)]
+        if !contains_secret && existing_permissions.is_none() {
+            use std::os::unix::fs::PermissionsExt;
+            builder.permissions(std::fs::Permissions::from_mode(0o666));
+        }
+        let mut temp = builder
+            .tempfile_in(parent)
+            .wrap_err_with(|| format!("cannot create a temporary file in {}", parent.display()))?;
+        if !contains_secret && let Some(permissions) = existing_permissions {
+            temp.as_file()
+                .set_permissions(permissions)
+                .wrap_err_with(|| format!("cannot set permissions on {}", temp.path().display()))?;
+        }
+        temp.write_all(content.as_bytes())
+            .and_then(|()| temp.as_file().sync_all())
+            .wrap_err_with(|| format!("cannot write {}", temp.path().display()))?;
+        Ok(Self { temp, target })
     }
-    let mut options = std::fs::OpenOptions::new();
-    options.write(true).create(true).truncate(true);
-    #[cfg(unix)]
-    if contains_secret {
-        use std::os::unix::fs::OpenOptionsExt;
-        options.mode(0o600);
+
+    /// Move the new content into place.
+    fn commit(self) -> Result<(), eyre::Report> {
+        let target = self.target;
+        self.temp
+            .persist(&target)
+            .map_err(|err| err.error)
+            .wrap_err_with(|| format!("cannot replace {}", target.display()))?;
+        Ok(())
     }
-    let mut file = options
-        .open(path)
-        .wrap_err_with(|| format!("cannot open {} for writing", path.display()))?;
-    file.write_all(content.as_bytes())
-        .wrap_err_with(|| format!("cannot write {}", path.display()))?;
-    // The mode above only applies on creation; harden pre-existing files too.
-    #[cfg(unix)]
-    if contains_secret {
-        use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o600))
-            .wrap_err_with(|| format!("cannot set permissions on {}", path.display()))?;
-    }
-    Ok(())
 }
 
 #[cfg(test)]
@@ -603,7 +750,7 @@ mod tests {
             false,
         )
         .unwrap();
-        let out = render_target(None, "mycloud", &entry, false).unwrap();
+        let out = render_target(None, "mycloud", &entry, false, CLEARED_KEYS).unwrap();
         let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
         assert_eq!(
             doc["clouds"]["mycloud"]["auth"]["application_credential_id"],
@@ -625,7 +772,7 @@ mod tests {
             false,
         )
         .unwrap();
-        let out = render_target(Some(existing), "mycloud", &entry, false).unwrap();
+        let out = render_target(Some(existing), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
         let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
         assert_eq!(
             doc["clouds"]["other"]["auth"]["auth_url"],
@@ -644,8 +791,8 @@ mod tests {
             false,
         )
         .unwrap();
-        assert!(render_target(Some(existing), "mycloud", &entry, false).is_err());
-        let out = render_target(Some(existing), "mycloud", &entry, true).unwrap();
+        assert!(render_target(Some(existing), "mycloud", &entry, false, CLEARED_KEYS).is_err());
+        let out = render_target(Some(existing), "mycloud", &entry, true, CLEARED_KEYS).unwrap();
         let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
         assert_eq!(
             doc["clouds"]["mycloud"]["auth"]["application_credential_id"],
@@ -662,8 +809,26 @@ mod tests {
             false,
         )
         .unwrap();
-        assert!(render_target(Some(": not yaml : ["), "mycloud", &entry, false).is_err());
-        assert!(render_target(Some("- a\n- list\n"), "mycloud", &entry, false).is_err());
+        assert!(
+            render_target(
+                Some(": not yaml : ["),
+                "mycloud",
+                &entry,
+                false,
+                CLEARED_KEYS
+            )
+            .is_err()
+        );
+        assert!(
+            render_target(
+                Some("- a\n- list\n"),
+                "mycloud",
+                &entry,
+                false,
+                CLEARED_KEYS
+            )
+            .is_err()
+        );
     }
 
     #[test]
@@ -679,18 +844,277 @@ mod tests {
         );
     }
 
+    #[cfg(unix)]
+    fn mode(path: &Path) -> u32 {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::metadata(path).unwrap().permissions().mode() & 0o777
+    }
+
+    #[cfg(unix)]
+    fn set_mode(path: &Path, mode: u32) {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(mode)).unwrap();
+    }
+
+    /// The files in `dir`, to check no temporary file is left behind.
+    fn dir_entries(dir: &Path) -> Vec<String> {
+        let mut names: Vec<_> = std::fs::read_dir(dir)
+            .unwrap()
+            .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
+            .collect();
+        names.sort();
+        names
+    }
+
     #[test]
     fn write_creates_parents_and_sets_mode() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("nested/dir/clouds.yaml");
-        write_yaml_file(&path, "clouds: {}\n", true).unwrap();
+        StagedFile::new(&path, "clouds: {}\n", true)
+            .unwrap()
+            .commit()
+            .unwrap();
         assert_eq!(std::fs::read_to_string(&path).unwrap(), "clouds: {}\n");
+        assert_eq!(dir_entries(path.parent().unwrap()), ["clouds.yaml"]);
         #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            let mode = std::fs::metadata(&path).unwrap().permissions().mode();
-            assert_eq!(mode & 0o777, 0o600);
+        assert_eq!(mode(&path), 0o600);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn write_hardens_existing_secret_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("clouds.yaml");
+        std::fs::write(&path, "old\n").unwrap();
+        set_mode(&path, 0o644);
+        // Staging alone must not expose the secret: the original is
+        // untouched and the staged copy is already private.
+        let staged = StagedFile::new(&path, "secret\n", true).unwrap();
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "old\n");
+        assert_eq!(mode(staged.temp.path()), 0o600);
+        staged.commit().unwrap();
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "secret\n");
+        assert_eq!(mode(&path), 0o600);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn write_keeps_mode_of_existing_public_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("clouds.yaml");
+        std::fs::write(&path, "old\n").unwrap();
+        set_mode(&path, 0o640);
+        StagedFile::new(&path, "new\n", false)
+            .unwrap()
+            .commit()
+            .unwrap();
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "new\n");
+        assert_eq!(mode(&path), 0o640);
+    }
+
+    #[test]
+    fn uncommitted_write_leaves_target_untouched() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("clouds.yaml");
+        std::fs::write(&path, "old\n").unwrap();
+        drop(StagedFile::new(&path, "new\n", true).unwrap());
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "old\n");
+        assert_eq!(dir_entries(dir.path()), ["clouds.yaml"]);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn write_through_symlink_keeps_the_link() {
+        let dir = tempfile::tempdir().unwrap();
+        let real = dir.path().join("real.yaml");
+        let link = dir.path().join("clouds.yaml");
+        std::fs::write(&real, "old\n").unwrap();
+        std::os::unix::fs::symlink(&real, &link).unwrap();
+        StagedFile::new(&link, "new\n", true)
+            .unwrap()
+            .commit()
+            .unwrap();
+        assert!(std::fs::symlink_metadata(&link).unwrap().is_symlink());
+        assert_eq!(std::fs::read_to_string(&real).unwrap(), "new\n");
+    }
+
+    #[test]
+    fn cloud_name_is_restricted() {
+        for ok in ["openstack", "my-cloud_2.prod"] {
+            assert_eq!(parse_cloud_name(ok).as_deref(), Ok(ok));
         }
+        for bad in [
+            "",
+            "a: b",
+            "#x",
+            "a\nb",
+            "my cloud",
+            "\"q\"",
+            "*ref",
+            "\u{e9}t\u{e9}",
+        ] {
+            assert!(parse_cloud_name(bad).is_err(), "accepted {bad:?}");
+        }
+    }
+
+    #[test]
+    fn overwrite_drops_auth_methods() {
+        let existing = "\
+clouds:
+  mycloud:
+    auth_type: v3multifactor
+    auth_methods:
+      - v3password
+      - v3totp
+    auth:
+      auth_url: https://old:5000
+  # the other one
+  other:
+    auth_url: https://other:5000
+";
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        let out = render_target(Some(existing), "mycloud", &entry, true, CLEARED_KEYS).unwrap();
+        assert!(!out.contains("auth_methods"), "stale auth_methods:\n{out}");
+        assert!(!out.contains("v3totp"), "stale auth_methods:\n{out}");
+        assert!(out.contains("# the other one"), "{out}");
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+        assert_eq!(
+            doc["clouds"]["mycloud"]["auth_type"],
+            yaml_serde::Value::String("v3applicationcredential".into())
+        );
+    }
+
+    #[test]
+    fn secure_only_entry_is_a_collision_without_split() {
+        let secure = "clouds:\n  mycloud:\n    auth:\n      password: old\n";
+        let err = render_secure(Some(secure), "mycloud", None, false).unwrap_err();
+        assert!(err.to_string().contains("--overwrite"), "{err}");
+        // Other names, and a missing or empty secure file, leave it alone.
+        assert!(
+            render_secure(Some(secure), "other", None, false)
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            render_secure(None, "mycloud", None, false)
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            render_secure(Some("# empty\n"), "mycloud", None, true)
+                .unwrap()
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn overwrite_without_split_removes_secure_credential() {
+        let secure = "\
+# secrets
+clouds:
+  mycloud:
+    region_name: RegionSecure
+    auth_type: v3password
+    auth:
+      username: me
+      password: old
+  other:
+    auth:
+      password: keep
+";
+        let out = render_secure(Some(secure), "mycloud", None, true)
+            .unwrap()
+            .expect("secure.yaml is updated");
+        assert!(out.starts_with("# secrets\n"), "{out}");
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+        let mycloud = &doc["clouds"]["mycloud"];
+        assert!(mycloud.get("auth").is_none(), "{out}");
+        assert!(mycloud.get("auth_type").is_none(), "{out}");
+        // Keys the user set by hand are kept, as in clouds.yaml.
+        assert_eq!(
+            mycloud["region_name"],
+            yaml_serde::Value::String("RegionSecure".into())
+        );
+        assert_eq!(
+            doc["clouds"]["other"]["auth"]["password"],
+            yaml_serde::Value::String("keep".into())
+        );
+    }
+
+    #[test]
+    fn overwrite_with_split_drops_stale_secure_auth_type() {
+        let secure = "\
+clouds:
+  mycloud:
+    auth_type: v3password
+    auth:
+      password: old
+";
+        let (_, secure_entry) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            true,
+        )
+        .unwrap();
+        let out = render_secure(Some(secure), "mycloud", secure_entry.as_ref(), true)
+            .unwrap()
+            .expect("secure.yaml is updated");
+        assert!(!out.contains("auth_type"), "{out}");
+        assert!(!out.contains("password"), "{out}");
+        assert!(out.contains("application_credential_secret: sec"), "{out}");
+    }
+
+    /// The case from review: the old credential lives only in secure.yaml.
+    /// After an overwrite without --split the loaded cloud must use the
+    /// new one.
+    #[test]
+    fn overwrite_without_split_new_credential_wins_on_load() {
+        let dir = tempfile::tempdir().unwrap();
+        let clouds_path = dir.path().join("clouds.yaml");
+        let secure_path = dir.path().join("secure.yaml");
+        let secure = "\
+clouds:
+  mycloud:
+    auth_type: v3applicationcredential
+    auth:
+      application_credential_id: old-id
+      application_credential_secret: old-secret
+";
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        let clouds = render_target(None, "mycloud", &entry, true, CLEARED_KEYS).unwrap();
+        let secure = render_secure(Some(secure), "mycloud", None, true)
+            .unwrap()
+            .expect("secure.yaml is updated");
+        std::fs::write(&clouds_path, clouds).unwrap();
+        std::fs::write(&secure_path, secure).unwrap();
+
+        let cfg = ConfigFile::new_with_user_specified_configs(
+            Some(clouds_path.to_str().unwrap()),
+            Some(secure_path.to_str().unwrap()),
+        )
+        .unwrap();
+        let cloud = cfg.get_cloud_config("mycloud").unwrap().unwrap();
+        let auth = cloud.auth.unwrap();
+        assert_eq!(auth.application_credential_id.as_deref(), Some("cid"));
+        assert_eq!(
+            auth.application_credential_secret
+                .as_ref()
+                .map(secrecy::ExposeSecret::expose_secret),
+            Some("sec")
+        );
     }
 
     /// A realistic hand-maintained clouds.yaml: header comment, an
@@ -720,7 +1144,14 @@ clouds:
             false,
         )
         .unwrap();
-        let out = render_target(Some(handwritten_clouds_yaml()), "mycloud", &entry, false).unwrap();
+        let out = render_target(
+            Some(handwritten_clouds_yaml()),
+            "mycloud",
+            &entry,
+            false,
+            CLEARED_KEYS,
+        )
+        .unwrap();
 
         for expected in [
             "# Managed by hand - please keep the comments!",
@@ -770,7 +1201,7 @@ clouds:
             false,
         )
         .unwrap();
-        let out = render_target(Some(existing), "mycloud", &entry, true).unwrap();
+        let out = render_target(Some(existing), "mycloud", &entry, true, CLEARED_KEYS).unwrap();
 
         // Comments on both the edited entry and its neighbour survive.
         assert!(out.contains("# my cloud"), "{out}");
@@ -803,7 +1234,14 @@ clouds:
             false,
         )
         .unwrap();
-        let out = render_target(Some("# my clouds\nclouds:\n"), "mycloud", &entry, false).unwrap();
+        let out = render_target(
+            Some("# my clouds\nclouds:\n"),
+            "mycloud",
+            &entry,
+            false,
+            CLEARED_KEYS,
+        )
+        .unwrap();
 
         assert!(out.contains("# my clouds"), "{out}");
         let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
@@ -821,7 +1259,14 @@ clouds:
             false,
         )
         .unwrap();
-        let out = render_target(Some("# just a header\n"), "mycloud", &entry, false).unwrap();
+        let out = render_target(
+            Some("# just a header\n"),
+            "mycloud",
+            &entry,
+            false,
+            CLEARED_KEYS,
+        )
+        .unwrap();
 
         assert!(out.starts_with("# just a header"), "{out}");
         let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
@@ -839,7 +1284,7 @@ clouds:
             false,
         )
         .unwrap();
-        let out = render_target(Some("\n  \n"), "mycloud", &entry, false).unwrap();
+        let out = render_target(Some("\n  \n"), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
 
         assert!(out.starts_with("clouds:\n  mycloud:\n"), "{out}");
         assert!(!out.contains('{'), "must not be flow style:\n{out}");

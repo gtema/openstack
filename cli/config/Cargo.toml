@@ -28,6 +28,7 @@ secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 structable = { workspace = true }
+tempfile.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 yaml_serde.workspace = true
@@ -37,7 +38,6 @@ zeroize = { workspace = true, features = ["derive"] }
 
 [dev-dependencies]
 config.workspace = true
-tempfile.workspace = true
 
 [lints]
 workspace = true

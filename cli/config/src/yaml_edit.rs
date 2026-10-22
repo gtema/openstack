@@ -195,16 +195,24 @@ impl YamlDocument {
             path.push(field.clone());
 
             match (new_value, self.value_at(&path)) {
-                // A nested mapping replacing a nested mapping: drop the keys
-                // the new value does not carry, then recurse so only leaves
-                // are ever rewritten.
+                // A nested mapping replacing a nested mapping: recurse so
+                // only leaves are ever rewritten, then drop the keys the new
+                // value does not carry. Removing them last matters: emptying
+                // a mapping makes `yamlpatch` remove its ancestors as well.
                 (yaml_serde::Value::Mapping(new_fields), Some(yaml_serde::Value::Mapping(old))) => {
-                    for stale in old.keys().filter_map(|k| match k {
-                        yaml_serde::Value::String(k) if !new_fields.contains_key(k.as_str()) => {
-                            Some(k.clone())
-                        }
-                        _ => None,
-                    }) {
+                    let stale_keys: Vec<String> = old
+                        .keys()
+                        .filter_map(|k| match k {
+                            yaml_serde::Value::String(k)
+                                if !new_fields.contains_key(k.as_str()) =>
+                            {
+                                Some(k.clone())
+                            }
+                            _ => None,
+                        })
+                        .collect();
+                    self.merge_fields(&path, new_fields)?;
+                    for stale in stale_keys {
                         let mut stale_path = path.clone();
                         stale_path.push(stale);
                         self.patch(Patch {
@@ -212,7 +220,6 @@ impl YamlDocument {
                             operation: Op::Remove,
                         })?;
                     }
-                    self.merge_fields(&path, new_fields)?;
                 }
                 // An existing leaf: replace it in place.
                 (new_value, Some(_)) => self.patch(Patch {
@@ -273,6 +280,26 @@ impl YamlDocument {
         };
         self.0 = apply_yaml_patches(&self.0, std::slice::from_ref(&patch))?;
         Ok(())
+    }
+
+    /// Remove `field` from the mapping entry at `parent.key`; a field that
+    /// is not there is not an error.
+    pub fn remove_entry_field(
+        &mut self,
+        parent: &str,
+        key: &str,
+        field: &str,
+    ) -> Result<(), YamlEditError> {
+        if self
+            .value_at(&[parent.to_string(), key.to_string(), field.to_string()])
+            .is_none()
+        {
+            return Ok(());
+        }
+        self.patch(Patch {
+            route: route![parent, key, field],
+            operation: Op::Remove,
+        })
     }
 
     /// The document's current YAML text.
@@ -549,6 +576,32 @@ mod tests {
         assert!(!out.contains("username"), "stale username: {out}");
         assert!(!out.contains("password"), "stale password: {out}");
         assert!(out.contains("application_credential_id"), "{out}");
+        Ok(())
+    }
+
+    #[test]
+    fn merge_replaces_nested_mapping_with_no_shared_key() -> Result<(), YamlEditError> {
+        // A secure.yaml entry rotated from a password to an application
+        // credential: every old key is stale, which must not empty the
+        // mapping mid-merge.
+        #[derive(Serialize)]
+        struct Nested {
+            auth: IndexMap<String, String>,
+        }
+        let mut auth = IndexMap::new();
+        auth.insert(
+            "application_credential_secret".to_string(),
+            "new".to_string(),
+        );
+
+        let existing = "clouds:\n  mycloud:\n    auth:\n      password: old\n  # other\n  other:\n    auth_url: https://x:5000\n";
+        let mut doc = YamlDocument::parse(existing)?;
+        doc.merge_mapping_entry("clouds", "mycloud", &Nested { auth })?;
+
+        let out = doc.source();
+        assert!(!out.contains("password"), "stale password: {out}");
+        assert!(out.contains("application_credential_secret: new"), "{out}");
+        assert!(out.contains("# other"), "{out}");
         Ok(())
     }
 
