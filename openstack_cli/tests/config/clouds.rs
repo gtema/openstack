@@ -145,6 +145,48 @@ fn add_same_name_needs_overwrite() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+/// An entry living only in secure.yaml collides too, and an overwrite
+/// without --split must not leave its old credential there to win on load.
+#[test]
+fn add_overwrites_entry_only_in_secure_file() -> Result<(), Box<dyn std::error::Error>> {
+    let dir = tempfile::tempdir()?;
+    let source = dir.path().join("src-clouds.yaml");
+    std::fs::write(&source, SOURCE_CLOUDS)?;
+    let target = dir.path().join("clouds.yaml");
+    let secure = dir.path().join("secure.yaml");
+    std::fs::write(
+        &secure,
+        "clouds:\n  openstack:\n    auth:\n      application_credential_secret: old\n",
+    )?;
+
+    let output = add_cmd(&source)?
+        .arg("--file")
+        .arg(&target)
+        .write_stdin(CREATE_RESPONSE)
+        .output()?;
+    assert!(!output.status.success());
+    assert!(
+        String::from_utf8_lossy(&output.stderr).contains("--overwrite"),
+        "collision error must point at --overwrite"
+    );
+    assert!(!target.exists(), "nothing is written on a collision");
+
+    add_cmd(&source)?
+        .arg("--file")
+        .arg(&target)
+        .arg("--overwrite")
+        .write_stdin(CREATE_RESPONSE)
+        .assert()
+        .success();
+
+    let clouds = std::fs::read_to_string(&target)?;
+    assert!(clouds.contains("application_credential_secret: sec"));
+    let secure = std::fs::read_to_string(&secure)?;
+    assert!(!secure.contains("old"), "stale secret left: {secure}");
+
+    Ok(())
+}
+
 /// A hand-maintained clouds.yaml must come back out with everything the
 /// user wrote still in it. This is the whole reason the command splices
 /// rather than re-serializing.
