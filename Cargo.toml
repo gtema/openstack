@@ -45,7 +45,7 @@ default-members = [
 license = "Apache-2.0"
 edition = "2024"
 authors = ["Artem Goncharov (gtema)"]
-rust-version = "1.91"  # MSRV
+rust-version = "1.96"  # MSRV
 homepage = "https://github.com/gtema/openstack"
 repository = "https://github.com/gtema/openstack"
 
@@ -62,7 +62,7 @@ config = { version = "^0.15", default-features = false }
 derive_builder = { version = "^0.20" }
 dialoguer = "^0.12"
 dirs = "^7.0"
-extism = { version = "^1.30" }
+extism = { version = "^1.40" }
 eyre = { version = "^0.6" }
 form_urlencoded = "^1.2"
 futures = "^0.3"
