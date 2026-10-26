@@ -25,6 +25,7 @@ updates:
       wasmtime:
         patterns:
           - "wasmtime*"
+          - "wiggle"
       rustls:
         patterns:
           - "rustls*"
