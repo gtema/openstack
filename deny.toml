@@ -72,6 +72,20 @@ feature-depth = 1
 ignore = [
     { id = "RUSTSEC-2021-0127", reason = "serde_cbor as optional transitive dep: https://github.com/mozilla/authenticator-rs/issues/327"},
     { id = "RUSTSEC-2023-0071", reason = "rsa crate is only used on the localhost"},
+    # zstd/zstd-safe advisories: drop once wasmtime moves to zstd >=0.14.3 / zstd-safe >=8.2.0
+    { id = "RUSTSEC-2026-0398", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0391", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0395", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0396", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0397", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0399", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0400", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0401", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0402", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0403", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0404", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0405", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" },
+    { id = "RUSTSEC-2026-0406", reason = "zstd via wasmtime-internal-cache, which only uses encode_all/decode_all; affected API/feature not used" }
 ]
 # If this is true, then cargo deny will use the git executable to fetch advisory database.
 # If this is false, then it uses a built-in git library.
