@@ -23,7 +23,7 @@ use std::path::{Path, PathBuf};
 use clap::Args;
 use eyre::{OptionExt, WrapErr, eyre};
 use secrecy::SecretString;
-use tracing::info;
+use tracing::{info, warn};
 use zeroize::Zeroizing;
 
 use openstack_cli_core::cli::CliArgs;
@@ -107,6 +107,9 @@ impl AddCommand {
         let clouds_existing = read_existing(&clouds_path)?;
         let secure_existing = read_existing(&secure_path)?;
 
+        let clouds_existed = entry_exists(clouds_existing.as_deref(), &self.cloud_name);
+        let secure_existed = entry_exists(secure_existing.as_deref(), &self.cloud_name);
+
         let (clouds_entry, secure_entry) =
             build_entries(&cloud_config, &credential_id, &secret, self.split)?;
 
@@ -135,22 +138,47 @@ impl AddCommand {
         // Stage both files before moving either into place, so a failure
         // writing one does not leave the pair half-updated.
         let clouds_file = StagedFile::new(&clouds_path, &clouds_content, !self.split)?;
+        let has_secure = secure_content.is_some();
         let secure_file = secure_content
             .as_deref()
             .map(|content| StagedFile::new(&secure_path, content, true))
             .transpose()?;
 
+        // The two renames cannot be made atomic together: if the second
+        // fails, say which file was already replaced.
         clouds_file.commit()?;
+        if let Some(file) = secure_file {
+            file.commit().wrap_err_with(|| {
+                if self.split {
+                    format!(
+                        "{} was updated but {} was not, so the pair may be inconsistent. The credential secret is not stored anywhere else and cannot be retrieved again: fix {} by hand, or create a new application credential and re-run with --overwrite",
+                        clouds_path.display(),
+                        secure_path.display(),
+                        secure_path.display()
+                    )
+                } else {
+                    format!(
+                        "{} was updated but the old credential could not be removed from {}. It overrides the new one on load: remove the `{}` credential entry from {} by hand",
+                        clouds_path.display(),
+                        secure_path.display(),
+                        self.cloud_name,
+                        secure_path.display()
+                    )
+                }
+            })?;
+        }
+
         println!(
-            "Added cloud `{}` to {}",
+            "{} cloud `{}` in {}",
+            verb(clouds_existed),
             self.cloud_name,
             clouds_path.display()
         );
-        if let Some(file) = secure_file {
-            file.commit()?;
+        if has_secure {
             if self.split {
                 println!(
-                    "Added cloud `{}` to {}",
+                    "{} cloud `{}` in {}",
+                    verb(secure_existed),
                     self.cloud_name,
                     secure_path.display()
                 );
@@ -166,20 +194,77 @@ impl AddCommand {
     }
 }
 
-/// Accept a cloud name only from a conservative character set, so it can
-/// be written as a plain YAML key without quoting or escaping.
+/// Verb for the report line: an entry that was already there is updated.
+fn verb(existed: bool) -> &'static str {
+    if existed { "Updated" } else { "Added" }
+}
+
+/// Whether the file content already holds an entry for `cloud_name`.
+fn entry_exists(existing: Option<&str>, cloud_name: &str) -> bool {
+    existing
+        .filter(|c| has_yaml_content(c))
+        .and_then(|c| yaml_edit::YamlDocument::parse(c).ok())
+        .is_some_and(|doc| doc.contains_key("clouds", cloud_name))
+}
+
+/// Accept a cloud name only from a conservative character set that YAML
+/// reads back as a string, so it can be written as a plain key without
+/// quoting or escaping.
 fn parse_cloud_name(name: &str) -> Result<String, String> {
-    if !name.is_empty()
+    let charset_ok = !name.is_empty()
         && name
             .chars()
-            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-'))
-    {
-        Ok(name.to_string())
-    } else {
-        Err(String::from(
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-'));
+    if !charset_ok {
+        return Err(String::from(
             "the cloud name must be non-empty and contain only ASCII letters, digits, `.`, `_` and `-`",
-        ))
+        ));
     }
+    // `null`, `true`, `123`, `1.5`, `-` ... would be read back as something
+    // other than the name.
+    if !matches!(
+        yaml_serde::from_str::<yaml_serde::Value>(name),
+        Ok(yaml_serde::Value::String(_))
+    ) {
+        return Err(format!(
+            "the cloud name `{name}` would be read as a non-string YAML value; choose another one"
+        ));
+    }
+    // YAML 1.1 readers (PyYAML, used by the python openstacksdk) resolve
+    // more plain scalars to non-strings than the YAML 1.2 parser above.
+    let lower = name.to_ascii_lowercase();
+    let digits = lower.replace('_', "");
+    let unsigned = digits.trim_start_matches(['+', '-']);
+    let radix_literal = unsigned.len() > 2
+        && unsigned.starts_with('0')
+        && matches!(unsigned.as_bytes()[1], b'x' | b'b' | b'o');
+    // Only numeric-looking input can be a float; Rust would also parse the
+    // bare words `inf`, `infinity` and `nan`, which YAML reads as strings.
+    let float_like = digits
+        .starts_with(|c: char| c.is_ascii_digit() || matches!(c, '+' | '-' | '.'))
+        && digits.parse::<f64>().is_ok();
+    // `2024-01-01` is a timestamp for YAML 1.1.
+    let timestamp = {
+        let mut parts = unsigned.splitn(3, '-');
+        let year = parts.next().unwrap_or_default();
+        let (month, rest) = (parts.next(), parts.next());
+        year.len() == 4
+            && year.bytes().all(|b| b.is_ascii_digit())
+            && month.is_some_and(|m| m.starts_with(|c: char| c.is_ascii_digit()))
+            && rest.is_some_and(|d| d.starts_with(|c: char| c.is_ascii_digit()))
+    };
+    if matches!(
+        lower.as_str(),
+        "y" | "n" | "yes" | "no" | "on" | "off" | "true" | "false" | "null" | "~"
+    ) || float_like
+        || radix_literal
+        || timestamp
+    {
+        return Err(format!(
+            "the cloud name `{name}` would be read as a non-string value by some YAML parsers; choose another one"
+        ));
+    }
+    Ok(name.to_string())
 }
 
 /// Read the application credential JSON from stdin.
@@ -270,9 +355,11 @@ fn default_config_dir() -> PathBuf {
 /// old `auth` block is dropped except for `auth_url` - an application
 /// credential is already scoped, so a project/domain would be rejected.
 ///
-/// The source is always run through [`CloudConfig::split_sensitive`], also
-/// without `--split`, to refuse a source carrying a short-lived secret
-/// (e.g. `token`) that would otherwise be persisted.
+/// The old `auth` block is discarded, so ephemeral credentials in it (e.g.
+/// `token`) do not matter; a short-lived secret in the inherited `options`
+/// is refused instead of being persisted. Plugin specific `options` whose
+/// name looks like a secret are not inherited either: the credential of
+/// the source cloud must not leak into the new entry.
 fn build_entries(
     source: &CloudConfig,
     credential_id: &str,
@@ -285,7 +372,20 @@ fn build_entries(
         .and_then(|auth| auth.auth_url.clone())
         .ok_or_eyre("cannot determine the auth_url of the current cloud")?;
 
-    let mut entry = source.clone();
+    // The public half of the source (without its `auth`) drops the known
+    // secrets that live in `options`, such as a `client_secret`, and
+    // refuses an ephemeral one. Plugins unknown to this binary may keep
+    // others there, which `looks_like_secret` catches by name.
+    let mut inherited = source.clone();
+    inherited.auth = None;
+    let mut entry = inherited.split_sensitive()?.public;
+    entry.options.retain(|key, _| {
+        let secret = looks_like_secret(key);
+        if secret {
+            warn!("not inheriting the `{key}` option of the source cloud: it looks like a secret");
+        }
+        !secret
+    });
     entry.auth = Some(Auth {
         auth_url: Some(auth_url),
         application_credential_id: Some(credential_id.into()),
@@ -300,12 +400,29 @@ fn build_entries(
     // loaded config has it; only a non-default value is worth exporting.
     entry.interface = entry.interface.filter(|i| i != "public");
 
-    let split_config = entry.split_sensitive()?;
     Ok(if split {
+        let split_config = entry.split_sensitive()?;
         (split_config.public, Some(split_config.secure))
     } else {
         (entry, None)
     })
+}
+
+/// Whether an option name suggests it holds a credential.
+fn looks_like_secret(key: &str) -> bool {
+    let key = key.to_ascii_lowercase();
+    [
+        "secret",
+        "password",
+        "passwd",
+        "passcode",
+        "token",
+        "credential",
+        "api_key",
+        "apikey",
+    ]
+    .iter()
+    .any(|marker| key.contains(marker))
 }
 
 /// Top-level keys [`build_entries`] clears. An unset field is not
@@ -387,9 +504,32 @@ fn render_target(
             block.push_str(line);
             block.push('\n');
         }
-        return Ok(match existing {
+        // An end marker in the preamble would start a second document
+        // with the new block, which single-document loaders reject.
+        // Keep a single start marker and the original line endings.
+        let preamble = existing.map(|text| {
+            let mut seen_start = false;
+            text.split_inclusive('\n')
+                .filter(|line| {
+                    let line = line.trim();
+                    if line.starts_with("...") {
+                        return false;
+                    }
+                    if is_document_marker(line) {
+                        return !std::mem::replace(&mut seen_start, true);
+                    }
+                    true
+                })
+                .collect::<String>()
+        });
+        return Ok(match preamble {
             Some(preamble) if !preamble.trim().is_empty() => {
-                format!("{}\n{block}", preamble.trim_end())
+                let eol = if preamble.contains("\r\n") {
+                    "\r\n"
+                } else {
+                    "\n"
+                };
+                format!("{}{eol}{}", preamble.trim_end(), block.replace('\n', eol))
             }
             _ => block,
         });
@@ -470,11 +610,24 @@ fn render_secure(
 }
 
 /// Whether `text` holds any YAML node, as opposed to being empty or only
-/// blank lines and comments.
+/// blank lines, comments and document markers.
 fn has_yaml_content(text: &str) -> bool {
     text.lines()
         .map(str::trim)
-        .any(|line| !line.is_empty() && !line.starts_with('#'))
+        .any(|line| !line.is_empty() && !line.starts_with('#') && !is_document_marker(line))
+}
+
+/// A `---` or `...` line, optionally followed by a comment.
+fn is_document_marker(line: &str) -> bool {
+    ["---", "..."].iter().any(|marker| {
+        line.strip_prefix(marker).is_some_and(|rest| {
+            rest.is_empty()
+                || rest.starts_with([' ', '\t']) && {
+                    let rest = rest.trim_start();
+                    rest.is_empty() || rest.starts_with('#')
+                }
+        })
+    })
 }
 
 /// Read the current content of a target file; `None` when it does not
@@ -736,6 +889,17 @@ mod tests {
     }
 
     #[test]
+    fn ephemeral_secret_in_source_auth_is_ignored() {
+        let mut config = config_with(Some("https://keystone:5000"));
+        config.auth.as_mut().unwrap().token = Some(SecretString::from("tok"));
+        for split in [false, true] {
+            let (clouds, secure) = build_entries(&config, "cid", "sec", split).unwrap();
+            assert!(auth(&clouds).token.is_none());
+            assert!(secure.is_none_or(|s| s.auth.is_some_and(|a| a.token.is_none())));
+        }
+    }
+
+    #[test]
     fn missing_auth_url_is_an_error() {
         assert!(build_entries(&config_with(None), "cid", "sec", false).is_err());
         assert!(build_entries(&CloudConfig::default(), "cid", "sec", false).is_err());
@@ -940,11 +1104,16 @@ mod tests {
 
     #[test]
     fn cloud_name_is_restricted() {
-        for ok in ["openstack", "my-cloud_2.prod"] {
+        for ok in ["openstack", "my-cloud_2.prod", "inf", "nan", "infinity"] {
             assert_eq!(parse_cloud_name(ok).as_deref(), Ok(ok));
         }
         for bad in [
             "",
+            "null",
+            "true",
+            "123",
+            "1.5",
+            "-",
             "a: b",
             "#x",
             "a\nb",
@@ -952,9 +1121,39 @@ mod tests {
             "\"q\"",
             "*ref",
             "\u{e9}t\u{e9}",
+            "yes",
+            "No",
+            "on",
+            "OFF",
+            "y",
+            "1_000",
+            "1e3",
+            ".inf",
+            "0x1f",
+            "-0x1f",
+            "-0b101",
+            "+0o7",
+            "2024-01-01",
         ] {
             assert!(parse_cloud_name(bad).is_err(), "accepted {bad:?}");
         }
+    }
+
+    #[test]
+    fn preamble_keeps_line_endings_and_one_start_marker() {
+        let (entry, _) = credential_entry(false);
+        let crlf = render_target(
+            Some("# header\r\n---\r\n...\r\n"),
+            "c",
+            &entry,
+            false,
+            CLEARED_KEYS,
+        )
+        .unwrap();
+        assert!(!crlf.replace("\r\n", "").contains('\n'), "{crlf:?}");
+        let twice = render_target(Some("---\n---\n"), "c", &entry, false, CLEARED_KEYS).unwrap();
+        assert_eq!(twice.matches("---").count(), 1, "{twice}");
+        assert!(yaml_serde::from_str::<yaml_serde::Value>(&twice).is_ok());
     }
 
     #[test]
@@ -1114,6 +1313,193 @@ clouds:
                 .as_ref()
                 .map(secrecy::ExposeSecret::expose_secret),
             Some("sec")
+        );
+    }
+
+    /// Write the pair into a temp dir and load `name` the way the CLI does.
+    fn load_pair(clouds: &str, secure: Option<&str>, name: &str) -> CloudConfig {
+        let dir = tempfile::tempdir().unwrap();
+        let clouds_path = dir.path().join("clouds.yaml");
+        let secure_path = dir.path().join("secure.yaml");
+        std::fs::write(&clouds_path, clouds).unwrap();
+        std::fs::write(&secure_path, secure.unwrap_or("clouds: {}\n")).unwrap();
+        ConfigFile::new_with_user_specified_configs(
+            Some(clouds_path.to_str().unwrap()),
+            Some(secure_path.to_str().unwrap()),
+        )
+        .unwrap()
+        .get_cloud_config(name)
+        .unwrap()
+        .unwrap()
+    }
+
+    fn credential_entry(split: bool) -> (CloudConfig, Option<CloudConfig>) {
+        build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            split,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn flow_style_empty_clouds_mapping() {
+        let (entry, _) = credential_entry(false);
+        let out =
+            render_target(Some("clouds: {}\n"), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
+        let cloud = load_pair(&out, None, "mycloud");
+        assert_eq!(
+            cloud.auth.unwrap().application_credential_id.as_deref(),
+            Some("cid")
+        );
+    }
+
+    #[test]
+    fn flow_style_clouds_mapping_keeps_other_entries() {
+        let (entry, _) = credential_entry(false);
+        let existing = "clouds: {other: {region_name: r1}}\n";
+        let out = render_target(Some(existing), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
+        assert_eq!(
+            load_pair(&out, None, "other").region_name.as_deref(),
+            Some("r1")
+        );
+        assert!(load_pair(&out, None, "mycloud").auth.is_some());
+    }
+
+    #[test]
+    fn flow_style_entry_overwrite() {
+        let (entry, _) = credential_entry(false);
+        let existing = "clouds: {mycloud: {region_name: r1, interface: internal}}\n";
+        let out = render_target(Some(existing), "mycloud", &entry, true, CLEARED_KEYS).unwrap();
+        let cloud = load_pair(&out, None, "mycloud");
+        assert_eq!(cloud.region_name.as_deref(), Some("r1"));
+        assert_eq!(cloud.interface.as_deref(), Some("internal"));
+        assert_eq!(
+            cloud.auth.unwrap().application_credential_id.as_deref(),
+            Some("cid")
+        );
+    }
+
+    #[test]
+    fn multi_document_file_edits_only_the_first_document() {
+        let (entry, _) = credential_entry(false);
+        let existing = "clouds:\n  other:\n    region_name: r1\n---\nclouds:\n  third: {}\n";
+        let out = render_target(Some(existing), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
+        let (first, rest) = out.split_once("\n---\n").expect("second document kept");
+        assert!(
+            first.contains("other:") && first.contains("mycloud:"),
+            "{out}"
+        );
+        assert!(first.contains("application_credential_id: cid"), "{out}");
+        assert_eq!(rest, "clouds:\n  third: {}\n");
+    }
+
+    #[test]
+    fn crlf_file_keeps_content_and_stays_loadable() {
+        let (entry, _) = credential_entry(false);
+        let existing = "# header\r\nclouds:\r\n  other:\r\n    region_name: r1\r\n";
+        let out = render_target(Some(existing), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
+        assert!(out.starts_with("# header\r\n"), "{out:?}");
+        assert_eq!(
+            load_pair(&out, None, "other").region_name.as_deref(),
+            Some("r1")
+        );
+        assert_eq!(
+            load_pair(&out, None, "mycloud")
+                .auth
+                .unwrap()
+                .application_credential_id
+                .as_deref(),
+            Some("cid")
+        );
+    }
+
+    #[test]
+    fn crlf_overwrite_keeps_other_entries() {
+        let (entry, _) = credential_entry(false);
+        let existing = "clouds:\r\n  mycloud:\r\n    region_name: r1\r\n    auth:\r\n      application_credential_id: old\r\n  other:\r\n    region_name: r2\r\n";
+        let out = render_target(Some(existing), "mycloud", &entry, true, CLEARED_KEYS).unwrap();
+        assert_eq!(
+            load_pair(&out, None, "other").region_name.as_deref(),
+            Some("r2")
+        );
+        let cloud = load_pair(&out, None, "mycloud");
+        assert_eq!(cloud.region_name.as_deref(), Some("r1"));
+        assert_eq!(
+            cloud.auth.unwrap().application_credential_id.as_deref(),
+            Some("cid")
+        );
+    }
+
+    /// `--split --overwrite` on files that already hold the cloud: the
+    /// secret moves to secure.yaml, stale credential keys go, hand-set
+    /// keys and neighbours stay, and the pair loads with the new
+    /// credential.
+    #[test]
+    fn split_overwrite_end_to_end() {
+        let clouds = "\
+# my clouds
+clouds:
+  mycloud:
+    region_name: r1
+    interface: internal
+    auth_type: v3password
+    auth:
+      auth_url: https://old:5000
+      username: bob
+      project_name: p
+  other:
+    region_name: r2
+";
+        let secure = "\
+clouds:
+  mycloud:
+    auth:
+      password: old-pass
+  other:
+    auth:
+      password: other-pass
+";
+        let (clouds_entry, secure_entry) = credential_entry(true);
+        let clouds_out =
+            render_target(Some(clouds), "mycloud", &clouds_entry, true, CLEARED_KEYS).unwrap();
+        let secure_out = render_secure(Some(secure), "mycloud", secure_entry.as_ref(), true)
+            .unwrap()
+            .expect("secure.yaml is updated");
+
+        assert!(
+            !clouds_out.contains("application_credential_secret"),
+            "{clouds_out}"
+        );
+        assert!(clouds_out.starts_with("# my clouds\n"), "{clouds_out}");
+        assert!(secure_out.contains("other-pass"), "{secure_out}");
+        assert!(!secure_out.contains("old-pass"), "{secure_out}");
+
+        let cloud = load_pair(&clouds_out, Some(&secure_out), "mycloud");
+        assert_eq!(cloud.region_name.as_deref(), Some("r1"));
+        assert_eq!(cloud.interface.as_deref(), Some("internal"));
+        assert_eq!(cloud.auth_type.as_deref(), Some("v3applicationcredential"));
+        let auth = cloud.auth.unwrap();
+        assert_eq!(auth.application_credential_id.as_deref(), Some("cid"));
+        assert_eq!(
+            auth.application_credential_secret
+                .as_ref()
+                .map(secrecy::ExposeSecret::expose_secret),
+            Some("sec")
+        );
+        assert!(auth.password.is_none());
+
+        let other = load_pair(&clouds_out, Some(&secure_out), "other");
+        assert_eq!(other.region_name.as_deref(), Some("r2"));
+        assert_eq!(
+            other
+                .auth
+                .unwrap()
+                .password
+                .as_ref()
+                .map(secrecy::ExposeSecret::expose_secret),
+            Some("other-pass")
         );
     }
 
@@ -1290,5 +1676,88 @@ clouds:
         assert!(!out.contains('{'), "must not be flow style:\n{out}");
         let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
         assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
+    }
+
+    #[test]
+    fn marker_only_file_is_treated_as_empty() {
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        let out = render_target(Some("---\n"), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
+        assert!(out.starts_with("---\nclouds:\n  mycloud:\n"), "{out}");
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+        assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
+    }
+
+    #[test]
+    fn document_markers_with_comments_or_end_marker_count_as_empty() {
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        for text in ["--- # header\n", "...\n", "---\n# c\n...\n"] {
+            assert!(!has_yaml_content(text), "{text:?}");
+            let out = render_target(Some(text), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
+            let docs = out.lines().filter(|l| l.trim() == "...").count();
+            assert_eq!(docs, 0, "{out}");
+            let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+            assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
+        }
+        assert!(has_yaml_content("--- !!map\na: 1\n"));
+    }
+
+    #[test]
+    fn entry_exists_and_verb() {
+        let existing = "clouds:\n  mycloud:\n    region_name: r\n";
+        assert!(entry_exists(Some(existing), "mycloud"));
+        assert!(!entry_exists(Some(existing), "other"));
+        assert!(!entry_exists(Some("# c\n"), "mycloud"));
+        assert!(!entry_exists(None, "mycloud"));
+        assert_eq!(verb(true), "Updated");
+        assert_eq!(verb(false), "Added");
+    }
+
+    #[test]
+    fn secret_looking_options_are_not_inherited() {
+        let mut config = config_with(Some("https://keystone:5000"));
+        config
+            .options
+            .insert("oidc_secret".into(), config::Value::from("s"));
+        config
+            .options
+            .insert("api_key".into(), config::Value::from("k"));
+        config
+            .options
+            .insert("identity_api_version".into(), config::Value::from("3"));
+        let (clouds, _) = build_entries(&config, "cid", "sec", false).unwrap();
+        assert!(!clouds.options.contains_key("oidc_secret"));
+        assert!(!clouds.options.contains_key("api_key"));
+        assert!(clouds.options.contains_key("identity_api_version"));
+    }
+
+    #[test]
+    fn plugin_secrets_in_options_are_not_inherited() {
+        let mut config = config_with(Some("https://keystone:5000"));
+        config
+            .options
+            .insert("client_secret".into(), config::Value::from("oidc-secret"));
+        config
+            .options
+            .insert("identity_api_version".into(), config::Value::from("3"));
+        for split in [false, true] {
+            let (clouds, secure) = build_entries(&config, "cid", "sec", split).unwrap();
+            assert!(!clouds.options.contains_key("client_secret"));
+            assert!(clouds.options.contains_key("identity_api_version"));
+            if let Some(secure) = secure {
+                assert!(!secure.options.contains_key("client_secret"));
+            }
+        }
     }
 }
