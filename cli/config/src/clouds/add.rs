@@ -135,22 +135,35 @@ impl AddCommand {
         // Stage both files before moving either into place, so a failure
         // writing one does not leave the pair half-updated.
         let clouds_file = StagedFile::new(&clouds_path, &clouds_content, !self.split)?;
+        let has_secure = secure_content.is_some();
         let secure_file = secure_content
             .as_deref()
             .map(|content| StagedFile::new(&secure_path, content, true))
             .transpose()?;
 
+        // The two renames cannot be made atomic together: if the second
+        // fails, say which file was already replaced.
         clouds_file.commit()?;
+        if let Some(file) = secure_file {
+            file.commit().wrap_err_with(|| {
+                format!(
+                    "{} was updated but {} was not; fix the error and re-run with --overwrite",
+                    clouds_path.display(),
+                    secure_path.display()
+                )
+            })?;
+        }
+
+        let verb = if self.overwrite { "Updated" } else { "Added" };
         println!(
-            "Added cloud `{}` to {}",
+            "{verb} cloud `{}` in {}",
             self.cloud_name,
             clouds_path.display()
         );
-        if let Some(file) = secure_file {
-            file.commit()?;
+        if has_secure {
             if self.split {
                 println!(
-                    "Added cloud `{}` to {}",
+                    "{verb} cloud `{}` in {}",
                     self.cloud_name,
                     secure_path.display()
                 );
@@ -166,20 +179,30 @@ impl AddCommand {
     }
 }
 
-/// Accept a cloud name only from a conservative character set, so it can
-/// be written as a plain YAML key without quoting or escaping.
+/// Accept a cloud name only from a conservative character set that YAML
+/// reads back as a string, so it can be written as a plain key without
+/// quoting or escaping.
 fn parse_cloud_name(name: &str) -> Result<String, String> {
-    if !name.is_empty()
+    let charset_ok = !name.is_empty()
         && name
             .chars()
-            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-'))
-    {
-        Ok(name.to_string())
-    } else {
-        Err(String::from(
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-'));
+    if !charset_ok {
+        return Err(String::from(
             "the cloud name must be non-empty and contain only ASCII letters, digits, `.`, `_` and `-`",
-        ))
+        ));
     }
+    // `null`, `true`, `123`, `1.5`, `-` ... would be read back as something
+    // other than the name.
+    if !matches!(
+        yaml_serde::from_str::<yaml_serde::Value>(name),
+        Ok(yaml_serde::Value::String(_))
+    ) {
+        return Err(format!(
+            "the cloud name `{name}` would be read as a non-string YAML value; choose another one"
+        ));
+    }
+    Ok(name.to_string())
 }
 
 /// Read the application credential JSON from stdin.
@@ -272,7 +295,8 @@ fn default_config_dir() -> PathBuf {
 ///
 /// The source is always run through [`CloudConfig::split_sensitive`], also
 /// without `--split`, to refuse a source carrying a short-lived secret
-/// (e.g. `token`) that would otherwise be persisted.
+/// (e.g. `token`) that would otherwise be persisted and to leave the
+/// secrets of its own credential behind.
 fn build_entries(
     source: &CloudConfig,
     credential_id: &str,
@@ -285,7 +309,11 @@ fn build_entries(
         .and_then(|auth| auth.auth_url.clone())
         .ok_or_eyre("cannot determine the auth_url of the current cloud")?;
 
-    let mut entry = source.clone();
+    // The public half of the source drops the secrets of its own credential
+    // that live outside `auth` (plugin specific `options` such as a
+    // `client_secret`), so they are not inherited into the new entry. It
+    // also refuses a source carrying a short-lived secret.
+    let mut entry = source.split_sensitive()?.public;
     entry.auth = Some(Auth {
         auth_url: Some(auth_url),
         application_credential_id: Some(credential_id.into()),
@@ -470,11 +498,11 @@ fn render_secure(
 }
 
 /// Whether `text` holds any YAML node, as opposed to being empty or only
-/// blank lines and comments.
+/// blank lines, comments and document markers.
 fn has_yaml_content(text: &str) -> bool {
     text.lines()
         .map(str::trim)
-        .any(|line| !line.is_empty() && !line.starts_with('#'))
+        .any(|line| !line.is_empty() && !line.starts_with('#') && line != "---" && line != "...")
 }
 
 /// Read the current content of a target file; `None` when it does not
@@ -945,6 +973,11 @@ mod tests {
         }
         for bad in [
             "",
+            "null",
+            "true",
+            "123",
+            "1.5",
+            "-",
             "a: b",
             "#x",
             "a\nb",
@@ -1290,5 +1323,39 @@ clouds:
         assert!(!out.contains('{'), "must not be flow style:\n{out}");
         let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
         assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
+    }
+
+    #[test]
+    fn marker_only_file_is_treated_as_empty() {
+        let (entry, _) = build_entries(
+            &config_with(Some("https://keystone:5000")),
+            "cid",
+            "sec",
+            false,
+        )
+        .unwrap();
+        let out = render_target(Some("---\n"), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
+        assert!(out.starts_with("---\nclouds:\n  mycloud:\n"), "{out}");
+        let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
+        assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
+    }
+
+    #[test]
+    fn plugin_secrets_in_options_are_not_inherited() {
+        let mut config = config_with(Some("https://keystone:5000"));
+        config
+            .options
+            .insert("client_secret".into(), config::Value::from("oidc-secret"));
+        config
+            .options
+            .insert("identity_api_version".into(), config::Value::from("3"));
+        for split in [false, true] {
+            let (clouds, secure) = build_entries(&config, "cid", "sec", split).unwrap();
+            assert!(!clouds.options.contains_key("client_secret"));
+            assert!(clouds.options.contains_key("identity_api_version"));
+            if let Some(secure) = secure {
+                assert!(!secure.options.contains_key("client_secret"));
+            }
+        }
     }
 }
