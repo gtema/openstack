@@ -23,10 +23,9 @@
 #![allow(clippy::enum_variant_names)]
 use std::io::{self, IsTerminal};
 
-use clap::{CommandFactory, Parser};
+use clap::{CommandFactory, FromArgMatches};
 use clap_complete::Generator;
 use dialoguer::FuzzySelect;
-use eyre::eyre;
 use std::sync::{Arc, Mutex};
 use tracing::warn;
 use tracing_subscriber::filter::{LevelFilter, Targets};
@@ -38,12 +37,21 @@ use openstack_cli_core::{
     build_http_requests_timing_table,
     tracing_stats::{HttpRequestStats, RequestTracingCollector},
 };
+use openstack_sdk::config::selector::SelectionError;
 use openstack_sdk::{
     AsyncOpenStack, MicroVersionStrategy,
-    auth::auth_helper::{Dialoguer, ExternalCmd, Noop},
+    auth::auth_helper::{Dialoguer, ExternalCmd, Fallback, Noop},
     auth::authtoken::AuthTokenScope,
     types::identity::v3::Project,
 };
+
+/// Show the problems of loading the configuration on the standard error: the log level may hide
+/// them.
+fn print_warnings(warnings: &[String]) {
+    for warning in warnings {
+        eprintln!("WARNING: {warning}");
+    }
+}
 
 fn microversion_strategy_from_arg(value: MicroVersionStrategyArg) -> MicroVersionStrategy {
     match value {
@@ -60,7 +68,12 @@ use cli::TopLevelCommands;
 
 /// Entry point for the CLI wrapper
 pub async fn entry_point() -> Result<(), OpenStackCliError> {
-    let cli = Cli::parse();
+    let mut cmd = Cli::command();
+    let matches = cmd.clone().get_matches();
+    let mut cli = Cli::from_arg_matches(&matches).unwrap_or_else(|err| err.exit());
+    cli.global_opts
+        .connection
+        .apply_context_precedence(&matches, &mut cmd);
 
     if let TopLevelCommands::Completion(args) = &cli.command {
         // generate completion output
@@ -126,51 +139,55 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         .with(rtl)
         .init();
 
-    let mut cloud_config = if cli.global_opts.connection.cloud_config_from_env {
-        // Environment variables should be used to get the cloud configuration
-        tracing::debug!("Using environment variables for the cloud connection");
-        let cloud_name = cli
-            .global_opts
-            .connection
-            .os_cloud_name
-            .clone()
-            .unwrap_or(String::from("envvars"));
-        let mut cloud_config = openstack_sdk::config::CloudConfig::from_env()?;
-        cloud_config.name = Some(cloud_name.clone());
-        cloud_config
-    } else {
-        // prepare cloud config parsing
-        let cfg = openstack_sdk::config::ConfigFile::new_with_user_specified_configs(
-            cli.global_opts.connection.os_client_config_file.as_deref(),
-            cli.global_opts.connection.os_client_secure_file.as_deref(),
-        )?;
-
-        // Identify target cloud to connect to
-        let cloud_name = match cli.global_opts.connection.os_cloud {
-            Some(ref cloud) => cloud.clone(),
-            None => {
-                if std::io::stdin().is_terminal() {
-                    // Cloud was not selected and we are in the potentially interactive mode (terminal)
-                    let mut profiles = cfg.get_available_clouds();
-                    profiles.sort();
-                    let selected_cloud_idx = FuzzySelect::new()
-                    .with_prompt("Please select cloud you want to connect to (use `--os-cloud` next time for efficiency)?")
-                    .items(&profiles)
-                    .interact()?;
-                    profiles[selected_cloud_idx].clone()
-                } else {
-                    return Err(
-                    eyre!("`--os-cloud` or `OS_CLOUD` environment variable must be given, or at least `--cloud-config-from-env` should be used.").into(),
-                );
-                }
-            }
-        };
-        cfg.get_cloud_config(&cloud_name)?
-            .ok_or(OpenStackCliError::ConnectionNotFound(cloud_name.clone()))?
+    // Select the connection: contexts.yaml, environment, clouds.yaml
+    let conn = &cli.global_opts.connection;
+    let mut selector = openstack_sdk::config::selector::ConnectionSelector {
+        context: conn.os_context.clone(),
+        cloud: conn.os_cloud.clone(),
+        from_env: conn.cloud_config_from_env,
+        env_cloud_name: conn.os_cloud_name.clone(),
+        project_override: conn.os_project_id.is_some() || conn.os_project_name.is_some(),
+        skip_implicit_context: false,
+        region_name: conn.os_region_name.clone(),
+        contexts_file: conn.os_context_file.as_ref().map(Into::into),
+        config_file: conn.os_client_config_file.as_ref().map(Into::into),
+        secure_file: conn.os_client_secure_file.as_ref().map(Into::into),
     };
-    if let Some(region_name) = &cli.global_opts.connection.os_region_name {
-        cloud_config.region_name = Some(region_name.clone());
-    }
+    let resolved = match selector.resolve() {
+        Err(SelectionError::NoSelection {
+            clouds,
+            contexts,
+            warnings,
+        }) => {
+            print_warnings(&warnings);
+            if clouds.is_empty() && contexts.is_empty() {
+                return Err(OpenStackCliError::NoConnectionAvailable);
+            }
+            if !io::stdin().is_terminal() {
+                return Err(OpenStackCliError::NoConnectionSelected);
+            }
+            // Cloud was not selected and we are in the potentially interactive mode (terminal)
+            let items: Vec<String> = clouds
+                .iter()
+                .cloned()
+                .chain(contexts.iter().map(|c| format!("{c} (context)")))
+                .collect();
+            let selected = FuzzySelect::new()
+                .with_prompt("Please select the connection you want to use (use `--os-cloud` or `--os-context` next time for efficiency)?")
+                .items(&items)
+                .interact()?;
+            if selected < clouds.len() {
+                selector.cloud = Some(clouds[selected].clone());
+            } else {
+                selector.context = Some(contexts[selected - clouds.len()].clone());
+            }
+            selector.resolve()?
+        }
+        other => other?,
+    };
+    print_warnings(&resolved.warnings);
+    let context_auth_helper = resolved.auth_helper();
+    let cloud_config = resolved.cloud;
 
     // Certain commands (e.g. `auth login --renew`, `auth status`) need different
     // pre-connect behavior than the default "connect with a live authenticated
@@ -196,6 +213,23 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
                 .microversion_strategy(microversion_strategy)
                 .connect()
                 .await
+        } else if let Some(context_helper) = context_auth_helper {
+            if std::io::stdin().is_terminal() {
+                // What the helper cannot provide (i.e. MFA passcode) is asked interactively
+                AsyncOpenStack::builder(&cloud_config)
+                    .auth_helper(Fallback::new(context_helper, Dialoguer::default()))
+                    .renew_auth(renew_auth)
+                    .microversion_strategy(microversion_strategy)
+                    .connect()
+                    .await
+            } else {
+                AsyncOpenStack::builder(&cloud_config)
+                    .auth_helper(context_helper)
+                    .renew_auth(renew_auth)
+                    .microversion_strategy(microversion_strategy)
+                    .connect()
+                    .await
+            }
         } else if std::io::stdin().is_terminal() {
             AsyncOpenStack::builder(&cloud_config)
                 .auth_helper(Dialoguer::default())

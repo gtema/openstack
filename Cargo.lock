@@ -5092,6 +5092,7 @@ dependencies = [
  "jiff 1.0.1",
  "jsonschema",
  "open",
+ "openstack-cli-core",
  "openstack_sdk",
  "pretty_assertions",
  "ratatui",

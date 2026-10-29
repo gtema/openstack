@@ -154,12 +154,71 @@ impl AuthHelper for Noop {
 pub struct ExternalCmd {
     /// External command
     pub command: String,
+    /// Treat a failure or an empty output of the command as an error.
+    pub strict: bool,
 }
 
 impl ExternalCmd {
     /// Construct new External command AuthHelper.
+    ///
+    /// The output of the command is returned as is, whatever the exit status is (the behavior of
+    /// the `--auth-helper-cmd`).
     pub fn new(command: String) -> Self {
-        Self { command }
+        Self {
+            command,
+            strict: false,
+        }
+    }
+
+    /// Construct a strict External command AuthHelper.
+    ///
+    /// A command which cannot be started, exits with a failure or prints nothing is an error:
+    /// an empty secret is never useful and must not be sent to the server. Combined with the
+    /// [`Fallback`] this lets the user be asked for the value instead.
+    pub fn strict(command: String) -> Self {
+        Self {
+            command,
+            strict: true,
+        }
+    }
+}
+
+impl ExternalCmd {
+    /// Run the command asking for the `key` and return what it printed.
+    ///
+    /// In the [`strict`](ExternalCmd::strict) mode a command which exits with a failure or prints
+    /// nothing is an error.
+    fn run(&self, key: String, connection_name: Option<String>) -> Result<String, AuthHelperError> {
+        let mut command = Command::new(&self.command);
+        command.arg(&key);
+        if let Some(connection) = &connection_name {
+            command.arg(connection);
+        }
+        let res = command
+            .output()
+            .map_err(|e| AuthHelperError::Other(format!("{:?}: {e}", self.command)))?;
+        if !res.stderr.is_empty() {
+            warn!(
+                "{:?} written to stderr during invocation: {:?}",
+                self.command,
+                String::from_utf8_lossy(&res.stderr).trim_end_matches('\n')
+            );
+        }
+        if self.strict && !res.status.success() {
+            return Err(AuthHelperError::Other(format!(
+                "{:?} requested for `{key}` failed with {}",
+                self.command, res.status
+            )));
+        }
+        let stdout: String = String::from_utf8(res.stdout)?;
+        let value = stdout.trim_end_matches('\n');
+        if self.strict && value.is_empty() {
+            return Err(AuthHelperError::Other(format!(
+                "{:?} returned nothing for `{key}`",
+                self.command
+            )));
+        }
+        Ok(value.into())
     }
 }
 
@@ -174,25 +233,56 @@ impl AuthHelper for ExternalCmd {
         key: String,
         connection_name: Option<String>,
     ) -> Result<String, AuthHelperError> {
-        let mut command = Command::new(&self.command);
-        command.arg(key);
-        if let Some(connection) = &connection_name {
-            command.arg(connection);
+        self.run(key, connection_name)
+    }
+
+    async fn get_secret(
+        &self,
+        key: String,
+        connection_name: Option<String>,
+    ) -> Result<SecretString, AuthHelperError> {
+        self.run(key, connection_name).map(SecretString::from)
+    }
+}
+
+/// AuthHelper asking the `secondary` when the `primary` fails.
+///
+/// Allows, for example, to get the stored secrets from an [`ExternalCmd`] and fall back to the
+/// interactive prompt for what it cannot provide (i.e. the MFA passcode).
+pub struct Fallback {
+    primary: Box<dyn AuthHelper>,
+    secondary: Box<dyn AuthHelper>,
+}
+
+impl Fallback {
+    /// Construct the helper.
+    pub fn new(primary: impl AuthHelper + 'static, secondary: impl AuthHelper + 'static) -> Self {
+        Self {
+            primary: Box::new(primary),
+            secondary: Box::new(secondary),
         }
-        match command.output() {
-            Ok(res) => {
-                if !res.stderr.is_empty() {
-                    warn!(
-                        "{:?} written to stderr during invocation: {:?}",
-                        self.command,
-                        String::from_utf8(res.stderr)?.trim_end_matches('\n')
-                    );
-                }
-                let stdout: String = String::from_utf8(res.stdout)?;
-                Ok(stdout.trim_end_matches('\n').into())
-            }
-            Err(e) => {
-                return Err(AuthHelperError::Other(e.to_string()));
+    }
+}
+
+#[async_trait]
+impl AuthHelper for Fallback {
+    fn clone_box(&self) -> Box<dyn AuthHelper> {
+        Box::new(Self {
+            primary: self.primary.clone_box(),
+            secondary: self.secondary.clone_box(),
+        })
+    }
+
+    async fn get(
+        &self,
+        key: String,
+        connection_name: Option<String>,
+    ) -> Result<String, AuthHelperError> {
+        match self.primary.get(key.clone(), connection_name.clone()).await {
+            Ok(val) => Ok(val),
+            Err(err) => {
+                warn!("{err}, asking for `{key}` in a different way");
+                self.secondary.get(key, connection_name).await
             }
         }
     }
@@ -202,25 +292,15 @@ impl AuthHelper for ExternalCmd {
         key: String,
         connection_name: Option<String>,
     ) -> Result<SecretString, AuthHelperError> {
-        let mut command = Command::new(&self.command);
-        command.arg(key);
-        if let Some(connection) = &connection_name {
-            command.arg(connection);
-        }
-        match command.output() {
-            Ok(res) => {
-                if !res.stderr.is_empty() {
-                    warn!(
-                        "{:?} written to stderr during invocation: {:?}",
-                        self.command,
-                        String::from_utf8(res.stderr)?.trim_end_matches('\n')
-                    );
-                }
-                let stdout: String = String::from_utf8(res.stdout)?;
-                Ok(stdout.trim_end_matches('\n').into())
-            }
-            Err(e) => {
-                return Err(AuthHelperError::Other(e.to_string()));
+        match self
+            .primary
+            .get_secret(key.clone(), connection_name.clone())
+            .await
+        {
+            Ok(val) => Ok(val),
+            Err(err) => {
+                warn!("{err}, asking for `{key}` in a different way");
+                self.secondary.get_secret(key, connection_name).await
             }
         }
     }
@@ -340,5 +420,70 @@ mod tests {
             "secret"
         );
         let _ = helper.clone_box();
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn external_cmd_failures_are_errors() {
+        // the plain helper returns whatever was printed
+        assert_eq!(
+            ExternalCmd::new("/bin/false".into())
+                .get("k".into(), None)
+                .await
+                .unwrap(),
+            ""
+        );
+        assert_eq!(
+            ExternalCmd::new("/bin/true".into())
+                .get("k".into(), None)
+                .await
+                .unwrap(),
+            ""
+        );
+        // exits with a failure
+        assert!(
+            ExternalCmd::strict("/bin/false".into())
+                .get("k".into(), None)
+                .await
+                .is_err()
+        );
+        // succeeds but prints nothing
+        assert!(
+            ExternalCmd::strict("/bin/true".into())
+                .get_secret("k".into(), None)
+                .await
+                .is_err()
+        );
+        // prints the key
+        assert_eq!(
+            ExternalCmd::strict("/bin/echo".into())
+                .get("k".into(), None)
+                .await
+                .unwrap(),
+            "k"
+        );
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn fallback_is_used_on_failure() {
+        let helper = Fallback::new(
+            ExternalCmd::strict("/bin/false".into()),
+            Fixed("manual".into()),
+        );
+        assert_eq!(helper.get("k".into(), None).await.unwrap(), "manual");
+        assert_eq!(
+            helper
+                .get_secret("k".into(), None)
+                .await
+                .unwrap()
+                .expose_secret(),
+            "manual"
+        );
+        let helper = Fallback::new(
+            ExternalCmd::strict("/bin/echo".into()),
+            Fixed("manual".into()),
+        );
+        assert_eq!(helper.clone_box().get("k".into(), None).await.unwrap(), "k");
     }
 }

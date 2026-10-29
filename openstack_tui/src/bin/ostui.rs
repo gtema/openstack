@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::Parser;
+use clap::{CommandFactory, FromArgMatches};
 use eyre::Result;
 
 use openstack_tui::{
@@ -26,7 +26,10 @@ async fn tokio_main() -> Result<()> {
 
     initialize_panic_handler()?;
 
-    let args = Cli::parse();
+    let mut cmd = Cli::command();
+    let matches = cmd.clone().get_matches();
+    let mut args = Cli::from_arg_matches(&matches).unwrap_or_else(|err| err.exit());
+    args.apply_context_precedence(&matches, &mut cmd);
 
     let mut app = App::new(&args)?;
     app.run().await?;
