@@ -2,6 +2,7 @@
 
 [Introduction](./intro.md)
 [Clouds.yaml](./clouds.yaml.md)
+[Contexts.yaml](./contexts.yaml.md)
 
 # Design
 

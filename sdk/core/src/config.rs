@@ -65,6 +65,8 @@ use tracing::{debug, error, trace, warn};
 
 use crate::auth::plugin_sensitive_fields;
 
+pub mod contexts;
+
 /// Errors which may occur when dealing with OpenStack connection
 /// configuration data.
 #[derive(Debug, Error)]
