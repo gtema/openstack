@@ -129,7 +129,7 @@ tracing-error = { version = "^0.2" }
 tracing-subscriber = { version = "^0.3", features = ["env-filter", "serde"] }
 tracing-test = { version = "^0.2" }
 url = { version = "^2.5", features = ["serde"] }
-webauthn-authenticator-rs = { version = "^0.5", features = ["ctap2", "mozilla", "ui-cli"]}
+webauthn-authenticator-rs = { version = "^0.6.0", features = ["ctap2", "mozilla", "ui-cli"]}
 webauthn-rs-proto = { version = "^0.5" }
 uuid = { version = "^1.26" }
 x509-parser = { version = "^0.18" }
