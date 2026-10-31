@@ -66,7 +66,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Deploy devstack
-        uses: EmilienM/devstack-action@60ca1042045c0c9e3e001c64575d381654ffcba1 # v0.19
+        uses: EmilienM/devstack-action@fc61cc16ba19c4224a70b0b4d7e3e4907fac51e7 # v0.20
         with:
           branch: ${{ matrix.openstack_version }}
           # `c-bak` (cinder-backup) is not in devstack's default service
