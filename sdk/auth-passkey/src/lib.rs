@@ -110,9 +110,7 @@ impl OpenStackAuthType for WebAuthnAuthenticator {
 
         use webauthn_authenticator_rs::WebauthnAuthenticator;
 
-        let mut auth = WebauthnAuthenticator::new(
-            webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new(),
-        );
+        let mut auth = webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new();
         let mut passkey_auth: AuthFinishRequestBuilder = AuthFinishRequestBuilder::try_from(
             auth.do_authentication(
                 // TODO: the url contains path, while authenticator may only want domain info

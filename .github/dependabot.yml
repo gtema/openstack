@@ -20,6 +20,9 @@ updates:
         patterns:
           - "wasmtime*"
           - "wiggle"
+      webauthn:
+        patterns:
+          - "webauthn*"
       rustls:
         patterns:
           - "rustls*"
