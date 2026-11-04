@@ -108,7 +108,7 @@ fn convert_api_response_to_public_key_credential_options(
             authenticator_selection: val
                 .authenticator_selection
                 .map(convert_authenticator_selection),
-            challenge: URL_SAFE.decode(val.challenge)?.into(),
+            challenge: URL_SAFE.decode(val.challenge)?,
             exclude_credentials: val
                 .exclude_credentials
                 .map(|ecs| {
@@ -242,7 +242,7 @@ fn convert_exclude_credential(
     val: register::ExcludeCredentials,
 ) -> Result<webauthn_rs_proto::options::PublicKeyCredentialDescriptor, OpenStackCliError> {
     Ok(webauthn_rs_proto::options::PublicKeyCredentialDescriptor {
-        id: URL_SAFE.decode(val.id)?.into(),
+        id: URL_SAFE.decode(val.id)?,
         type_: val.type_,
         transports: val
             .transports
@@ -368,7 +368,7 @@ fn convert_user(
     val: register::User,
 ) -> Result<webauthn_rs_proto::options::User, OpenStackCliError> {
     Ok(webauthn_rs_proto::options::User {
-        id: URL_SAFE.decode(val.id)?.into(),
+        id: URL_SAFE.decode(val.id)?,
         name: val.name,
         display_name: val.display_name,
     })
@@ -519,9 +519,7 @@ impl PasskeyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let pk_request: register::RegisterStartResponse = ep.query_async(client).await?;
 
-        let mut auth = WebauthnAuthenticator::new(
-            webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new(),
-        );
+        let mut auth = webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new();
         match auth.do_registration(
             Url::parse("http://localhost:8080")?,
             convert_api_parameters_to_webauthn(pk_request)?,
