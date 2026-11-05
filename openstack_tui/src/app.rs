@@ -53,6 +53,8 @@ pub struct App {
     frame_rate: f64,
     components: HashMap<Mode, Box<dyn Component>>,
     header: Box<dyn Component>,
+    /// Whether the header is shown (toggled by `ToggleHeader`)
+    show_header: bool,
     should_quit: bool,
     should_suspend: bool,
     mode: Mode,
@@ -313,6 +315,7 @@ impl App {
             frame_rate: args.frame_rate,
             components,
             header: Box::new(Header::new()),
+            show_header: true,
             should_quit: false,
             should_suspend: false,
             config,
@@ -495,6 +498,7 @@ impl App {
                     self.should_quit = true;
                     self.cloud_worker_tx.send(Action::Quit)?;
                 }
+                Action::ToggleHeader => self.show_header = !self.show_header,
                 Action::Suspend => self.should_suspend = true,
                 Action::Resume => self.should_suspend = false,
                 Action::ClearScreen => tui.clear()?,
@@ -810,7 +814,7 @@ impl App {
 
     fn render(&mut self, tui: &mut Tui) -> Result<()> {
         tui.draw(|f| {
-            let draw_header = f.area().height > 30;
+            let draw_header = self.show_header && f.area().height > 30;
             let rects = Layout::default()
                 .constraints(
                     [
@@ -918,6 +922,7 @@ mod tests {
             frame_rate: 30.0,
             components: HashMap::new(),
             header: Box::new(crate::components::header::Header::new()),
+            show_header: true,
             should_quit: false,
             should_suspend: false,
             mode: Mode::Home,
@@ -945,6 +950,7 @@ mod tests {
             frame_rate: 30.0,
             components: HashMap::new(),
             header: Box::new(crate::components::header::Header::new()),
+            show_header: true,
             should_quit: false,
             should_suspend: false,
             mode: Mode::Home,
@@ -991,6 +997,17 @@ mod tests {
 
     fn drain_actions(app: &mut App) -> Vec<Action> {
         std::iter::from_fn(|| app.action_rx.try_recv().ok()).collect()
+    }
+
+    #[test]
+    fn ctrl_e_toggles_header() {
+        let mut app = make_test_app();
+        app.config = Config::new().expect("default config must load");
+        assert!(app.show_header);
+
+        let key = KeyEvent::new(KeyCode::Char('e'), KeyModifiers::CONTROL);
+        app.handle_key_event(key).unwrap();
+        assert!(drain_actions(&mut app).contains(&Action::ToggleHeader));
     }
 
     #[test]

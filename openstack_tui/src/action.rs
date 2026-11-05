@@ -96,6 +96,8 @@ pub enum Action {
     ApiRequestSelect,
     /// Refresh data
     Refresh,
+    /// Show/hide the header
+    ToggleHeader,
     /// Start searching (narrowing) the rows of the current view
     Search,
 

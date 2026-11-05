@@ -19,6 +19,13 @@ well as altered by the terminal or display device.
 
 ![](../images/tui/header.png)
 
+## Hiding the header
+
+Pressing `Ctrl-e` toggles the header visibility (similar to k9s), giving the
+resource table the whole screen. The key is configured as `ToggleHeader` action
+in the `global_keybindings` section of the configuration file. The header is
+also hidden automatically on small terminals.
+
 ## Search
 
 Pressing `/` in a resource view opens a search input between the table and the
