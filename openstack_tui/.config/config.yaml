@@ -270,7 +270,7 @@ mode_keybindings:
           key: "network.security_group"
           op: Create
       description: Create
-    "ctrl-e":
+    "e":
       action:
         ResourceOp:
           key: "network.security_group"
@@ -341,6 +341,9 @@ global_keybindings:
   "/":
     action: Search
     description: Search
+  "<ctrl-e>":
+    action: ToggleHeader
+    description: Toggle header
 # Mode aliases
 # <ALIAS>: <MODE>
 mode_aliases:
