@@ -49,7 +49,7 @@ jobs:
           permission-contents: write
 
       - name: Run release-plz
-        uses: release-plz/action@d529f731ae3e89610ada96eda34e5c6ba3b12214 # v0.5.118
+        uses: release-plz/action@66b324fd6c72d05d2a08568492ecdd62bfb8a62b # v0.5.148
         with:
           command: release
         env:
@@ -92,7 +92,7 @@ jobs:
           permission-pull-requests: write
 
       - name: Run release-plz
-        uses: release-plz/action@d529f731ae3e89610ada96eda34e5c6ba3b12214 # v0.5.118
+        uses: release-plz/action@66b324fd6c72d05d2a08568492ecdd62bfb8a62b # v0.5.148
         with:
           command: release-pr
         env:
