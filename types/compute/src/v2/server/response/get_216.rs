@@ -184,6 +184,16 @@ pub struct ServerResponse {
     /// The instance name. The Compute API generates the instance name from the
     /// instance name template. Appears in the response for administrative
     /// users only.
+    ///
+    /// Note
+    ///
+    /// This field intends to expose the name of the actual virtual machine on
+    /// the hypervisor (i.e. the “domain name” in libvirt). However, this may
+    /// be inaccurate as it is not stored or retrieved from the hypervisor
+    /// itself, but instead computed per-request at the API layer based on the
+    /// value of the `instance_name_template` config variable and thus may be
+    /// different from what is actually in use. Admins are encouraged to *not*
+    /// trust this value.
     #[serde(default, rename = "OS-EXT-SRV-ATTR:instance_name")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:instance_name")]
     pub os_ext_srv_attr_instance_name: Option<String>,

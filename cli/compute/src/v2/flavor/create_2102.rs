@@ -68,7 +68,7 @@ struct PathParameters {}
 /// Flavor Body data
 #[derive(Args, Clone)]
 struct Flavor {
-    /// A free form description of the flavor. Limited to 65535 characters in
+    /// A free-form description of the flavor. Limited to 65535 characters in
     /// length. Only printable characters are allowed.
     ///
     /// **New in version 2.55**

@@ -5,6 +5,21 @@ info:
   title: OpenStack Block Storage API
   version: '3.71'
 paths:
+  /:
+    get:
+      description: |-
+        Lists information for all Block Storage API versions.
+      operationId: versions:get
+      responses:
+        '300':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionsAllResponse'
+          description: Ok
+      summary: List All Api Versions
+      tags:
+        - version
   /v3/:
     get:
       description: |-
@@ -11692,8 +11707,9 @@ components:
                 type: integer
               replication_status:
                 description: |-
-                  The cluster replication status. Only included in responses if configured.
-                  One of: `enabled` or `disabled`.
+                  The cluster replication status. One of: `enabled` or `disabled`.
+
+                  **New in version 3.26**
                 enum:
                   - disabled
                   - enabled
@@ -11810,8 +11826,9 @@ components:
                 type: string
               replication_status:
                 description: |-
-                  The cluster replication status. Only included in responses if configured.
-                  One of: `enabled` or `disabled`.
+                  The cluster replication status. One of: `enabled` or `disabled`.
+
+                  **New in version 3.26**
                 enum:
                   - disabled
                   - enabled
@@ -17796,6 +17813,9 @@ components:
           type: object
       required:
         - volume_type
+      type: object
+    VersionsAllResponse:
+      description: Response of the versions:get operation
       type: object
     VolumeShowResponse:
       additionalProperties: false

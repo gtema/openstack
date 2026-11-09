@@ -27,7 +27,9 @@ use openstack_sdk_core::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
+use serde_json::Value;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 
 /// The resource options for the domain. Available resource options are
 /// `immutable`.
@@ -81,6 +83,24 @@ pub struct Domain<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> DomainBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -172,7 +192,7 @@ impl RestEndpoint for Request<'_> {
 /// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
 /// constraints, `enum`, ranges and descriptions that the generated struct's
 /// `Option<T>` fields alone do not express).
-pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"domain\": {\"description\": \"A `domain` object\", \"properties\": {\"description\": {\"description\": \"The description of the domain.\", \"maxLength\": 255, \"type\": [\"null\", \"string\"]}, \"enabled\": {\"description\": \"If set to `true`, domain is created enabled. If set to\\n`false`, domain is created disabled. The default is `true`.\\n\\nUsers can only authorize against an enabled domain (and any of its\\nprojects). In addition, users can only authenticate if the domain that owns\\nthem is also enabled. Disabling a domain prevents both of these things.\", \"enum\": [\"\", \"0\", \"1\", \"FALSE\", false, \"False\", \"N\", false, true, \"TRUE\", true, \"True\", \"Y\", \"false\", \"n\", false, false, true, \"true\", \"y\", true], \"type\": [\"boolean\", \"null\", \"string\"]}, \"explicit_domain_id\": {\"description\": \"The ID of the domain. A domain created this way will not use an\\nauto-generated ID, but will use the ID passed in instead. Identifiers passed\\nin this way must conform to the existing ID generation scheme: UUID4 without\\ndashes.\", \"maxLength\": 64, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-]+$\", \"type\": \"string\"}, \"name\": {\"description\": \"The name of the domain.\", \"maxLength\": 64, \"minLength\": 1, \"pattern\": \"[\\\\S]+\", \"type\": \"string\"}, \"options\": {\"additionalProperties\": false, \"description\": \"The resource options for the domain. Available resource options are\\n`immutable`.\", \"properties\": {\"immutable\": {\"enum\": [null, false, true], \"type\": [\"boolean\", \"null\"]}}, \"type\": \"object\"}, \"tags\": {\"items\": {\"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[^,/]*$\", \"type\": \"string\"}, \"maxItems\": 80, \"required\": [], \"type\": \"array\", \"uniqueItems\": true}}, \"required\": [\"name\"], \"type\": \"object\"}}, \"required\": [\"domain\"], \"type\": \"object\"}";
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"domain\": {\"additionalProperties\": true, \"description\": \"A `domain` object\", \"properties\": {\"description\": {\"description\": \"The description of the domain.\", \"maxLength\": 255, \"type\": [\"null\", \"string\"]}, \"enabled\": {\"description\": \"If set to `true`, domain is created enabled. If set to\\n`false`, domain is created disabled. The default is `true`.\\n\\nUsers can only authorize against an enabled domain (and any of its\\nprojects). In addition, users can only authenticate if the domain that owns\\nthem is also enabled. Disabling a domain prevents both of these things.\", \"enum\": [\"\", \"0\", \"1\", \"FALSE\", false, \"False\", \"N\", false, true, \"TRUE\", true, \"True\", \"Y\", \"false\", \"n\", false, false, true, \"true\", \"y\", true], \"type\": [\"boolean\", \"null\", \"string\"]}, \"explicit_domain_id\": {\"description\": \"The ID of the domain. A domain created this way will not use an\\nauto-generated ID, but will use the ID passed in instead. Identifiers passed\\nin this way must conform to the existing ID generation scheme: UUID4 without\\ndashes.\", \"maxLength\": 64, \"minLength\": 1, \"pattern\": \"^[a-zA-Z0-9-]+$\", \"type\": \"string\"}, \"name\": {\"description\": \"The name of the domain.\", \"maxLength\": 64, \"minLength\": 1, \"pattern\": \"[\\\\S]+\", \"type\": \"string\"}, \"options\": {\"additionalProperties\": false, \"description\": \"The resource options for the domain. Available resource options are\\n`immutable`.\", \"properties\": {\"immutable\": {\"enum\": [null, false, true], \"type\": [\"boolean\", \"null\"]}}, \"type\": \"object\"}, \"tags\": {\"items\": {\"maxLength\": 255, \"minLength\": 1, \"pattern\": \"^[^,/]*$\", \"type\": \"string\"}, \"maxItems\": 80, \"required\": [], \"type\": \"array\", \"uniqueItems\": true}}, \"required\": [\"name\"], \"type\": \"object\"}}, \"required\": [\"domain\"], \"type\": \"object\"}";
 
 #[cfg(test)]
 mod tests {

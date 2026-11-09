@@ -630,9 +630,10 @@ paths:
         - zone-imports
     post:
       description: |-
-        Import a zone.
+        Import a zone from a zone file in RFC 1035 format.
 
-        The API supports two content types for zone import:
+        The request body must contain the zone file data. The API supports two
+        content types for zone import:
       operationId: zones/tasks/imports:post
       requestBody:
         content:
@@ -762,7 +763,8 @@ paths:
     parameters:
       - $ref: '#/components/parameters/zones_tasks_transfer_requests_zone_transfer_request_id'
     patch:
-      description: |
+      description: |-
+        This allows you to update a zone transfer request.
       operationId: zones/tasks/transfer_requests/zone_transfer_request_id:patch
       requestBody:
         content:

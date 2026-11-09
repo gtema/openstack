@@ -401,6 +401,14 @@ paths:
           type:
           - string
           - 'null'
+      - name: enabled
+        in: query
+        description: Filter domains by the `enabled` flag.
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
       - name: limit
         in: query
         description: Limit number of entries on the single response page.
@@ -874,6 +882,284 @@ paths:
           description: Invalid configuration
         '403':
           description: Forbidden or unsupported group
+  /v3/domains/{domain_id}/groups/{group_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a group has on a domain.
+      operationId: /domain/group/role:list
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain or group not found
+      security:
+      - x-auth: []
+  /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to group on domain
+      description: Assigns a role to a group on a domain.
+      operationId: /domain/group/role:put
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain, group or role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from group on domain
+      description: Remove a role assignment for a group on a domain.
+      operationId: /domain/group/role:delete
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether group has role assignment on domain.
+      description: Validates that a group has a role on the domain.
+      operationId: /domain/group/role:check
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+  /v3/domains/{domain_id}/users/{user_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a user has on a domain.
+      operationId: /domain/user/role:list
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain or user not found
+      security:
+      - x-auth: []
+  /v3/domains/{domain_id}/users/{user_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to user on domain
+      description: Assigns a role to a user on a domain.
+      operationId: /domain/user/role:put
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain, user or role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from user on domain
+      description: Remove a role assignment for a user on a domain.
+      operationId: /domain/user/role:delete
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether user has role assignment on domain.
+      description: Validates that a user has a role on the domain.
+      operationId: /domain/user/role:check
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
   /v3/ec2tokens:
     post:
       tags:
@@ -1199,6 +1485,393 @@ paths:
                 $ref: '#/components/schemas/GroupResponse'
         '404':
           description: Group not found
+  /v3/groups/{group_id}/users:
+    get:
+      tags:
+      - groups
+      summary: List users in a group.
+      description: |-
+        Two-phase policy check (security model I8): `identity/group/user/list` is
+        enforced against the group first, then **every** returned user is
+        individually re-checked against `identity/user/show`, dropping the ones the
+        caller may not read.
+      operationId: /groups/group_id/users:list
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: domain_id
+        in: query
+        description: Filter users by Domain ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: name
+        in: query
+        description: Filter users by Name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: unique_id
+        in: query
+        description: Filter users by the federated unique ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: enabled
+        in: query
+        description: Filter users by the `enabled` flag.
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: List of users in the group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Group not found
+      security:
+      - x-auth: []
+  /v3/groups/{group_id}/users/{user_id}:
+    put:
+      tags:
+      - groups
+      summary: Add a user to a group.
+      operationId: /groups/group_id/users/user_id:add
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Add a user to a group.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Group, user or membership not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - groups
+      summary: Remove a user from a group.
+      operationId: /groups/group_id/users/user_id:remove
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Remove a user from a group.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Group, user or membership not found
+        '409':
+          description: User remains a member through a federated membership
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - groups
+      summary: Check whether a user is a member of a group.
+      operationId: /groups/group_id/users/user_id:check
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Check whether a user is a member of a group.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Group, user or membership not found
+      security:
+      - x-auth: []
+  /v3/limits:
+    get:
+      tags:
+      - limits
+      summary: List limits.
+      description: List limits
+      operationId: list
+      parameters:
+      - name: domain_id
+        in: query
+        description: Filters the response by a domain ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: project_id
+        in: query
+        description: Filters the response by a project ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: region_id
+        in: query
+        description: Filters the response by a region ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: resource_name
+        in: query
+        description: Filters the response by a resource name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: service_id
+        in: query
+        description: Filters the response by a service ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: List of limits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LimitList'
+        '500':
+          description: Internal error
+    post:
+      tags:
+      - limits
+      summary: Create limits.
+      description: |-
+        The request carries one or more limits and is processed atomically: either
+        all of them are created or none. Exactly one of `project_id` and
+        `domain_id` must be set on every limit. The policy is enforced for every
+        item of the batch.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LimitCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Limits created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LimitList'
+        '400':
+          description: Invalid input
+        '403':
+          description: No registered limit exists or the limit violates the enforcement model
+        '409':
+          description: Limit already exists
+        '500':
+          description: Internal error
+  /v3/limits/model:
+    get:
+      tags:
+      - limits
+      summary: Get the limit enforcement model.
+      description: Get the limit enforcement model
+      operationId: model
+      responses:
+        '200':
+          description: The enforcement model
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LimitModelResponse'
+        '500':
+          description: Internal error
+  /v3/limits/{limit_id}:
+    get:
+      tags:
+      - limits
+      summary: Get a single limit.
+      description: Get limit by ID
+      operationId: show
+      parameters:
+      - name: limit_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Limit object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LimitResponse'
+        '404':
+          description: Limit not found
+    delete:
+      tags:
+      - limits
+      summary: Delete a limit.
+      description: Delete limit by ID
+      operationId: delete
+      parameters:
+      - name: limit_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Limit deleted
+        '404':
+          description: Limit not found
+    patch:
+      tags:
+      - limits
+      summary: Update a limit.
+      description: Update limit by ID
+      operationId: update
+      parameters:
+      - name: limit_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LimitUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Limit object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LimitResponse'
+        '400':
+          description: Invalid input
+        '403':
+          description: The limit violates the enforcement model
+        '404':
+          description: Limit not found
   /v3/policies:
     get:
       tags:
@@ -1380,6 +2053,48 @@ paths:
           type:
           - string
           - 'null'
+      - name: enabled
+        in: query
+        description: Filter projects by the `enabled` flag.
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      - name: tags
+        in: query
+        description: Comma-separated tags. Return only projects carrying all of them.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: tags-any
+        in: query
+        description: |-
+          Comma-separated tags. Return only projects carrying at least one of
+          them.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: not-tags
+        in: query
+        description: Comma-separated tags. Exclude projects carrying all of them.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: not-tags-any
+        in: query
+        description: Comma-separated tags. Exclude projects carrying at least one of them.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
       - name: limit
         in: query
         description: Limit number of entries on the single response page.
@@ -1415,7 +2130,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectShortList'
+                $ref: '#/components/schemas/ProjectList'
         '500':
           description: Internal error
     post:
@@ -1446,8 +2161,52 @@ paths:
       tags:
       - projects
       summary: Get single project
+      description: |-
+        The optional `parents_as_list`, `parents_as_ids`, `subtree_as_list` and
+        `subtree_as_ids` query parameters add the project hierarchy data into the
+        response. Only the projects the caller is allowed to see are returned.
       operationId: show
       parameters:
+      - name: parents_as_list
+        in: query
+        description: |-
+          Return the list of the project parents (from the closest to the root).
+          Mutually exclusive with `parents_as_ids`.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: parents_as_ids
+        in: query
+        description: |-
+          Return the parents of the project as a nested object of the project
+          IDs. Mutually exclusive with `parents_as_list`.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: subtree_as_list
+        in: query
+        description: |-
+          Return the list of all project descendants. Mutually exclusive with
+          `subtree_as_ids`.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: subtree_as_ids
+        in: query
+        description: |-
+          Return the descendants of the project as a nested object of the
+          project IDs. Mutually exclusive with `subtree_as_list`.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
       - name: project_id
         in: path
         required: true
@@ -1459,7 +2218,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectResponse'
+                $ref: '#/components/schemas/ProjectHierarchyResponse'
+        '400':
+          description: Conflicting hierarchy parameters
         '404':
           description: Project not found
     delete:
@@ -1503,6 +2264,272 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectResponse'
+        '404':
+          description: Project not found
+  /v3/projects/{project_id}/groups/{group_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a group has on a project.
+      operationId: /project/group/role:list
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Project or group not found
+      security:
+      - x-auth: []
+  /v3/projects/{project_id}/groups/{group_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to group on project
+      description: Assigns a role to a group on a project.
+      operationId: /project/group/role:put
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Project, group or role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from group on project
+      description: Remove a role assignment for a group on a project.
+      operationId: /project/group/role:delete
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether group has role assignment on project.
+      description: Validates that a group has a role on the project.
+      operationId: /project/group/role:check
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+  /v3/projects/{project_id}/tags:
+    get:
+      tags:
+      - projects
+      summary: List project tags.
+      operationId: list
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Project tags
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectTags'
+        '404':
+          description: Project not found
+    put:
+      tags:
+      - projects
+      summary: Replace project tags.
+      operationId: replace
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectTags'
+        required: true
+      responses:
+        '200':
+          description: The resulting project tags
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectTags'
+        '404':
+          description: Project not found
+    delete:
+      tags:
+      - projects
+      summary: Delete all project tags.
+      operationId: remove_all
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Project not found
+  /v3/projects/{project_id}/tags/{tag}:
+    get:
+      tags:
+      - projects
+      summary: Check a project tag.
+      operationId: show
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tag
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: The project has the tag
+        '404':
+          description: Project not found
+    put:
+      tags:
+      - projects
+      summary: Add a project tag.
+      operationId: create
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tag
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Tag added
+        '404':
+          description: Project not found
+    delete:
+      tags:
+      - projects
+      summary: Delete a project tag.
+      operationId: remove
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tag
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Tag deleted
         '404':
           description: Project not found
   /v3/projects/{project_id}/users/{user_id}/roles:
@@ -1807,6 +2834,178 @@ paths:
                 $ref: '#/components/schemas/RegionResponse'
         '404':
           description: Region not found
+  /v3/registered_limits:
+    get:
+      tags:
+      - limits
+      summary: List registered limits.
+      description: List registered limits
+      operationId: list
+      parameters:
+      - name: region_id
+        in: query
+        description: Filters the response by a region ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: resource_name
+        in: query
+        description: Filters the response by a resource name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: service_id
+        in: query
+        description: Filters the response by a service ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: List of registered limits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredLimitList'
+        '500':
+          description: Internal error
+    post:
+      tags:
+      - limits
+      summary: Create registered limits.
+      description: |-
+        The request carries one or more registered limits and is processed
+        atomically: either all of them are created or none. The policy is enforced
+        for every item of the batch.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisteredLimitCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Registered limits created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredLimitList'
+        '400':
+          description: Invalid input
+        '409':
+          description: Registered limit already exists
+        '500':
+          description: Internal error
+  /v3/registered_limits/{registered_limit_id}:
+    get:
+      tags:
+      - limits
+      summary: Get a single registered limit.
+      description: Get registered limit by ID
+      operationId: show
+      parameters:
+      - name: registered_limit_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Registered limit object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredLimitResponse'
+        '404':
+          description: Registered limit not found
+    delete:
+      tags:
+      - limits
+      summary: Delete a registered limit.
+      description: Delete registered limit by ID
+      operationId: delete
+      parameters:
+      - name: registered_limit_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Registered limit deleted
+        '403':
+          description: Registered limit is referenced by limits
+        '404':
+          description: Registered limit not found
+    patch:
+      tags:
+      - limits
+      summary: Update a registered limit.
+      description: Update registered limit by ID
+      operationId: update
+      parameters:
+      - name: registered_limit_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisteredLimitUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Registered limit object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredLimitResponse'
+        '400':
+          description: Invalid input
+        '403':
+          description: Registered limit is referenced by limits
+        '404':
+          description: Registered limit not found
+        '409':
+          description: Registered limit already exists
   /v3/role_assignments:
     get:
       tags:
@@ -2384,6 +3583,113 @@ paths:
                 $ref: '#/components/schemas/ServiceResponse'
         '404':
           description: Service not found
+  /v3/system/groups/{group_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a group has on the system.
+      operationId: /system/group/role:list
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '404':
+          description: Group not found
+      security:
+      - x-auth: []
+  /v3/system/groups/{group_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to group on system
+      description: Assigns a role to a group on the system.
+      operationId: /system/group/role:put
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from group on system
+      description: Remove a role assignment for a group on the system.
+      operationId: /system/group/role:delete
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - X-Auth-Token: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether group has role assignment on system.
+      description: Validates that a group has a role on the system.
+      operationId: /system/group/role:check
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
   /v3/system/users/{user_id}/roles:
     get:
       tags:
@@ -2518,6 +3824,14 @@ paths:
         schema:
           type:
           - string
+          - 'null'
+      - name: enabled
+        in: query
+        description: Filter users by the `enabled` flag.
+        required: false
+        schema:
+          type:
+          - boolean
           - 'null'
       - name: limit
         in: query
@@ -2898,6 +4212,30 @@ paths:
           description: User not found
         '409':
           description: Password change not supported for nonlocal user
+        '500':
+          description: Internal error
+  /v3/users/{user_id}/projects:
+    get:
+      tags:
+      - users
+      summary: List projects a user has a role assignment on
+      description: List projects a user has a role assignment on
+      operationId: projects
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of user projects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectShortList'
+        '404':
+          description: User not found
         '500':
           description: Internal error
   /v4:
@@ -3336,6 +4674,299 @@ paths:
           description: No such dynamic plugin
       security:
       - x-auth: []
+  /v4/delegatable-services:
+    get:
+      tags:
+      - delegatable_service
+      summary: List the services the caller may create service grants for.
+      operationId: /delegatable_service:list
+      responses:
+        '200':
+          description: Delegatable services
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DelegatableServiceList'
+      security:
+      - x-auth: []
+  /v4/domains/{domain_id}/groups/{group_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a group has on a domain.
+      operationId: /domain/group/role:list
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain or group not found
+      security:
+      - x-auth: []
+  /v4/domains/{domain_id}/groups/{group_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to group on domain
+      description: Assigns a role to a group on a domain.
+      operationId: /domain/group/role:put
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain, group or role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from group on domain
+      description: Remove a role assignment for a group on a domain.
+      operationId: /domain/group/role:delete
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether group has role assignment on domain.
+      description: Validates that a group has a role on the domain.
+      operationId: /domain/group/role:check
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+  /v4/domains/{domain_id}/users/{user_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a user has on a domain.
+      operationId: /domain/user/role:list
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain or user not found
+      security:
+      - x-auth: []
+  /v4/domains/{domain_id}/users/{user_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to user on domain
+      description: Assigns a role to a user on a domain.
+      operationId: /domain/user/role:put
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Domain, user or role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from user on domain
+      description: Remove a role assignment for a user on a domain.
+      operationId: /domain/user/role:delete
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether user has role assignment on domain.
+      description: Validates that a user has a role on the domain.
+      operationId: /domain/user/role:check
+      parameters:
+      - name: domain_id
+        in: path
+        description: The domain ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
   /v4/federation/identity_providers:
     get:
       tags:
@@ -3749,6 +5380,190 @@ paths:
                 $ref: '#/components/schemas/GroupResponse'
         '404':
           description: Group not found
+  /v4/groups/{group_id}/users:
+    get:
+      tags:
+      - groups
+      summary: List users in a group.
+      description: |-
+        Two-phase policy check (security model I8): `identity/group/user/list` is
+        enforced against the group first, then **every** returned user is
+        individually re-checked against `identity/user/show`, dropping the ones the
+        caller may not read.
+      operationId: /groups/group_id/users:list
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: domain_id
+        in: query
+        description: Filter users by Domain ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: name
+        in: query
+        description: Filter users by Name.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: unique_id
+        in: query
+        description: Filter users by the federated unique ID.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: enabled
+        in: query
+        description: Filter users by the `enabled` flag.
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: List of users in the group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Group not found
+      security:
+      - x-auth: []
+  /v4/groups/{group_id}/users/{user_id}:
+    put:
+      tags:
+      - groups
+      summary: Add a user to a group.
+      operationId: /groups/group_id/users/user_id:add
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Add a user to a group.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Group, user or membership not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - groups
+      summary: Remove a user from a group.
+      operationId: /groups/group_id/users/user_id:remove
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Remove a user from a group.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Group, user or membership not found
+        '409':
+          description: User remains a member through a federated membership
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - groups
+      summary: Check whether a user is a member of a group.
+      operationId: /groups/group_id/users/user_id:check
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: user_id
+        in: path
+        description: The user ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Check whether a user is a member of a group.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Group, user or membership not found
+      security:
+      - x-auth: []
   /v4/k8s_auth/instances:
     get:
       tags:
@@ -4124,6 +5939,26 @@ paths:
                 $ref: '#/components/schemas/MappingRuleSetResponse'
       security:
       - x-auth: []
+  /v4/oauth2/static/{*path}:
+    get:
+      tags:
+      - oauth2
+      summary: |-
+        `GET /v4/oauth2/static/{path}`. Serves files from `[oauth2] static_dir`
+        and the built-in default `style.css`; `404` otherwise.
+      operationId: /oauth2:static
+      parameters:
+      - name: path
+        in: path
+        description: Asset path below the static directory
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Static asset
+        '404':
+          description: Not configured or no such file
   /v4/oauth2/{domain_id}/.well-known/openid-configuration:
     get:
       tags:
@@ -4144,10 +5979,16 @@ paths:
       responses:
         '200':
           description: OIDC discovery document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpenIdConfiguration'
         '404':
           description: No signing keys provisioned for this domain
         '429':
           description: Rate limit exceeded
+        '503':
+          description: '`public_endpoint` is not configured'
   /v4/oauth2/{domain_id}/authorize:
     get:
       tags:
@@ -4219,6 +6060,51 @@ paths:
           type:
           - string
           - 'null'
+      - name: idp_hint
+        in: query
+        description: |-
+          Skip the login chooser and go straight to this upstream identity
+          provider. Only a registered, enabled IdP of the domain is honoured;
+          anything else is ignored.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: max_age
+        in: query
+        description: Maximum authentication age in seconds (OIDC Core §3.1.2.1).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: prompt
+        in: query
+        description: Space-separated `none`, `login`, `consent`, `select_account`.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: login_hint
+        in: query
+        description: Prefills the username field of the login form.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: dpop_jkt
+        in: query
+        description: |-
+          RFC 9449 §10: thumbprint of the DPoP key the authorization code (and
+          the tokens issued for it) are bound to.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
       responses:
         '200':
           description: Login form rendered
@@ -4230,6 +6116,8 @@ paths:
           description: Malformed request or unregistered redirect_uri
         '429':
           description: Rate limit exceeded
+        '503':
+          description: '`public_endpoint` is not configured'
   /v4/oauth2/{domain_id}/authorize/consent:
     post:
       tags:
@@ -4254,6 +6142,81 @@ paths:
           description: Redirect back to the client with a code or error
         '400':
           description: Missing/expired session, not signed in, or invalid CSRF token
+  /v4/oauth2/{domain_id}/authorize/federated:
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/authorize/federated`.'
+      operationId: /oauth2:authorize_federated
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FederatedForm'
+        required: true
+      responses:
+        '200':
+          description: Login form re-rendered with an error
+          content:
+            text/html: {}
+        '303':
+          description: Redirect to the upstream identity provider
+        '400':
+          description: Missing/expired session, invalid CSRF token or unknown identity provider
+        '429':
+          description: Rate limit exceeded
+  /v4/oauth2/{domain_id}/authorize/federated/callback:
+    get:
+      tags:
+      - oauth2
+      summary: '`GET /v4/oauth2/{domain_id}/authorize/federated/callback`.'
+      operationId: /oauth2:authorize_federated_callback
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: state
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: error
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: Consent form, or the login form with an error
+          content:
+            text/html: {}
+        '303':
+          description: 'Pre-authorized client: redirected straight to the RP with a code'
+        '400':
+          description: Missing/expired session or unexpected state
+        '429':
+          description: Rate limit exceeded
   /v4/oauth2/{domain_id}/authorize/login:
     post:
       tags:
@@ -4284,6 +6247,34 @@ paths:
           description: Missing/expired session or invalid CSRF token
         '429':
           description: Rate limit exceeded
+  /v4/oauth2/{domain_id}/authorize/mfa:
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/authorize/mfa`.'
+      operationId: /oauth2:authorize_mfa
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MfaForm'
+        required: true
+      responses:
+        '200':
+          description: MFA form re-rendered after a wrong code, or the consent page
+          content:
+            text/html: {}
+        '400':
+          description: Missing/expired session, no second factor pending, or invalid CSRF token
+        '429':
+          description: Rate limit exceeded
   /v4/oauth2/{domain_id}/clients:
     get:
       tags:
@@ -4306,6 +6297,16 @@ paths:
         schema:
           type:
           - boolean
+          - 'null'
+      - name: name
+        in: query
+        description: |-
+          Restrict to clients whose name contains this substring
+          (case-insensitive).
+        required: false
+        schema:
+          type:
+          - string
           - 'null'
       - name: limit
         in: query
@@ -4590,6 +6591,79 @@ paths:
             text/html: {}
         '400':
           description: Missing/expired grant, not signed in, or invalid CSRF token
+  /v4/oauth2/{domain_id}/device/federated:
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/device/federated`.'
+      operationId: /oauth2:device_federated
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FederatedForm'
+        required: true
+      responses:
+        '200':
+          description: Login form re-rendered with an error
+          content:
+            text/html: {}
+        '303':
+          description: Redirect to the upstream identity provider
+        '400':
+          description: Missing/expired code, invalid CSRF token or unknown identity provider
+        '429':
+          description: Rate limit exceeded
+  /v4/oauth2/{domain_id}/device/federated/callback:
+    get:
+      tags:
+      - oauth2
+      summary: '`GET /v4/oauth2/{domain_id}/device/federated/callback`.'
+      operationId: /oauth2:device_federated_callback
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: state
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: error
+        in: query
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: Consent form, the result page, or the login form with an error
+          content:
+            text/html: {}
+        '400':
+          description: Missing/expired code or unexpected state
+        '429':
+          description: Rate limit exceeded
   /v4/oauth2/{domain_id}/device/login:
     post:
       tags:
@@ -4616,6 +6690,34 @@ paths:
             text/html: {}
         '400':
           description: Missing/expired grant or invalid CSRF token
+  /v4/oauth2/{domain_id}/device/mfa:
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/device/mfa`.'
+      operationId: /oauth2:device_mfa
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceMfaForm'
+        required: true
+      responses:
+        '200':
+          description: MFA form re-rendered after a wrong code, or the consent page
+          content:
+            text/html: {}
+        '400':
+          description: Missing/expired code, no second factor pending, or invalid CSRF token
+        '429':
+          description: Rate limit exceeded
   /v4/oauth2/{domain_id}/device_authorization:
     post:
       tags:
@@ -4639,6 +6741,8 @@ paths:
           description: Device authorization grant issued
         '400':
           description: Malformed request, unknown client, or invalid scope
+        '503':
+          description: '`public_endpoint` is not configured'
   /v4/oauth2/{domain_id}/ensure-signing-key:
     post:
       tags:
@@ -4660,6 +6764,40 @@ paths:
                 $ref: '#/components/schemas/EnsureSigningKeyResponse'
       security:
       - x-auth: []
+  /v4/oauth2/{domain_id}/introspect:
+    post:
+      tags:
+      - oauth2
+      summary: RFC 7662 token introspection endpoint.
+      operationId: /oauth2:introspect
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/IntrospectForm'
+        required: true
+      responses:
+        '200':
+          description: Introspection response; `active` is false for any token that is not currently valid
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Missing `token` parameter
+        '401':
+          description: Invalid client credentials or public client
+        '429':
+          description: Rate limit exceeded
+        '503':
+          description: '`public_endpoint` is not configured'
   /v4/oauth2/{domain_id}/jwks:
     get:
       tags:
@@ -4731,6 +6869,113 @@ paths:
                 $ref: '#/components/schemas/ListLocalEmergencyCandidatesResponse'
       security:
       - x-auth: []
+  /v4/oauth2/{domain_id}/logout:
+    get:
+      tags:
+      - oauth2
+      summary: '`GET /v4/oauth2/{domain_id}/logout`.'
+      operationId: /oauth2:logout
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      - name: id_token_hint
+        in: query
+        description: An `id_token` this provider issued earlier for the user.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: post_logout_redirect_uri
+        in: query
+        description: Where to send the browser afterwards; must be registered on the client.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: state
+        in: query
+        description: Echoed on the redirect.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: client_id
+        in: query
+        description: The client, when no `id_token_hint` is sent.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: Confirmation or signed-out page
+          content:
+            text/html: {}
+        '303':
+          description: Redirect to the registered post_logout_redirect_uri
+        '400':
+          description: Invalid id_token_hint, unknown client or unregistered redirect URI
+        '429':
+          description: Rate limit exceeded
+    post:
+      tags:
+      - oauth2
+      summary: '`POST /v4/oauth2/{domain_id}/logout`.'
+      operationId: /oauth2:logout_post
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LogoutParams'
+        required: true
+      responses:
+        '200':
+          description: Signed-out page
+          content:
+            text/html: {}
+        '303':
+          description: Redirect to the registered post_logout_redirect_uri
+        '400':
+          description: Invalid id_token_hint, unknown client or unregistered redirect URI
+        '429':
+          description: Rate limit exceeded
+  /v4/oauth2/{domain_id}/logout/complete:
+    get:
+      tags:
+      - oauth2
+      summary: '`GET /v4/oauth2/{domain_id}/logout/complete`.'
+      operationId: /oauth2:logout_complete
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Signed-out page
+          content:
+            text/html: {}
+        '303':
+          description: Redirect to the registered post_logout_redirect_uri
+        '429':
+          description: Rate limit exceeded
   /v4/oauth2/{domain_id}/reconcile-local-emergency-key:
     post:
       tags:
@@ -4758,6 +7003,64 @@ paths:
                 $ref: '#/components/schemas/ReconcileLocalEmergencyKeyResponse'
       security:
       - x-auth: []
+  /v4/oauth2/{domain_id}/revocations:
+    post:
+      tags:
+      - oauth2_revocation
+      summary: Revoke the refresh token families of a user, a client or a domain.
+      operationId: /oauth2/revocation:create
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Oauth2RevocationRequest'
+        required: true
+      responses:
+        '200':
+          description: Revocation counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Oauth2RevocationResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/revoke:
+    post:
+      tags:
+      - oauth2
+      summary: RFC 7009 token revocation endpoint.
+      operationId: /oauth2:revoke
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RevokeForm'
+        required: true
+      responses:
+        '200':
+          description: Token revoked, or nothing to revoke
+        '400':
+          description: Missing `token` parameter
+        '401':
+          description: Invalid client credentials
+        '429':
+          description: Rate limit exceeded
+        '503':
+          description: '`public_endpoint` is not configured'
   /v4/oauth2/{domain_id}/rotate-signing-key:
     post:
       tags:
@@ -4785,12 +7088,35 @@ paths:
                 $ref: '#/components/schemas/RotateSigningKeyResponse'
       security:
       - x-auth: []
-  /v4/oauth2/{domain_id}/token:
-    post:
+  /v4/oauth2/{domain_id}/settings:
+    get:
       tags:
-      - oauth2
-      summary: '`client_credentials` machine-to-machine grant (ADR 0026 §5, §7.A).'
-      operationId: /oauth2:token
+      - oauth2_settings
+      summary: |-
+        Show the OAuth2 settings of a domain. A domain that was never configured
+        reports the defaults (`dpop: disabled`, `updated_at: 0`).
+      operationId: /oauth2/settings:show
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OAuth2 settings of the domain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Oauth2DomainSettingsResponse'
+      security:
+      - x-auth: []
+    put:
+      tags:
+      - oauth2_settings
+      summary: Update the OAuth2 settings of a domain.
+      operationId: /oauth2/settings:update
       parameters:
       - name: domain_id
         in: path
@@ -4800,10 +7126,32 @@ paths:
           type: string
       requestBody:
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
-              $ref: '#/components/schemas/TokenForm'
+              $ref: '#/components/schemas/Oauth2DomainSettingsUpdateRequest'
         required: true
+      responses:
+        '200':
+          description: OAuth2 settings of the domain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Oauth2DomainSettingsResponse'
+      security:
+      - x-auth: []
+  /v4/oauth2/{domain_id}/token:
+    post:
+      tags:
+      - oauth2
+      summary: 'Token endpoint: dispatches on `grant_type` (ADR 0026 §5).'
+      operationId: /oauth2:token
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Access token issued
@@ -4813,6 +7161,200 @@ paths:
           description: Invalid client credentials
         '429':
           description: Rate limit exceeded
+        '503':
+          description: '`public_endpoint` is not configured'
+  /v4/oauth2/{domain_id}/userinfo:
+    get:
+      tags:
+      - oauth2
+      summary: OIDC UserInfo endpoint (`GET`).
+      operationId: /oauth2:userinfo:get
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: UserInfo claims
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Missing or invalid access token
+        '403':
+          description: Access token lacks the `openid` scope
+        '429':
+          description: Rate limit exceeded
+        '503':
+          description: '`public_endpoint` is not configured'
+    post:
+      tags:
+      - oauth2
+      summary: OIDC UserInfo endpoint (`POST`, OIDC Core §5.3.1).
+      operationId: /oauth2:userinfo:post
+      parameters:
+      - name: domain_id
+        in: path
+        description: Domain ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: UserInfo claims
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Missing or invalid access token
+        '403':
+          description: Access token lacks the `openid` scope
+        '429':
+          description: Rate limit exceeded
+        '503':
+          description: '`public_endpoint` is not configured'
+  /v4/projects/{project_id}/groups/{group_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a group has on a project.
+      operationId: /project/group/role:list
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Project or group not found
+      security:
+      - x-auth: []
+  /v4/projects/{project_id}/groups/{group_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to group on project
+      description: Assigns a role to a group on a project.
+      operationId: /project/group/role:put
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Project, group or role not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from group on project
+      description: Remove a role assignment for a group on a project.
+      operationId: /project/group/role:delete
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether group has role assignment on project.
+      description: Validates that a group has a role on the project.
+      operationId: /project/group/role:check
+      parameters:
+      - name: project_id
+        in: path
+        description: The project ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
   /v4/projects/{project_id}/users/{user_id}/roles:
     get:
       tags:
@@ -5526,6 +8068,176 @@ paths:
           description: Resource purged
       security:
       - x-auth: []
+  /v4/service-grants:
+    get:
+      tags:
+      - service_grant
+      summary: List service grants.
+      description: |-
+        Without `admin`, the caller must filter on itself (`user_id`), or on the
+        project (`project_id`) or domain (`domain_id`) it manages. Every
+        returned grant is re-checked against the show policy.
+      operationId: /service_grant:list
+      parameters:
+      - name: domain_id
+        in: query
+        description: Domain of the target project.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: enabled
+        in: query
+        description: Restrict to enabled or disabled grants.
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+      - name: grantee_client_id
+        in: query
+        description: Grantee client id.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: project_id
+        in: query
+        description: Target project id.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: user_id
+        in: query
+        description: Grantor user id.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: limit
+        in: query
+        description: Limit number of entries on the single response page.
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+      - name: marker
+        in: query
+        description: Page marker (id of the last entry of the previous page).
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: page_reverse
+        in: query
+        description: |-
+          Fetch the page preceding `marker` instead of the page following it.
+
+          v3 endpoints accept this field (unknown-to-python-keystone query
+          params are harmless) but never read or forward it; only v4 endpoints
+          wire it through.
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Service grants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceGrantList'
+      security:
+      - x-auth: []
+    post:
+      tags:
+      - service_grant
+      summary: |-
+        Create a service grant delegating the caller's roles on a project to a
+        service.
+      description: |-
+        The caller is always the grantor, and must not itself be authenticated
+        through a delegation (trust, restricted application credential, service
+        grant).
+      operationId: /service_grant:create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceGrantCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: Service grant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceGrantResponse'
+        '400':
+          description: The grantee, project or roles are not usable
+        '403':
+          description: The caller may not delegate
+        '429':
+          description: The project reached its grant quota
+      security:
+      - x-auth: []
+  /v4/service-grants/{grant_id}:
+    get:
+      tags:
+      - service_grant
+      summary: Show a service grant.
+      description: |-
+        Users call it with a token; the grantee service calls it on the internal
+        interface with its X.509-SVID.
+      operationId: /service_grant:show
+      parameters:
+      - name: grant_id
+        in: path
+        description: Service grant id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Service grant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceGrantResponse'
+        '404':
+          description: No such grant
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - service_grant
+      summary: Delete (revoke) a service grant.
+      description: |-
+        The grantor, a manager of the grant's project or domain, or the grantee
+        service (internal interface, X.509-SVID) may delete it.
+      operationId: /service_grant:delete
+      parameters:
+      - name: grant_id
+        in: path
+        description: Service grant id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Service grant deleted
+        '404':
+          description: No such grant
+      security:
+      - x-auth: []
   /v4/spiffe/{domain_id}/jwks:
     get:
       tags:
@@ -5550,6 +8262,113 @@ paths:
           description: No attestation signing keys provisioned for this domain
         '429':
           description: Rate limit exceeded
+  /v4/system/groups/{group_id}/roles:
+    get:
+      tags:
+      - role_assignments
+      summary: List the roles that a group has on the system.
+      operationId: /system/group/role:list
+      parameters:
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of roles
+        '404':
+          description: Group not found
+      security:
+      - x-auth: []
+  /v4/system/groups/{group_id}/roles/{role_id}:
+    put:
+      tags:
+      - role_assignments
+      summary: Assign role to group on system
+      description: Assigns a role to a group on the system.
+      operationId: /system/group/role:put
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is created.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
+    delete:
+      tags:
+      - role_assignments
+      summary: Revoke role from group on system
+      description: Remove a role assignment for a group on the system.
+      operationId: /system/group/role:delete
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Role revoked successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Grant not found
+      security:
+      - X-Auth-Token: []
+    head:
+      tags:
+      - role_assignments
+      summary: Check whether group has role assignment on system.
+      description: Validates that a group has a role on the system.
+      operationId: /system/group/role:check
+      parameters:
+      - name: role_id
+        in: path
+        description: The role ID.
+        required: true
+        schema:
+          type: string
+      - name: group_id
+        in: path
+        description: The group ID.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Grant is present.
+        '404':
+          description: Grant not found
+      security:
+      - x-auth: []
   /v4/system/users/{user_id}/roles:
     get:
       tags:
@@ -5864,14 +8683,22 @@ paths:
           type:
           - string
           - 'null'
+      - name: enabled
+        in: query
+        description: Filter users by the `enabled` flag.
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
       - name: type
         in: query
         description: Filter users by type (`local`, `federated`, `nonlocal`, `all`).
         required: false
         schema:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/UserType'
+          - type: 'null'
       - name: limit
         in: query
         description: Limit number of entries on the single response page.
@@ -6018,6 +8845,58 @@ paths:
           description: User not found
         '500':
           description: Internal error
+  /v4/users/{user_id}/oauth2/consents:
+    get:
+      tags:
+      - users
+      summary: List the applications a user has approved
+      description: List the OAuth2 applications a user has approved
+      operationId: oauth2_consents
+      parameters:
+      - name: user_id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The approved applications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Oauth2ConsentList'
+        '404':
+          description: User not found
+      security:
+      - x-auth: []
+  /v4/users/{user_id}/oauth2/consents/{client_id}:
+    delete:
+      tags:
+      - users
+      summary: Withdraw the consent for an application
+      description: Withdraw the consent for an OAuth2 application and revoke its refresh tokens
+      operationId: oauth2_consent_delete
+      parameters:
+      - name: user_id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      - name: client_id
+        in: path
+        description: OAuth2 client ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Consent withdrawn
+        '404':
+          description: User or consent not found
+      security:
+      - x-auth: []
   /v4/users/{user_id}/passkeys/register_finish:
     post:
       tags:
@@ -6076,6 +8955,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserPasskeyRegistrationStartResponse'
+        '500':
+          description: Internal error
+  /v4/users/{user_id}/projects:
+    get:
+      tags:
+      - users
+      summary: List projects a user has a role assignment on
+      description: List projects a user has a role assignment on
+      operationId: projects
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of user projects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectShortList'
+        '404':
+          description: User not found
         '500':
           description: Internal error
   /v4/vendordata:
@@ -6504,9 +9407,9 @@ components:
             is `false`.
         scope:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/SimulatedScope'
             description: The scope the key would be granted. Absent when `matched` is `false`.
+          - type: 'null'
     ApiKeyUpdate:
       type: object
       description: |-
@@ -6607,7 +9510,6 @@ components:
       description: Data for creating an application credential.
       required:
       - name
-      - roles
       properties:
         access_rules:
           type:
@@ -6639,7 +9541,7 @@ components:
         roles:
           type: array
           items:
-            $ref: '#/components/schemas/RoleRef'
+            $ref: '#/components/schemas/ApplicationCredentialRoleRef'
           description: |-
             Roles to delegate to the new credential. Must be a subset of the
             user's roles on the project. Defaults to all of the user's roles on the
@@ -6766,6 +9668,29 @@ components:
         application_credential:
           $ref: '#/components/schemas/ApplicationCredential'
           description: The application credential object.
+    ApplicationCredentialRoleRef:
+      type: object
+      description: |-
+        Role reference in an application credential create request.
+
+        Like in python keystone the role may be identified either by `id` or by
+        `name` (optionally qualified with `domain_id`).
+      properties:
+        domain_id:
+          type:
+          - string
+          - 'null'
+          description: Role domain ID.
+        id:
+          type:
+          - string
+          - 'null'
+          description: Role ID. May be omitted when `name` is given.
+        name:
+          type:
+          - string
+          - 'null'
+          description: Role name. May be omitted when `id` is given.
     Assignment:
       type: object
       description: Assignment.
@@ -6775,9 +9700,9 @@ components:
       properties:
         group:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/Group'
             description: Group.
+          - type: 'null'
         role:
           $ref: '#/components/schemas/Role'
           description: Role.
@@ -6786,9 +9711,9 @@ components:
           description: Target scope.
         user:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/User'
             description: User.
+          - type: 'null'
     AssignmentList:
       type: object
       description: Assignments.
@@ -7085,6 +10010,11 @@ components:
           type: string
         decision:
           type: string
+        remember:
+          type:
+          - string
+          - 'null'
+          description: Present (any value) when the "remember" checkbox was ticked.
     CredProps:
       type: object
       description: <https://www.w3.org/TR/webauthn-3/#sctn-authenticator-credential-properties-extension>.
@@ -7251,6 +10181,105 @@ components:
         credential:
           $ref: '#/components/schemas/CredentialUpdate'
           description: Credential update patch.
+    DelegatableService:
+      type: object
+      description: |-
+        A service a user may name as a service grant grantee (ADR 0036 §3).
+        Carries the delegation ceilings only; SPIFFE IDs are never returned.
+      required:
+      - client_id
+      - cross_domain
+      - domain_id
+      - max_role_ids
+      - name
+      properties:
+        client_id:
+          type: string
+          description: Client id to pass as `grantee_client_id`.
+        cross_domain:
+          type: boolean
+          description: Users and projects of other domains may delegate to this client.
+        domain_id:
+          type: string
+          description: Client domain.
+        max_grant_lifetime:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Maximum grant lifetime in seconds.
+          minimum: 0
+        max_grants_per_project:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Maximum live grants per project for this client.
+          minimum: 0
+        max_role_ids:
+          type: array
+          items:
+            type: string
+          description: |-
+            Role ids a grant may carry; empty means no ceiling beyond the
+            grantor's own roles.
+        name:
+          type: string
+          description: Client display name.
+    DelegatableServiceList:
+      type: object
+      description: Delegatable service list response.
+      required:
+      - delegatable_services
+      properties:
+        delegatable_services:
+          type: array
+          items:
+            $ref: '#/components/schemas/DelegatableService'
+          description: Services the caller may delegate to.
+    DelegationPolicy:
+      type: object
+      description: Delegation capabilities of a delegatable service client (ADR 0036 §3).
+      properties:
+        cross_domain:
+          type: boolean
+          description: |-
+            Users of other domains, or users on projects of other domains, may
+            delegate to this client.
+        max_grant_lifetime:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Maximum service grant lifetime in seconds.
+          minimum: 0
+        max_grants_per_project:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Maximum live grants per project for this client.
+          minimum: 0
+        max_operation_lifetime:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: |-
+            Maximum operation token lifetime in seconds; required with
+            `on_behalf_of`.
+          minimum: 0
+        max_role_ids:
+          type: array
+          items:
+            type: string
+          description: Role ids a delegation to this client may carry; empty = no ceiling.
+        on_behalf_of:
+          type: boolean
+          description: The client may exchange user tokens for operation tokens.
+        service_grants:
+          type: boolean
+          description: Users may create service grants naming this client.
     DeviceAuthorizationForm:
       type: object
       properties:
@@ -7258,6 +10287,14 @@ components:
           type:
           - string
           - 'null'
+        dpop_jkt:
+          type:
+          - string
+          - 'null'
+          description: |-
+            RFC 9449 §10 style thumbprint of the DPoP key the device code, and
+            the tokens issued for it, are bound to (ADR 0043 §3). Ignored while
+            DPoP is disabled for the request.
         scope:
           type:
           - string
@@ -7279,6 +10316,11 @@ components:
           type: string
         decision:
           type: string
+        remember:
+          type:
+          - string
+          - 'null'
+          description: Present (any value) when the "remember" checkbox was ticked.
     DeviceLoginForm:
       type: object
       required:
@@ -7292,6 +10334,30 @@ components:
           type: string
         username:
           type: string
+    DeviceMfaForm:
+      type: object
+      required:
+      - csrf_token
+      - factor
+      properties:
+        assertion:
+          type: string
+        csrf_token:
+          type: string
+        factor:
+          type: string
+        passcode:
+          type: string
+    DisabledReason:
+      type: string
+      description: Why a grant was disabled.
+      enum:
+      - expired
+      - grantor_disabled
+      - grantee_removed
+      - revoked
+      - role_lost
+      - target_disabled
     Domain:
       type: object
       description: Domain information.
@@ -7353,12 +10419,12 @@ components:
           description: The domain name.
         options:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/ProjectOptions'
             description: |-
               The resource options for the domain. A domain is a project with
               `is_domain = true` and shares its resource options, hence the shared
               `ProjectOptions` type.
+          - type: 'null'
       additionalProperties:
         description: Additional domain properties.
     DomainCreateRequest:
@@ -7460,12 +10526,12 @@ components:
           description: The domain name.
         options:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/ProjectOptions'
             description: |-
               The resource options for the domain. A domain is a project with
               `is_domain = true` and shares its resource options, hence the shared
               `ProjectOptions` type.
+          - type: 'null'
       additionalProperties:
         description: Additional domain properties.
     DomainUpdateRequest:
@@ -7477,6 +10543,13 @@ components:
         domain:
           $ref: '#/components/schemas/DomainUpdate'
           description: Domain object.
+    DpopMode:
+      type: string
+      description: DPoP enforcement mode (ADR 0043 §1).
+      enum:
+      - disabled
+      - optional
+      - required
     Ec2Credential:
       type: object
       description: |-
@@ -7752,6 +10825,16 @@ components:
           description: |-
             The domain's `Primary` key's `kid` -- pre-existing if one was
             already provisioned, freshly generated otherwise.
+    FederatedForm:
+      type: object
+      required:
+      - csrf_token
+      - idp_id
+      properties:
+        csrf_token:
+          type: string
+        idp_id:
+          type: string
     Federation:
       type: object
       description: User federation data.
@@ -7787,6 +10870,26 @@ components:
             Actions OIDC `sub` claim), which for merge-queue-triggered runs can
             exceed 100 characters. The limit is kept below the backing column
             width (`VARCHAR(255)`) rather than the usual 64-char ID convention.
+    GrantTarget:
+      oneOf:
+      - type: object
+        description: One project.
+        required:
+        - project_id
+        - project_domain_id
+        - type
+        properties:
+          project_domain_id:
+            type: string
+            description: Domain of the target project.
+          project_id:
+            type: string
+            description: Target project id.
+          type:
+            type: string
+            enum:
+            - project
+      description: What a grant lets the grantee act on.
     GrantType:
       type: string
       description: OAuth2/OIDC grant type a client is authorized to use.
@@ -7796,6 +10899,26 @@ components:
       - device_code
       - refresh_token
       - urn:ietf:params:oauth:grant-type:token-exchange
+    Grantee:
+      oneOf:
+      - type: object
+        description: A registered delegatable service client.
+        required:
+        - client_id
+        - client_domain_id
+        - type
+        properties:
+          client_domain_id:
+            type: string
+            description: Domain of the grantee client.
+          client_id:
+            type: string
+            description: Grantee client id.
+          type:
+            type: string
+            enum:
+            - client
+      description: Who a grant delegates to.
     Group:
       type: object
       required:
@@ -7839,9 +10962,9 @@ components:
           description: Group name.
         strategy:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/GroupStrategy'
             description: Strategy for resolving the group. Defaults to `CreateOrGet`.
+          - type: 'null'
     GroupCreate:
       type: object
       required:
@@ -7968,11 +11091,11 @@ components:
       properties:
         identity_mode:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/IdentityMode'
             description: |-
               Identity mode for the resolved principal. When absent, defaults to
               `Local` for `Federation` source and `Ephemeral` for others.
+          - type: 'null'
         is_system:
           type: boolean
           description: Whether the resolved identity has system-level privileges.
@@ -8151,9 +11274,9 @@ components:
           description: Redirect URI to include in the auth request.
         scope:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/Scope'
             description: Authentication scope.
+          - type: 'null'
     IdentityProviderAuthResponse:
       type: object
       description: Authentication initialization response.
@@ -8454,6 +11577,21 @@ components:
             type: string
             enum:
             - o_auth2_client
+      - type: object
+        description: RFC 8693 token exchange identity source (ADR 0026 §12).
+        required:
+        - issuer
+        - type
+        properties:
+          issuer:
+            type: string
+            description: |-
+              The `iss` of the external JWT, equal to the `bound_issuer` of the
+              identity provider that signs it.
+          type:
+            type: string
+            enum:
+            - token_exchange
       description: Identity source type identifying the ingress provider.
     ImplyGroup:
       type: object
@@ -8470,6 +11608,32 @@ components:
         prior_role:
           $ref: '#/components/schemas/RoleRef'
           description: The prior role.
+    IntrospectForm:
+      type: object
+      properties:
+        client_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Client credentials in the body (`client_secret_post`); HTTP Basic
+            takes precedence.
+        client_secret:
+          type:
+          - string
+          - 'null'
+        token:
+          type:
+          - string
+          - 'null'
+          description: The token to introspect (refresh token or access token).
+        token_type_hint:
+          type:
+          - string
+          - 'null'
+          description: |-
+            `refresh_token` or `access_token`; only a lookup-order hint
+            (RFC 7662 §2.1). Unknown values are ignored.
     JwksRevocationResponse:
       type: object
       description: Response body for `jwks/revocation`.
@@ -8659,6 +11823,175 @@ components:
           description: |-
             Optional rule name hint for the mapping-engine path. When set, the
             mapping engine evaluates the named rule first.
+    Limit:
+      type: object
+      description: The limit data.
+      required:
+      - id
+      - resource_limit
+      - resource_name
+      - service_id
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The limit description.
+        domain_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the domain the limit is set for.
+        id:
+          type: string
+          description: The limit ID.
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the project the limit is set for.
+        region_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the region.
+        resource_limit:
+          type: integer
+          format: int32
+          description: The limit value (`-1` means unlimited).
+        resource_name:
+          type: string
+          description: The name of the resource.
+        service_id:
+          type: string
+          description: The ID of the service.
+    LimitCreate:
+      type: object
+      description: |-
+        New limit data.
+
+        Exactly one of `project_id` and `domain_id` must be set.
+      required:
+      - resource_limit
+      - resource_name
+      - service_id
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: The limit description.
+        domain_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the domain the limit is set for.
+        project_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the project the limit is set for.
+        region_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the region.
+        resource_limit:
+          type: integer
+          format: int32
+          description: The limit value (`-1` means unlimited).
+        resource_name:
+          type: string
+          description: The name of the resource.
+        service_id:
+          type: string
+          description: The ID of the service.
+      additionalProperties: false
+    LimitCreateRequest:
+      type: object
+      description: Limits creation request.
+      required:
+      - limits
+      properties:
+        limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/LimitCreate'
+          description: The limits to create (at least one).
+    LimitList:
+      type: object
+      description: Limits.
+      required:
+      - limits
+      properties:
+        limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Limit'
+          description: Collection of limit objects.
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
+    LimitModel:
+      type: object
+      description: The enforcement model.
+      required:
+      - description
+      - name
+      properties:
+        description:
+          type: string
+          description: The description of the model.
+        name:
+          type: string
+          description: The name of the model.
+    LimitModelResponse:
+      type: object
+      description: The enforcement model response.
+      required:
+      - model
+      properties:
+        model:
+          $ref: '#/components/schemas/LimitModel'
+          description: The enforcement model.
+    LimitResponse:
+      type: object
+      description: The limit response.
+      required:
+      - limit
+      properties:
+        limit:
+          $ref: '#/components/schemas/Limit'
+          description: Limit object.
+    LimitUpdate:
+      type: object
+      description: Update limit data.
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: New description (`null` resets the description).
+        resource_limit:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: New limit value.
+      additionalProperties: false
+    LimitUpdateRequest:
+      type: object
+      description: Limit update request.
+      required:
+      - limit
+      properties:
+        limit:
+          $ref: '#/components/schemas/LimitUpdate'
+          description: Limit object.
     Link:
       type: object
       description: Link object.
@@ -8741,6 +12074,30 @@ components:
           type: string
         username:
           type: string
+    LogoutParams:
+      type: object
+      description: Request parameters, from the query (`GET`) or the form (`POST`).
+      properties:
+        client_id:
+          type:
+          - string
+          - 'null'
+          description: The client, when no `id_token_hint` is sent.
+        id_token_hint:
+          type:
+          - string
+          - 'null'
+          description: An `id_token` this provider issued earlier for the user.
+        post_logout_redirect_uri:
+          type:
+          - string
+          - 'null'
+          description: Where to send the browser afterwards; must be registered on the client.
+        state:
+          type:
+          - string
+          - 'null'
+          description: Echoed on the redirect.
     MappingRule:
       type: object
       description: A single rule within a `MappingRuleSet`.
@@ -8930,6 +12287,20 @@ components:
         in the UI, or not.
       enum:
       - Conditional
+    MfaForm:
+      type: object
+      required:
+      - csrf_token
+      - factor
+      properties:
+        assertion:
+          type: string
+        csrf_token:
+          type: string
+        factor:
+          type: string
+        passcode:
+          type: string
     OAuth2Client:
       type: object
       description: |-
@@ -8951,12 +12322,25 @@ components:
       - require_pkce
       - token_endpoint_auth_method
       - updated_at
+      - name
+      - contacts
+      - post_logout_redirect_uris
+      - backchannel_logout_session_required
+      - frontchannel_logout_session_required
       properties:
         allowed_scopes:
           type: array
           items:
             type: string
           description: Scopes this client may request.
+        backchannel_logout_session_required:
+          type: boolean
+          description: Whether logout tokens must carry the `sid` claim.
+        backchannel_logout_uri:
+          type:
+          - string
+          - 'null'
+          description: '`https://` OIDC Back-Channel Logout endpoint.'
         claims_template:
           type: object
           description: Per-client output claim templates (ADR 0026 §4, "Claim Safety").
@@ -8970,27 +12354,73 @@ components:
         confidential:
           type: boolean
           description: Whether this is a confidential client (has a `client_secret`).
+        contacts:
+          type: array
+          items:
+            type: string
+          description: Contact addresses of the client's operators (RFC 7591 `contacts`).
         created_at:
           type: integer
           format: int64
           description: UTC epoch seconds.
+        delegation:
+          oneOf:
+          - $ref: '#/components/schemas/DelegationPolicy'
+            description: Delegation capabilities (ADR 0036 §3).
+          - type: 'null'
         deleted_at:
           type:
           - integer
           - 'null'
           format: int64
           description: UTC epoch seconds of soft-delete, if revoked.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Short description of the client.
         domain_id:
           type: string
           description: Domain owning this client registration.
+        dpop_bound_access_tokens:
+          type: boolean
+          description: |-
+            Only DPoP-bound access tokens are issued to the client (ADR 0043
+            §1).
         enabled:
           type: boolean
           description: Whether the client is currently usable.
+        frontchannel_logout_session_required:
+          type: boolean
+          description: Whether front-channel logout requests must carry `iss` and `sid`.
+        frontchannel_logout_uri:
+          type:
+          - string
+          - 'null'
+          description: '`https://` OIDC Front-Channel Logout endpoint.'
         grant_types:
           type: array
           items:
             $ref: '#/components/schemas/GrantType'
           description: Grant types this client is authorized to use.
+        logo_uri:
+          type:
+          - string
+          - 'null'
+          description: '`https://` URL of the client logo.'
+        name:
+          type: string
+          description: Human-readable client name shown on login and consent pages.
+        policy_uri:
+          type:
+          - string
+          - 'null'
+          description: '`https://` URL of the client''s privacy policy.'
+        post_logout_redirect_uris:
+          type: array
+          items:
+            type: string
+          description: URIs the provider may redirect to after RP-initiated logout.
         pre_authorized:
           type: boolean
           description: Whether consent is pre-authorized. SystemAdmin-only to set.
@@ -9007,9 +12437,21 @@ components:
         require_pkce:
           type: boolean
           description: Whether PKCE (RFC 7636) is mandatory for this client.
+        spiffe_ids:
+          type: array
+          items:
+            type: string
+          description: |-
+            SPIFFE ID patterns the client authenticates with
+            (`tls_client_auth`, ADR 0036 §3.1).
         token_endpoint_auth_method:
           type: string
           description: Token endpoint authentication method. Immutable after creation.
+        tos_uri:
+          type:
+          - string
+          - 'null'
+          description: '`https://` URL of the client''s terms of service.'
         updated_at:
           type: integer
           format: int64
@@ -9021,12 +12463,25 @@ components:
       - confidential
       - provider_id
       - token_endpoint_auth_method
+      - name
       properties:
         allowed_scopes:
           type: array
           items:
             type: string
           description: Scopes this client may request.
+        backchannel_logout_session_required:
+          type: boolean
+          description: |-
+            Require the `sid` claim in logout tokens; needs
+            `backchannel_logout_uri`.
+        backchannel_logout_uri:
+          type:
+          - string
+          - 'null'
+          description: |-
+            `https://` OIDC Back-Channel Logout endpoint; receives a signed
+            `logout_token` when the user's sign-in session ends.
         claims_template:
           type: object
           description: Per-client output claim templates.
@@ -9040,11 +12495,63 @@ components:
             Whether to register a confidential client (server generates and
             returns a `client_secret` exactly once) or a public client (no
             secret, PKCE mandatory).
+        contacts:
+          type: array
+          items:
+            type: string
+          description: Contact addresses of the client's operators (RFC 7591 `contacts`).
+        delegation:
+          oneOf:
+          - $ref: '#/components/schemas/DelegationPolicy'
+            description: |-
+              Register the client as a delegatable service (ADR 0036 §3). Needs
+              `tls_client_auth` and `spiffe_ids`. Admin only.
+          - type: 'null'
+        description:
+          type:
+          - string
+          - 'null'
+          description: Short description of the client (at most 1024 characters).
+        dpop_bound_access_tokens:
+          type: boolean
+          description: Issue only DPoP-bound access tokens to the client (ADR 0043 §1).
+        frontchannel_logout_session_required:
+          type: boolean
+          description: |-
+            Pass `iss` and `sid` on front-channel logout requests; needs
+            `frontchannel_logout_uri`.
+        frontchannel_logout_uri:
+          type:
+          - string
+          - 'null'
+          description: |-
+            `https://` OIDC Front-Channel Logout endpoint; rendered in a hidden
+            iframe when the user logs out.
         grant_types:
           type: array
           items:
             $ref: '#/components/schemas/GrantType'
           description: Grant types this client is authorized to use.
+        logo_uri:
+          type:
+          - string
+          - 'null'
+          description: '`https://` URL of the client logo.'
+        name:
+          type: string
+          description: Human-readable client name shown on login and consent pages.
+        policy_uri:
+          type:
+          - string
+          - 'null'
+          description: '`https://` URL of the client''s privacy policy.'
+        post_logout_redirect_uris:
+          type: array
+          items:
+            type: string
+          description: |-
+            URIs the provider may redirect to after RP-initiated logout (exact
+            match, same scheme rules as `redirect_uris`).
         pre_authorized:
           type: boolean
           description: Whether consent is pre-authorized. SystemAdmin-only to set.
@@ -9061,11 +12568,23 @@ components:
         require_pkce:
           type: boolean
           description: Whether PKCE is mandatory. Always `true` for public clients.
+        spiffe_ids:
+          type: array
+          items:
+            type: string
+          description: |-
+            SPIFFE ID patterns for `tls_client_auth` (ADR 0036 §3.1); only the
+            last path segment may be `*`. Admin only.
         token_endpoint_auth_method:
           type: string
           description: |-
             Token endpoint authentication method (e.g. `client_secret_basic`,
             `none`).
+        tos_uri:
+          type:
+          - string
+          - 'null'
+          description: '`https://` URL of the client''s terms of service.'
     OAuth2ClientCreateRequest:
       type: object
       description: OAuth2 client creation request wrapper.
@@ -9141,6 +12660,16 @@ components:
           items:
             type: string
           description: New allowed scopes.
+        backchannel_logout_session_required:
+          type:
+          - boolean
+          - 'null'
+          description: New `backchannel_logout_session_required` value.
+        backchannel_logout_uri:
+          type:
+          - string
+          - 'null'
+          description: New Back-Channel Logout endpoint; an empty string clears it.
         claims_template:
           type:
           - object
@@ -9150,11 +12679,45 @@ components:
             type: string
           propertyNames:
             type: string
+        contacts:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: New contacts.
+        delegation:
+          oneOf:
+          - $ref: '#/components/schemas/DelegationPolicy'
+            description: New delegation policy, replacing the current one. Admin only.
+          - type: 'null'
+        description:
+          type:
+          - string
+          - 'null'
+          description: New description; an empty string clears it.
+        dpop_bound_access_tokens:
+          type:
+          - boolean
+          - 'null'
+          description: |-
+            New value of `dpop_bound_access_tokens` (ADR 0043 §1). Turning it
+            off requires `admin`.
         enabled:
           type:
           - boolean
           - 'null'
           description: Enable/disable toggle.
+        frontchannel_logout_session_required:
+          type:
+          - boolean
+          - 'null'
+          description: New `frontchannel_logout_session_required` value.
+        frontchannel_logout_uri:
+          type:
+          - string
+          - 'null'
+          description: New Front-Channel Logout endpoint; an empty string clears it.
         grant_types:
           type:
           - array
@@ -9162,6 +12725,28 @@ components:
           items:
             $ref: '#/components/schemas/GrantType'
           description: New grant types.
+        logo_uri:
+          type:
+          - string
+          - 'null'
+          description: New logo URL; an empty string clears it.
+        name:
+          type:
+          - string
+          - 'null'
+          description: New client name.
+        policy_uri:
+          type:
+          - string
+          - 'null'
+          description: New privacy policy URL; an empty string clears it.
+        post_logout_redirect_uris:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: New post-logout redirect URIs.
         pre_authorized:
           type:
           - boolean
@@ -9174,11 +12759,28 @@ components:
           items:
             type: string
           description: New redirect URIs.
+        remove_delegation:
+          type: boolean
+          description: |-
+            Remove the delegation policy; exclusive with `delegation`. Admin
+            only.
         require_pkce:
           type:
           - boolean
           - 'null'
           description: New PKCE requirement.
+        spiffe_ids:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: New SPIFFE ID patterns. Admin only.
+        tos_uri:
+          type:
+          - string
+          - 'null'
+          description: New terms of service URL; an empty string clears it.
     OAuth2ClientUpdateRequest:
       type: object
       description: OAuth2 client update request wrapper.
@@ -9188,6 +12790,321 @@ components:
         oauth2_client:
           $ref: '#/components/schemas/OAuth2ClientUpdate'
           description: OAuth2 client update payload.
+    Oauth2Consent:
+      type: object
+      description: |-
+        An application (OAuth2 client) the user approved and that is remembered,
+        so the consent page is skipped while the approved scopes cover the
+        request.
+      required:
+      - client_id
+      - scopes
+      - granted_at
+      - updated_at
+      properties:
+        authorization_target:
+          type:
+          - string
+          - 'null'
+          description: Authorization target the approval is limited to (`openstack:api`).
+        client_id:
+          type: string
+          description: The approved client.
+        client_name:
+          type:
+          - string
+          - 'null'
+          description: Display name of the client, when it still exists.
+        granted_at:
+          type: integer
+          format: int64
+          description: UTC epoch seconds the user first approved the client.
+        scopes:
+          type: array
+          items:
+            type: string
+          description: The approved scopes.
+        updated_at:
+          type: integer
+          format: int64
+          description: UTC epoch seconds the approved scopes last changed.
+    Oauth2ConsentList:
+      type: object
+      description: The applications a user has approved.
+      required:
+      - consents
+      properties:
+        consents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Oauth2Consent'
+          description: The approved applications.
+    Oauth2DomainSettings:
+      type: object
+      description: OAuth2 settings of a domain.
+      required:
+      - domain_id
+      - dpop
+      - updated_at
+      properties:
+        domain_id:
+          type: string
+          description: Domain the settings belong to.
+        dpop:
+          $ref: '#/components/schemas/DpopMode'
+          description: |-
+            DPoP enforcement mode of the domain. The effective mode of a request
+            is the strictest of the global, domain and client modes.
+        updated_at:
+          type: integer
+          format: int64
+          description: |-
+            Unix timestamp of the last change; `0` while the domain has never
+            been configured.
+    Oauth2DomainSettingsResponse:
+      type: object
+      description: Response body of the OAuth2 domain settings endpoints.
+      required:
+      - settings
+      properties:
+        settings:
+          $ref: '#/components/schemas/Oauth2DomainSettings'
+          description: The settings of the domain.
+    Oauth2DomainSettingsUpdate:
+      type: object
+      description: |-
+        Update of the OAuth2 settings of a domain. A missing field keeps its
+        current value, so a misspelled field must be an error rather than a
+        silently ignored change.
+      properties:
+        dpop:
+          oneOf:
+          - $ref: '#/components/schemas/DpopMode'
+            description: New DPoP enforcement mode of the domain.
+          - type: 'null'
+      additionalProperties: false
+    Oauth2DomainSettingsUpdateRequest:
+      type: object
+      description: Request body of `PUT /v4/oauth2/{domain_id}/settings`.
+      required:
+      - settings
+      properties:
+        settings:
+          $ref: '#/components/schemas/Oauth2DomainSettingsUpdate'
+          description: Settings to change.
+      additionalProperties: false
+    Oauth2RevocationRequest:
+      type: object
+      description: |-
+        Request body for `POST /v4/oauth2/{domain_id}/revocations`. Exactly one of
+        `user_id`, `client_id` or `all` must be given.
+      properties:
+        all:
+          type: boolean
+          description: Revoke every refresh token family in the domain.
+        client_id:
+          type:
+          - string
+          - 'null'
+          description: Revoke every refresh token family issued to this `client_id`.
+        reason:
+          type:
+          - string
+          - 'null'
+          description: Free-text reason recorded in the log (at most 256 characters).
+        user_id:
+          type:
+          - string
+          - 'null'
+          description: Revoke every refresh token family of this user in the domain.
+    Oauth2RevocationResponse:
+      type: object
+      description: Response body for `POST /v4/oauth2/{domain_id}/revocations`.
+      required:
+      - revoked_families
+      properties:
+        revoked_families:
+          type: integer
+          description: |-
+            Refresh token families processed by the request. Selecting a client
+            counts every family issued to it, including ones already revoked;
+            selecting a user or the whole domain counts only newly revoked ones.
+          minimum: 0
+    OpenIdConfiguration:
+      type: object
+      description: OIDC Discovery 1.0 / RFC 8414 / RFC 8628 provider metadata.
+      required:
+      - authorization_endpoint
+      - claim_types_supported
+      - claims_supported
+      - code_challenge_methods_supported
+      - device_authorization_endpoint
+      - grant_types_supported
+      - id_token_signing_alg_values_supported
+      - issuer
+      - jwks_uri
+      - end_session_endpoint
+      - backchannel_logout_supported
+      - backchannel_logout_session_supported
+      - frontchannel_logout_supported
+      - frontchannel_logout_session_supported
+      - prompt_values_supported
+      - request_parameter_supported
+      - request_uri_parameter_supported
+      - response_modes_supported
+      - response_types_supported
+      - introspection_endpoint
+      - dpop_required
+      - introspection_endpoint_auth_methods_supported
+      - revocation_endpoint
+      - revocation_endpoint_auth_methods_supported
+      - scopes_supported
+      - subject_types_supported
+      - token_endpoint
+      - token_endpoint_auth_methods_supported
+      - userinfo_endpoint
+      - userinfo_signing_alg_values_supported
+      properties:
+        authorization_endpoint:
+          type: string
+          description: Authorization endpoint URL.
+        backchannel_logout_session_supported:
+          type: boolean
+          description: |-
+            Whether logout tokens carry a `sid` that matches the `sid` of the
+            id token.
+        backchannel_logout_supported:
+          type: boolean
+          description: |-
+            Whether clients can register a `backchannel_logout_uri` (OIDC
+            Back-Channel Logout 1.0).
+        claim_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported claim types.
+        claims_supported:
+          type: array
+          items:
+            type: string
+          description: Claims that may be present in issued tokens.
+        code_challenge_methods_supported:
+          type: array
+          items:
+            type: string
+          description: Supported PKCE code challenge methods (RFC 7636).
+        device_authorization_endpoint:
+          type: string
+          description: Device authorization endpoint URL (RFC 8628 §4).
+        dpop_required:
+          type: boolean
+          description: |-
+            Whether the effective DPoP mode of the domain is `required`, so a
+            resource server must reject access tokens of this issuer that are not
+            DPoP-bound (ADR 0043 §4).
+        dpop_signing_alg_values_supported:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: |-
+            JWS algorithms accepted for DPoP proofs (RFC 9449 §5.1). Absent while
+            DPoP is disabled for the domain.
+        end_session_endpoint:
+          type: string
+          description: RP-Initiated Logout endpoint URL (OIDC RP-Initiated Logout 1.0).
+        frontchannel_logout_session_supported:
+          type: boolean
+          description: Whether the front-channel logout request carries `iss` and `sid`.
+        frontchannel_logout_supported:
+          type: boolean
+          description: |-
+            Whether clients can register a `frontchannel_logout_uri` (OIDC
+            Front-Channel Logout 1.0).
+        grant_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported grant type identifiers.
+        id_token_signing_alg_values_supported:
+          type: array
+          items:
+            type: string
+          description: JWS algorithms used to sign ID tokens.
+        introspection_endpoint:
+          type: string
+          description: Token introspection endpoint URL (RFC 7662).
+        introspection_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+          description: |-
+            Client authentication methods accepted by the introspection endpoint
+            (confidential clients only).
+        issuer:
+          type: string
+          description: Issuer identifier of the domain.
+        jwks_uri:
+          type: string
+          description: JWKS document URL.
+        prompt_values_supported:
+          type: array
+          items:
+            type: string
+          description: Supported `prompt` values (OIDC Core §3.1.2.1).
+        request_parameter_supported:
+          type: boolean
+          description: Whether the `request` parameter is supported.
+        request_uri_parameter_supported:
+          type: boolean
+          description: Whether the `request_uri` parameter is supported.
+        response_modes_supported:
+          type: array
+          items:
+            type: string
+          description: Supported `response_mode` values.
+        response_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported `response_type` values.
+        revocation_endpoint:
+          type: string
+          description: Token revocation endpoint URL (RFC 7009).
+        revocation_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+          description: Client authentication methods accepted by the revocation endpoint.
+        scopes_supported:
+          type: array
+          items:
+            type: string
+          description: Supported scope values.
+        subject_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported subject identifier types.
+        token_endpoint:
+          type: string
+          description: Token endpoint URL.
+        token_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+          description: Client authentication methods accepted by the token endpoint.
+        userinfo_endpoint:
+          type: string
+          description: UserInfo endpoint URL (OIDC Core §5.3).
+        userinfo_signing_alg_values_supported:
+          type: array
+          items:
+            type: string
+          description: |-
+            JWS algorithms the UserInfo response may be signed with; `none`
+            means a plain JSON response.
     Passkey:
       type: object
       description: Passkey information.
@@ -9508,11 +13425,11 @@ components:
             A project can have the same name as its domain.
         options:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/ProjectOptions'
             description: |-
               The resource options for the project. Available resource options are
               documented in `ProjectOptions`.
+          - type: 'null'
         parent_id:
           type:
           - string
@@ -9530,6 +13447,13 @@ components:
 
             `parent_id` is immutable, and can’t be updated after the project is
             created - hence a project cannot be moved within the hierarchy.
+        tags:
+          type: array
+          items:
+            type: string
+          description: |-
+            The tags of the project. A tag must be 1 to 255 characters long, must
+            not contain `/` or `,` and a project can have up to 80 tags.
       additionalProperties:
         description: Additional project properties.
     ProjectCreateRequest:
@@ -9541,6 +13465,51 @@ components:
         project:
           $ref: '#/components/schemas/ProjectCreate'
           description: Project object.
+    ProjectHierarchy:
+      oneOf:
+      - type: array
+        items:
+          $ref: '#/components/schemas/ProjectHierarchyItem'
+        description: Flat list of the projects.
+      - type: object
+        description: Nested object of the project IDs where leaves are `null`.
+      description: Project relatives (parents or subtree).
+    ProjectHierarchyItem:
+      type: object
+      description: Single entry of the project hierarchy list.
+      required:
+      - project
+      properties:
+        project:
+          $ref: '#/components/schemas/Project'
+          description: Project object.
+    ProjectHierarchyResponse:
+      type: object
+      description: Single project response with the optional hierarchy information.
+      required:
+      - project
+      properties:
+        project:
+          $ref: '#/components/schemas/ProjectWithHierarchy'
+          description: Project object.
+    ProjectList:
+      type: object
+      description: List of full projects.
+      required:
+      - projects
+      properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+          description: Collection of project objects.
     ProjectOptions:
       type: object
       description: Project resource options.
@@ -9603,6 +13572,17 @@ components:
           items:
             $ref: '#/components/schemas/ProjectShort'
           description: Collection of project objects.
+    ProjectTags:
+      type: object
+      description: Project tags.
+      required:
+      - tags
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: The list of tags.
     ProjectUpdate:
       type: object
       description: Update project data.
@@ -9626,11 +13606,20 @@ components:
           description: The project name.
         options:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/ProjectOptions'
             description: |-
               The resource options for the project. Available resource options are
               documented in `ProjectOptions`.
+          - type: 'null'
+        tags:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: |-
+            The new set of tags replacing the existing ones. Omit to keep the
+            tags unchanged.
       additionalProperties:
         description: Additional project properties.
     ProjectUpdateRequest:
@@ -9642,6 +13631,27 @@ components:
         project:
           $ref: '#/components/schemas/ProjectUpdate'
           description: Project object.
+    ProjectWithHierarchy:
+      allOf:
+      - $ref: '#/components/schemas/Project'
+        description: Project attributes.
+      - type: object
+        properties:
+          parents:
+            oneOf:
+            - $ref: '#/components/schemas/ProjectHierarchy'
+              description: |-
+                Parents of the project when requested with `parents_as_list` or
+                `parents_as_ids`.
+            - type: 'null'
+          subtree:
+            oneOf:
+            - $ref: '#/components/schemas/ProjectHierarchy'
+              description: |-
+                Descendants of the project when requested with `subtree_as_list` or
+                `subtree_as_ids`.
+            - type: 'null'
+      description: Project with the optional hierarchy information.
     PubKeyCredParams:
       type: object
       description: Public key cryptographic parameters.
@@ -9910,6 +13920,145 @@ components:
         region:
           $ref: '#/components/schemas/RegionUpdate'
           description: Region object.
+    RegisteredLimit:
+      type: object
+      description: The registered limit data.
+      required:
+      - default_limit
+      - id
+      - resource_name
+      - service_id
+      properties:
+        default_limit:
+          type: integer
+          format: int32
+          description: The default limit value (`-1` means unlimited).
+        description:
+          type:
+          - string
+          - 'null'
+          description: The registered limit description.
+        id:
+          type: string
+          description: The registered limit ID.
+        region_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the region the limit is registered for.
+        resource_name:
+          type: string
+          description: The name of the resource.
+        service_id:
+          type: string
+          description: The ID of the service the limit is registered for.
+    RegisteredLimitCreate:
+      type: object
+      description: New registered limit data.
+      required:
+      - default_limit
+      - resource_name
+      - service_id
+      properties:
+        default_limit:
+          type: integer
+          format: int32
+          description: The default limit value (`-1` means unlimited).
+        description:
+          type:
+          - string
+          - 'null'
+          description: The registered limit description.
+        region_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the region the limit is registered for.
+        resource_name:
+          type: string
+          description: The name of the resource.
+        service_id:
+          type: string
+          description: The ID of the service the limit is registered for.
+      additionalProperties: false
+    RegisteredLimitCreateRequest:
+      type: object
+      description: Registered limits creation request.
+      required:
+      - registered_limits
+      properties:
+        registered_limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegisteredLimitCreate'
+          description: The registered limits to create (at least one).
+    RegisteredLimitList:
+      type: object
+      description: Registered limits.
+      required:
+      - registered_limits
+      properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
+        registered_limits:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegisteredLimit'
+          description: Collection of registered limit objects.
+    RegisteredLimitResponse:
+      type: object
+      description: The registered limit response.
+      required:
+      - registered_limit
+      properties:
+        registered_limit:
+          $ref: '#/components/schemas/RegisteredLimit'
+          description: Registered limit object.
+    RegisteredLimitUpdate:
+      type: object
+      description: Update registered limit data.
+      properties:
+        default_limit:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: New default limit value.
+        description:
+          type:
+          - string
+          - 'null'
+          description: New description (`null` resets the description).
+        region_id:
+          type:
+          - string
+          - 'null'
+          description: New region ID (`null` resets the region).
+        resource_name:
+          type:
+          - string
+          - 'null'
+          description: New resource name.
+        service_id:
+          type:
+          - string
+          - 'null'
+          description: New service ID.
+      additionalProperties: false
+    RegisteredLimitUpdateRequest:
+      type: object
+      description: Registered limit update request.
+      required:
+      - registered_limit
+      properties:
+        registered_limit:
+          $ref: '#/components/schemas/RegisteredLimitUpdate'
+          description: Registered limit object.
     RegistrationExtensionsClientOutputs:
       type: object
       description: |-
@@ -10006,6 +14155,15 @@ components:
       - Discouraged
       - Preferred
       - Required
+    ResourceLinks:
+      type: object
+      description: Links of a single resource.
+      required:
+      - self
+      properties:
+        self:
+          type: string
+          description: Link to the resource itself.
     RevokeAllResponse:
       type: object
       required:
@@ -10028,6 +14186,32 @@ components:
         users_disabled:
           type: integer
           minimum: 0
+    RevokeForm:
+      type: object
+      properties:
+        client_id:
+          type:
+          - string
+          - 'null'
+          description: |-
+            Client credentials in the body (`client_secret_post`); HTTP Basic
+            takes precedence.
+        client_secret:
+          type:
+          - string
+          - 'null'
+        token:
+          type:
+          - string
+          - 'null'
+          description: The token to revoke (refresh token or access token).
+        token_type_hint:
+          type:
+          - string
+          - 'null'
+          description: |-
+            `refresh_token` or `access_token`; only a lookup-order hint
+            (RFC 7009 §2.1). Unknown values are ignored.
     Role:
       type: object
       description: The role data.
@@ -10053,11 +14237,11 @@ components:
           description: Role name.
         options:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/RoleOptions'
             description: |-
               The resource options for the role. Available resource options are
               documented in `RoleOptions`.
+          - type: 'null'
       additionalProperties: {}
     RoleCreate:
       type: object
@@ -10080,11 +14264,11 @@ components:
           description: The role name.
         options:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/RoleOptions'
             description: |-
               The resource options for the role. Available resource options are
               documented in `RoleOptions`.
+          - type: 'null'
       additionalProperties:
         description: Extra attributes for the role.
     RoleCreateRequest:
@@ -10209,11 +14393,11 @@ components:
           description: The role name.
         options:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/RoleOptions'
             description: |-
               The resource options for the role. Available resource options are
               documented in `RoleOptions`.
+          - type: 'null'
       additionalProperties:
         description: Extra attributes for the role.
     RoleUpdateRequest:
@@ -10309,9 +14493,9 @@ components:
             - insert
           position:
             oneOf:
-            - type: 'null'
             - $ref: '#/components/schemas/RulePosition'
               description: Optional position hint for the inserted rule.
+            - type: 'null'
           rule:
             $ref: '#/components/schemas/MappingRule'
             description: Rule to insert.
@@ -10525,9 +14709,9 @@ components:
       properties:
         domain:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/Domain'
             description: Project domain.
+          - type: 'null'
         id:
           type:
           - string
@@ -10594,6 +14778,141 @@ components:
         service:
           $ref: '#/components/schemas/ServiceCreate'
           description: Service object.
+    ServiceGrant:
+      type: object
+      description: |-
+        A service grant: a user's standing delegation of a subset of their roles
+        on one project to one service client.
+      required:
+      - created_at
+      - domain_id
+      - enabled
+      - grantee
+      - grantor_user_id
+      - id
+      - role_ids
+      - target
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          description: Creation time.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Free-form description.
+        disabled_reason:
+          oneOf:
+          - $ref: '#/components/schemas/DisabledReason'
+            description: Why the grant was disabled.
+          - type: 'null'
+        domain_id:
+          type: string
+          description: |-
+            Domain of the target project, whose token endpoint redeems the
+            grant. The grantor may belong to another domain.
+        enabled:
+          type: boolean
+          description: Whether the grant may be redeemed.
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Expiry, if any.
+        grantee:
+          $ref: '#/components/schemas/Grantee'
+          description: Who may redeem the grant.
+        grantor_user_id:
+          type: string
+          description: The user whose authority is delegated.
+        id:
+          type: string
+          description: Grant id.
+        last_redeemed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Approximate time of the last redemption.
+        role_ids:
+          type: array
+          items:
+            type: string
+          description: Delegated role ids.
+        target:
+          $ref: '#/components/schemas/GrantTarget'
+          description: What the grant applies to.
+    ServiceGrantCreate:
+      type: object
+      description: Service grant creation payload. The grantor is always the caller.
+      required:
+      - grantee_client_id
+      - project_id
+      properties:
+        description:
+          type:
+          - string
+          - 'null'
+          description: Free-form description.
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Expiry; defaults to the grantee's `max_grant_lifetime`, if any.
+        grantee_client_id:
+          type: string
+          description: Grantee client id, as listed by `GET /v4/delegatable-services`.
+        project_id:
+          type: string
+          description: Target project id.
+        role_ids:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: |-
+            Role ids to delegate; omitted delegates the caller's current
+            effective roles on the project.
+    ServiceGrantCreateRequest:
+      type: object
+      description: Service grant creation request.
+      required:
+      - service_grant
+      properties:
+        service_grant:
+          $ref: '#/components/schemas/ServiceGrantCreate'
+          description: The grant to create.
+    ServiceGrantList:
+      type: object
+      description: Service grant list response.
+      required:
+      - service_grants
+      properties:
+        links:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Link'
+          description: Pagination links.
+        service_grants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceGrant'
+          description: Grants visible to the caller.
+    ServiceGrantResponse:
+      type: object
+      description: Single service grant response.
+      required:
+      - service_grant
+      properties:
+        service_grant:
+          $ref: '#/components/schemas/ServiceGrant'
+          description: The grant.
     ServiceList:
       type: object
       description: Services.
@@ -10741,9 +15060,9 @@ components:
       properties:
         OS-TRUST:trust:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/TokenTrustRepr'
             description: A trust object.
+          - type: 'null'
         audit_ids:
           type: array
           items:
@@ -10760,17 +15079,17 @@ components:
             token ID to non-privileged users.
         catalog:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/Catalog'
             description: A catalog object.
+          - type: 'null'
         domain:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/Domain'
             description: |-
               A domain object including the id and name representing the domain the
               token is scoped to. This is only included in tokens that are scoped
               to a domain.
+          - type: 'null'
         expires_at:
           type: string
           format: date-time
@@ -10797,12 +15116,12 @@ components:
             factors.
         project:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/Project'
             description: |-
               A project object including the id, name and domain object representing
               the project the token is scoped to. This is only included in tokens
               that are scoped to a project.
+          - type: 'null'
         roles:
           type:
           - array
@@ -10812,84 +15131,12 @@ components:
           description: A list of role objects.
         system:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/System'
             description: A system object.
+          - type: 'null'
         user:
           $ref: '#/components/schemas/User'
           description: A user object.
-    TokenForm:
-      type: object
-      properties:
-        client_id:
-          type:
-          - string
-          - 'null'
-        client_secret:
-          type:
-          - string
-          - 'null'
-        code:
-          type:
-          - string
-          - 'null'
-          description: '`authorization_code` grant only (RFC 6749 §4.1.3).'
-        code_verifier:
-          type:
-          - string
-          - 'null'
-          description: '`authorization_code` grant only: PKCE verifier (RFC 7636 §4.5).'
-        device_code:
-          type:
-          - string
-          - 'null'
-          description: |-
-            RFC 8628 `device_code` grant only (§3.4): the value returned by
-            `/device_authorization`.
-        grant_type:
-          type:
-          - string
-          - 'null'
-        redirect_uri:
-          type:
-          - string
-          - 'null'
-          description: |-
-            `authorization_code` grant only -- must exact-match the value
-            recorded at `/authorize`.
-        refresh_token:
-          type:
-          - string
-          - 'null'
-          description: '`refresh_token` grant only (RFC 6749 §6).'
-        requested_token_type:
-          type:
-          - string
-          - 'null'
-          description: |-
-            RFC 8693 Token Exchange grant only. Accepted but not branched on:
-            v1 always returns `urn:ietf:params:oauth:token-type:access_token`,
-            the only token type this grant mints.
-        scope:
-          type:
-          - string
-          - 'null'
-        subject_token:
-          type:
-          - string
-          - 'null'
-          description: |-
-            RFC 8693 Token Exchange grant only: the existing Keystone-native
-            token (Fernet or JWS) being exchanged.
-        subject_token_type:
-          type:
-          - string
-          - 'null'
-          description: |-
-            RFC 8693 Token Exchange grant only. Accepted but not branched on:
-            this repository's `TokenApi::validate_to_context` already decodes
-            either wire format transparently, so there is nothing for the value
-            to select between yet.
     TokenResponse:
       type: object
       required:
@@ -11379,7 +15626,6 @@ components:
           description: The user name. Must be unique within the owning domain.
         options:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/UserOptions'
             description: |-
               The resource options for the user. Available resource options are
@@ -11387,6 +15633,7 @@ components:
               ignore_lockout_failure_attempts, lock_password,
               multi_factor_auth_enabled, and multi_factor_auth_rules
               ignore_user_inactivity.
+          - type: 'null'
         password:
           type:
           - string
@@ -11597,7 +15844,6 @@ components:
           description: The user name. Must be unique within the owning domain.
         options:
           oneOf:
-          - type: 'null'
           - $ref: '#/components/schemas/UserOptions'
             description: |-
               The resource options for the user. Available resource options are
@@ -11605,6 +15851,7 @@ components:
               ignore_lockout_failure_attempts, lock_password,
               multi_factor_auth_enabled, and multi_factor_auth_rules
               ignore_user_inactivity.
+          - type: 'null'
         password:
           type:
           - string
@@ -11855,8 +16102,12 @@ tags:
       ```
       GET /role_assignments?include_names
       ```
+- name: limits
+  description: 'In OpenStack, a quota system mainly contains two parts: `limit` and `usage`. The Unified limits in Keystone is a replacement of the `limit` part. It contains two kinds of resources: `Registered Limit` and `Limit`. A `registered limit` is a default limit. It is usually created by the services which are registered in Keystone. A `limit` is the limit that override the registered limit for each project.'
 - name: api_key
   description: "API Key (SCIM ingress) admin API (ADR 0021).\n\nStateless, domain-owned machine-identity credentials for M2M SCIM provisioning\ningress. Management of these credentials requires the `manager` role\n(DomainManager) scoped to the key's own domain, or `admin` (SystemAdmin).\n        "
+- name: delegatable_service
+  description: Services a user may delegate to (ADR 0036).
 - name: identity_providers
   description: |-
     Identity providers API.
@@ -11886,6 +16137,8 @@ tags:
     SCIM realm administration. A SCIM realm is the explicit administrative
     activation of an `(domain_id, provider_id)` coordinate for SCIM Users/Groups
     resource provisioning (ADR 0024).
+- name: service_grant
+  description: "Service grants (ADR 0036).\n\nA service grant is a user's standing delegation of a subset of their roles on\none project to one registered service client. The service redeems it at the\nOAuth2 token endpoint, authenticated by its SPIFFE ID, for a short-lived token\nacting for the user.\n        "
 - name: spiffe
   description: SPIFFE attestation signing key API (SPIRE integration plan, Phase 2). Unauthenticated by design.
 - name: token

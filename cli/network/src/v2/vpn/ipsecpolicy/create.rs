@@ -69,7 +69,6 @@ struct PathParameters {}
 enum AuthAlgorithm {
     AesCmac,
     AesXcbc,
-    Sha1,
     Sha256,
     Sha384,
     Sha512,
@@ -83,12 +82,10 @@ enum EncapsulationMode {
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum EncryptionAlgorithm {
-    _3des,
     Aes128,
     Aes128Ccm12,
     Aes128Ccm16,
     Aes128Ccm8,
-    Aes128Ctr,
     Aes128Gcm12,
     Aes128Gcm16,
     Aes128Gcm8,
@@ -96,7 +93,6 @@ enum EncryptionAlgorithm {
     Aes192Ccm12,
     Aes192Ccm16,
     Aes192Ccm8,
-    Aes192Ctr,
     Aes192Gcm12,
     Aes192Gcm16,
     Aes192Gcm8,
@@ -104,7 +100,6 @@ enum EncryptionAlgorithm {
     Aes256Ccm12,
     Aes256Ccm16,
     Aes256Ccm8,
-    Aes256Ctr,
     Aes256Gcm12,
     Aes256Gcm16,
     Aes256Gcm8,
@@ -219,7 +214,6 @@ impl IpsecpolicyCommand {
             let tmp = match val {
                 AuthAlgorithm::AesCmac => create::AuthAlgorithm::AesCmac,
                 AuthAlgorithm::AesXcbc => create::AuthAlgorithm::AesXcbc,
-                AuthAlgorithm::Sha1 => create::AuthAlgorithm::Sha1,
                 AuthAlgorithm::Sha256 => create::AuthAlgorithm::Sha256,
                 AuthAlgorithm::Sha384 => create::AuthAlgorithm::Sha384,
                 AuthAlgorithm::Sha512 => create::AuthAlgorithm::Sha512,
@@ -241,12 +235,10 @@ impl IpsecpolicyCommand {
 
         if let Some(val) = &args.encryption_algorithm {
             let tmp = match val {
-                EncryptionAlgorithm::_3des => create::EncryptionAlgorithm::_3des,
                 EncryptionAlgorithm::Aes128 => create::EncryptionAlgorithm::Aes128,
                 EncryptionAlgorithm::Aes128Ccm12 => create::EncryptionAlgorithm::Aes128Ccm12,
                 EncryptionAlgorithm::Aes128Ccm16 => create::EncryptionAlgorithm::Aes128Ccm16,
                 EncryptionAlgorithm::Aes128Ccm8 => create::EncryptionAlgorithm::Aes128Ccm8,
-                EncryptionAlgorithm::Aes128Ctr => create::EncryptionAlgorithm::Aes128Ctr,
                 EncryptionAlgorithm::Aes128Gcm12 => create::EncryptionAlgorithm::Aes128Gcm12,
                 EncryptionAlgorithm::Aes128Gcm16 => create::EncryptionAlgorithm::Aes128Gcm16,
                 EncryptionAlgorithm::Aes128Gcm8 => create::EncryptionAlgorithm::Aes128Gcm8,
@@ -254,7 +246,6 @@ impl IpsecpolicyCommand {
                 EncryptionAlgorithm::Aes192Ccm12 => create::EncryptionAlgorithm::Aes192Ccm12,
                 EncryptionAlgorithm::Aes192Ccm16 => create::EncryptionAlgorithm::Aes192Ccm16,
                 EncryptionAlgorithm::Aes192Ccm8 => create::EncryptionAlgorithm::Aes192Ccm8,
-                EncryptionAlgorithm::Aes192Ctr => create::EncryptionAlgorithm::Aes192Ctr,
                 EncryptionAlgorithm::Aes192Gcm12 => create::EncryptionAlgorithm::Aes192Gcm12,
                 EncryptionAlgorithm::Aes192Gcm16 => create::EncryptionAlgorithm::Aes192Gcm16,
                 EncryptionAlgorithm::Aes192Gcm8 => create::EncryptionAlgorithm::Aes192Gcm8,
@@ -262,7 +253,6 @@ impl IpsecpolicyCommand {
                 EncryptionAlgorithm::Aes256Ccm12 => create::EncryptionAlgorithm::Aes256Ccm12,
                 EncryptionAlgorithm::Aes256Ccm16 => create::EncryptionAlgorithm::Aes256Ccm16,
                 EncryptionAlgorithm::Aes256Ccm8 => create::EncryptionAlgorithm::Aes256Ccm8,
-                EncryptionAlgorithm::Aes256Ctr => create::EncryptionAlgorithm::Aes256Ctr,
                 EncryptionAlgorithm::Aes256Gcm12 => create::EncryptionAlgorithm::Aes256Gcm12,
                 EncryptionAlgorithm::Aes256Gcm16 => create::EncryptionAlgorithm::Aes256Gcm16,
                 EncryptionAlgorithm::Aes256Gcm8 => create::EncryptionAlgorithm::Aes256Gcm8,

@@ -8961,7 +8961,6 @@ components:
         enum:
           - aes-cmac
           - aes-xcbc
-          - sha1
           - sha256
           - sha384
           - sha512
@@ -8980,12 +8979,10 @@ components:
       name: encryption_algorithm
       schema:
         enum:
-          - 3des
           - aes-128
           - aes-128-ccm-12
           - aes-128-ccm-16
           - aes-128-ccm-8
-          - aes-128-ctr
           - aes-128-gcm-12
           - aes-128-gcm-16
           - aes-128-gcm-8
@@ -8993,7 +8990,6 @@ components:
           - aes-192-ccm-12
           - aes-192-ccm-16
           - aes-192-ccm-8
-          - aes-192-ctr
           - aes-192-gcm-12
           - aes-192-gcm-16
           - aes-192-gcm-8
@@ -9001,7 +8997,6 @@ components:
           - aes-256-ccm-12
           - aes-256-ccm-16
           - aes-256-ccm-8
-          - aes-256-ctr
           - aes-256-gcm-12
           - aes-256-gcm-16
           - aes-256-gcm-8
@@ -9246,7 +9241,6 @@ components:
         enum:
           - aes-cmac
           - aes-xcbc
-          - sha1
           - sha256
           - sha384
           - sha512
@@ -9275,12 +9269,10 @@ components:
       name: encryption_algorithm
       schema:
         enum:
-          - 3des
           - aes-128
           - aes-128-ccm-12
           - aes-128-ccm-16
           - aes-128-ccm-8
-          - aes-128-ctr
           - aes-128-gcm-12
           - aes-128-gcm-16
           - aes-128-gcm-8
@@ -9288,7 +9280,6 @@ components:
           - aes-192-ccm-12
           - aes-192-ccm-16
           - aes-192-ccm-8
-          - aes-192-ctr
           - aes-192-gcm-12
           - aes-192-gcm-16
           - aes-192-gcm-8
@@ -9296,7 +9287,6 @@ components:
           - aes-256-ccm-12
           - aes-256-ccm-16
           - aes-256-ccm-8
-          - aes-256-ctr
           - aes-256-gcm-12
           - aes-256-gcm-16
           - aes-256-gcm-8
@@ -18642,9 +18632,7 @@ components:
                 This field is only meant for machine-machine communication for compute
                 services like Nova, Ironic or Zun to pass information to a Neutron
                 back-end. It should not be used by multiple services concurrently or by
-                cloud end users. The existing counterexamples
-                (`capabilities: [switchdev]` for Open vSwitch hardware offload and
-                `trusted=true` for Trusted Virtual Functions) are due to be cleaned up.
+                cloud end users.
                 The networking API does not define a specific format of this field.
                 The default is an empty dictionary.
                 If you update it with null then it is treated like {} in the response.
@@ -19480,9 +19468,7 @@ components:
                 This field is only meant for machine-machine communication for compute
                 services like Nova, Ironic or Zun to pass information to a Neutron
                 back-end. It should not be used by multiple services concurrently or by
-                cloud end users. The existing counterexamples
-                (`capabilities: [switchdev]` for Open vSwitch hardware offload and
-                `trusted=true` for Trusted Virtual Functions) are due to be cleaned up.
+                cloud end users.
                 The networking API does not define a specific format of this field.
                 The default is an empty dictionary.
                 If you update it with null then it is treated like {} in the response.
@@ -28605,7 +28591,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -28626,12 +28611,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -28639,7 +28622,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -28647,7 +28629,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8
@@ -28730,7 +28711,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -28751,12 +28731,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -28764,7 +28742,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -28772,7 +28749,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8
@@ -28861,7 +28837,6 @@ components:
                 enum:
                   - aes-cmac
                   - aes-xcbc
-                  - sha1
                   - sha256
                   - sha384
                   - sha512
@@ -28882,12 +28857,10 @@ components:
                   8, 12, 16 octets.
                   Default is `aes-128`.
                 enum:
-                  - 3des
                   - aes-128
                   - aes-128-ccm-12
                   - aes-128-ccm-16
                   - aes-128-ccm-8
-                  - aes-128-ctr
                   - aes-128-gcm-12
                   - aes-128-gcm-16
                   - aes-128-gcm-8
@@ -28895,7 +28868,6 @@ components:
                   - aes-192-ccm-12
                   - aes-192-ccm-16
                   - aes-192-ccm-8
-                  - aes-192-ctr
                   - aes-192-gcm-12
                   - aes-192-gcm-16
                   - aes-192-gcm-8
@@ -28903,7 +28875,6 @@ components:
                   - aes-256-ccm-12
                   - aes-256-ccm-16
                   - aes-256-ccm-8
-                  - aes-256-ctr
                   - aes-256-gcm-12
                   - aes-256-gcm-16
                   - aes-256-gcm-8
@@ -28992,7 +28963,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -29013,12 +28983,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -29026,7 +28994,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -29034,7 +29001,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8
@@ -29122,7 +29088,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -29143,12 +29108,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -29156,7 +29119,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -29164,7 +29126,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8
@@ -29242,7 +29203,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -29263,12 +29223,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -29276,7 +29234,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -29284,7 +29241,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8
@@ -30210,7 +30166,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -30239,12 +30194,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -30252,7 +30205,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -30260,7 +30212,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8
@@ -30336,7 +30287,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -30365,12 +30315,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -30378,7 +30326,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -30386,7 +30333,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8
@@ -30468,7 +30414,6 @@ components:
                 enum:
                   - aes-cmac
                   - aes-xcbc
-                  - sha1
                   - sha256
                   - sha384
                   - sha512
@@ -30497,12 +30442,10 @@ components:
                   8, 12, 16 octets.
                   Default is `aes-128`.
                 enum:
-                  - 3des
                   - aes-128
                   - aes-128-ccm-12
                   - aes-128-ccm-16
                   - aes-128-ccm-8
-                  - aes-128-ctr
                   - aes-128-gcm-12
                   - aes-128-gcm-16
                   - aes-128-gcm-8
@@ -30510,7 +30453,6 @@ components:
                   - aes-192-ccm-12
                   - aes-192-ccm-16
                   - aes-192-ccm-8
-                  - aes-192-ctr
                   - aes-192-gcm-12
                   - aes-192-gcm-16
                   - aes-192-gcm-8
@@ -30518,7 +30460,6 @@ components:
                   - aes-256-ccm-12
                   - aes-256-ccm-16
                   - aes-256-ccm-8
-                  - aes-256-ctr
                   - aes-256-gcm-12
                   - aes-256-gcm-16
                   - aes-256-gcm-8
@@ -30600,7 +30541,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -30629,12 +30569,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -30642,7 +30580,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -30650,7 +30587,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8
@@ -30731,7 +30667,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -30760,12 +30695,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -30773,7 +30706,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -30781,7 +30713,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8
@@ -30852,7 +30783,6 @@ components:
               enum:
                 - aes-cmac
                 - aes-xcbc
-                - sha1
                 - sha256
                 - sha384
                 - sha512
@@ -30881,12 +30811,10 @@ components:
                 8, 12, 16 octets.
                 Default is `aes-128`.
               enum:
-                - 3des
                 - aes-128
                 - aes-128-ccm-12
                 - aes-128-ccm-16
                 - aes-128-ccm-8
-                - aes-128-ctr
                 - aes-128-gcm-12
                 - aes-128-gcm-16
                 - aes-128-gcm-8
@@ -30894,7 +30822,6 @@ components:
                 - aes-192-ccm-12
                 - aes-192-ccm-16
                 - aes-192-ccm-8
-                - aes-192-ctr
                 - aes-192-gcm-12
                 - aes-192-gcm-16
                 - aes-192-gcm-8
@@ -30902,7 +30829,6 @@ components:
                 - aes-256-ccm-12
                 - aes-256-ccm-16
                 - aes-256-ccm-8
-                - aes-256-ctr
                 - aes-256-gcm-12
                 - aes-256-gcm-16
                 - aes-256-gcm-8

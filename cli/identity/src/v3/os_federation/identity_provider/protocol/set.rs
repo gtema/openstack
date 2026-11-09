@@ -79,7 +79,7 @@ struct PathParameters {
 #[derive(Args, Clone)]
 struct Protocol {
     #[arg(help_heading = "Body parameters", long)]
-    mapping_id: String,
+    mapping_id: Option<String>,
 
     #[arg(help_heading = "Body parameters", long)]
     remote_id_attribute: Option<String>,
@@ -110,8 +110,9 @@ impl ProtocolCommand {
         // Set Request.protocol data
         let args = &self.protocol;
         let mut protocol_builder = set::ProtocolBuilder::default();
-
-        protocol_builder.mapping_id(&args.mapping_id);
+        if let Some(val) = &args.mapping_id {
+            protocol_builder.mapping_id(val);
+        }
 
         if let Some(val) = &args.remote_id_attribute {
             protocol_builder.remote_id_attribute(val);

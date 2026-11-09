@@ -70,7 +70,7 @@ pub struct IpsecpoliciesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// auth_algorithm query parameter for /v2.0/vpn/ipsecpolicies API
-    #[arg(help_heading = "Query parameters", long, value_parser = ["aes-cmac","aes-xcbc","sha1","sha256","sha384","sha512"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["aes-cmac","aes-xcbc","sha256","sha384","sha512"])]
     auth_algorithm: Option<String>,
 
     /// description query parameter for /v2.0/vpn/ipsecpolicies API
@@ -82,7 +82,7 @@ struct QueryParameters {
     encapsulation_mode: Option<String>,
 
     /// encryption_algorithm query parameter for /v2.0/vpn/ipsecpolicies API
-    #[arg(help_heading = "Query parameters", long, value_parser = ["3des","aes-128","aes-128-ccm-12","aes-128-ccm-16","aes-128-ccm-8","aes-128-ctr","aes-128-gcm-12","aes-128-gcm-16","aes-128-gcm-8","aes-192","aes-192-ccm-12","aes-192-ccm-16","aes-192-ccm-8","aes-192-ctr","aes-192-gcm-12","aes-192-gcm-16","aes-192-gcm-8","aes-256","aes-256-ccm-12","aes-256-ccm-16","aes-256-ccm-8","aes-256-ctr","aes-256-gcm-12","aes-256-gcm-16","aes-256-gcm-8"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["aes-128","aes-128-ccm-12","aes-128-ccm-16","aes-128-ccm-8","aes-128-gcm-12","aes-128-gcm-16","aes-128-gcm-8","aes-192","aes-192-ccm-12","aes-192-ccm-16","aes-192-ccm-8","aes-192-gcm-12","aes-192-gcm-16","aes-192-gcm-8","aes-256","aes-256-ccm-12","aes-256-ccm-16","aes-256-ccm-8","aes-256-gcm-12","aes-256-gcm-16","aes-256-gcm-8"])]
     encryption_algorithm: Option<String>,
 
     /// id query parameter for /v2.0/vpn/ipsecpolicies API
