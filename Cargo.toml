@@ -77,7 +77,6 @@ inventory = { version = "0.3" }
 itertools = { version = "^0.15" }
 jsonschema = { version = "0.61", default-features = false }
 json-patch = { version = "^5.0.0" }
-lazy_static = { version = "^1.5" }
 open = { version = "^5.4" }
 openstack-cli-api = { path="cli/api", version = "0.13.8" }
 openstack-cli-auth = { path="cli/auth", version = "0.13.8" }
