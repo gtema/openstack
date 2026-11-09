@@ -10875,7 +10875,7 @@ components:
       additionalProperties: false
       properties:
         domain:
-          additionalProperties: false
+          additionalProperties: true
           description: |-
             A `domain` object
           properties:
@@ -11059,7 +11059,7 @@ components:
       additionalProperties: false
       properties:
         domain:
-          additionalProperties: false
+          additionalProperties: true
           description: |-
             A `domain` object
           properties:
@@ -11158,7 +11158,7 @@ components:
           description: |-
             A list of `domain` objects
           items:
-            additionalProperties: false
+            additionalProperties: true
             properties:
               description:
                 description: |-
@@ -11348,6 +11348,7 @@ components:
       additionalProperties: false
       properties:
         domain:
+          additionalProperties: true
           description: |-
             A `domain` object
           properties:
@@ -11444,7 +11445,7 @@ components:
       additionalProperties: false
       properties:
         domain:
-          additionalProperties: false
+          additionalProperties: true
           description: |-
             A `domain` object
           properties:
@@ -13613,7 +13614,7 @@ components:
               remote_ids:
                 description: List of the unique identity provider's remote IDs
                 items:
-                  maxLength: 64
+                  maxLength: 255
                   type: string
                 type:
                   - array
@@ -13695,7 +13696,7 @@ components:
             remote_ids:
               description: List of the unique identity provider's remote IDs
               items:
-                maxLength: 64
+                maxLength: 255
                 type: string
               type:
                 - array
@@ -13773,7 +13774,7 @@ components:
             remote_ids:
               description: List of the unique identity provider's remote IDs
               items:
-                maxLength: 64
+                maxLength: 255
                 type: string
               type:
                 - array
@@ -13843,7 +13844,7 @@ components:
             remote_ids:
               description: List of the unique identity provider's remote IDs
               items:
-                maxLength: 64
+                maxLength: 255
                 type: string
               type:
                 - array
@@ -13919,7 +13920,7 @@ components:
             remote_ids:
               description: List of the unique identity provider's remote IDs
               items:
-                maxLength: 64
+                maxLength: 255
                 type: string
               type:
                 - array
@@ -13996,7 +13997,7 @@ components:
               remote_ids:
                 description: List of the unique identity provider's remote IDs
                 items:
-                  maxLength: 64
+                  maxLength: 255
                   type: string
                 type:
                   - array
@@ -14078,8 +14079,6 @@ components:
             remote_id_attribute:
               maxLength: 64
               type: string
-          required:
-            - mapping_id
           type: object
       required:
         - protocol

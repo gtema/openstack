@@ -90,8 +90,9 @@ struct Rebuild {
     #[arg(help_heading = "Body parameters", long)]
     admin_pass: Option<String>,
 
-    /// A free form description of the server. Limited to 255 characters in
-    /// length. Before microversion 2.19 this was set to the server name.
+    /// A free-form description of the server. Limited to 255 characters in
+    /// length and new lines is not allowed. Before microversion 2.19 this was
+    /// set to the server name.
     ///
     /// **New in version 2.19**
     #[arg(help_heading = "Body parameters", long)]

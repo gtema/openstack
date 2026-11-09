@@ -33,9 +33,10 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::task::import::create;
 use serde_json::Value;
 
-/// Import a zone.
+/// Import a zone from a zone file in RFC 1035 format.
 ///
-/// The API supports two content types for zone import:
+/// The request body must contain the zone file data. The API supports two
+/// content types for zone import:
 #[derive(Args)]
 #[command(about = "Create a Zone Import")]
 pub struct ImportCommand {

@@ -95,8 +95,9 @@ pub struct ClusterResponse {
     #[structable(optional)]
     pub num_hosts: Option<i32>,
 
-    /// The cluster replication status. Only included in responses if
-    /// configured. One of: `enabled` or `disabled`.
+    /// The cluster replication status. One of: `enabled` or `disabled`.
+    ///
+    /// **New in version 3.26**
     #[serde(default)]
     #[structable(optional, serialize)]
     pub replication_status: Option<ReplicationStatus>,

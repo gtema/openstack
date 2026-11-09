@@ -33,7 +33,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::dns::v2::zone::task::transfer_request::set;
 use serde_json::Value;
 
-/// Command without description in OpenAPI
+/// This allows you to update a zone transfer request.
 #[derive(Args)]
 #[command(about = "Update a Zone Transfer Request")]
 pub struct TransferRequestCommand {

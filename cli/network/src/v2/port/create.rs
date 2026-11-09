@@ -131,17 +131,14 @@ struct Port {
     /// back-end. This field is only meant for machine-machine communication
     /// for compute services like Nova, Ironic or Zun to pass information to a
     /// Neutron back-end. It should not be used by multiple services
-    /// concurrently or by cloud end users. The existing counterexamples
-    /// (`capabilities: [switchdev]` for Open vSwitch hardware offload and
-    /// `trusted=true` for Trusted Virtual Functions) are due to be cleaned up.
-    /// The networking API does not define a specific format of this field. The
-    /// default is an empty dictionary. If you update it with null then it is
-    /// treated like {} in the response. Since the port-mac-address-override
-    /// extension the `device_mac_address` field of the binding:profile can be
-    /// used to provide the MAC address of the physical device a
-    /// direct-physical port is being bound to. If provided, then the
-    /// `mac_address` field of the port resource will be updated to the MAC
-    /// from the active binding.
+    /// concurrently or by cloud end users. The networking API does not define
+    /// a specific format of this field. The default is an empty dictionary. If
+    /// you update it with null then it is treated like {} in the response.
+    /// Since the port-mac-address-override extension the `device_mac_address`
+    /// field of the binding:profile can be used to provide the MAC address of
+    /// the physical device a direct-physical port is being bound to. If
+    /// provided, then the `mac_address` field of the port resource will be
+    /// updated to the MAC from the active binding.
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     binding_profile: Option<Vec<(String, Value)>>,
 

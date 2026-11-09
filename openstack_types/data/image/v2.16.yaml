@@ -1017,6 +1017,27 @@ paths:
       summary: Import methods and values discovery
       tags:
         - info
+  /v2/info/import/detail:
+    get:
+      description: |-
+        Returns the supported image import methods and the configured image import
+        plugins, including supported plugin configuration details. This call is
+        restricted to administrators and service users.
+
+        Normal response codes: 200
+
+        Error response codes: 401, 403
+      operationId: info/import/detail:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoImportDetailGet_Image_Import_DetailResponse'
+          description: Ok
+      summary: Import methods and plugin discovery
+      tags:
+        - info
   /v2/info/stores:
     get:
       description: |-
@@ -4167,6 +4188,23 @@ components:
               user_id:
                 description: User associated with the task
                 type: string
+          type: array
+      type: object
+    InfoImportDetailGet_Image_Import_DetailResponse:
+      additionalProperties: false
+      properties:
+        usage:
+          items:
+            additionalProperties: true
+            type: object
+            validation_data:
+              additionalProperties: false
+              properties:
+                limit:
+                  type: integer
+                usage:
+                  type: integer
+              type: object
           type: array
       type: object
     InfoImportGet_Image_ImportResponse:

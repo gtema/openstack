@@ -31,9 +31,9 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Protocol<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) mapping_id: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) mapping_id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -144,7 +144,7 @@ impl RestEndpoint for Request<'_> {
 /// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
 /// constraints, `enum`, ranges and descriptions that the generated struct's
 /// `Option<T>` fields alone do not express).
-pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"protocol\": {\"additionalProperties\": false, \"minProperties\": 1, \"properties\": {\"mapping_id\": {\"maxLength\": 64, \"minLength\": 1, \"type\": \"string\"}, \"remote_id_attribute\": {\"maxLength\": 64, \"type\": \"string\"}}, \"required\": [\"mapping_id\"], \"type\": \"object\"}}, \"required\": [\"protocol\"], \"type\": \"object\"}";
+pub const BODY_SCHEMA: &str = "{\"additionalProperties\": false, \"properties\": {\"protocol\": {\"additionalProperties\": false, \"minProperties\": 1, \"properties\": {\"mapping_id\": {\"maxLength\": 64, \"minLength\": 1, \"type\": \"string\"}, \"remote_id_attribute\": {\"maxLength\": 64, \"type\": \"string\"}}, \"type\": \"object\"}}, \"required\": [\"protocol\"], \"type\": \"object\"}";
 
 #[cfg(test)]
 mod tests {
@@ -161,12 +161,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .protocol(
-                    ProtocolBuilder::default()
-                        .mapping_id("foo")
-                        .build()
-                        .unwrap()
-                )
+                .protocol(ProtocolBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -178,12 +173,7 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .protocol(
-                    ProtocolBuilder::default()
-                        .mapping_id("foo")
-                        .build()
-                        .unwrap()
-                )
+                .protocol(ProtocolBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .response_key()
@@ -212,12 +202,7 @@ mod tests {
         let endpoint = Request::builder()
             .idp_id("idp_id")
             .id("id")
-            .protocol(
-                ProtocolBuilder::default()
-                    .mapping_id("foo")
-                    .build()
-                    .unwrap(),
-            )
+            .protocol(ProtocolBuilder::default().build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -246,12 +231,7 @@ mod tests {
         let endpoint = Request::builder()
             .idp_id("idp_id")
             .id("id")
-            .protocol(
-                ProtocolBuilder::default()
-                    .mapping_id("foo")
-                    .build()
-                    .unwrap(),
-            )
+            .protocol(ProtocolBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

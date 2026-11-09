@@ -40,8 +40,6 @@ pub enum AuthAlgorithm {
     AesCmac,
     #[serde(rename = "aes-xcbc")]
     AesXcbc,
-    #[serde(rename = "sha1")]
-    Sha1,
     #[serde(rename = "sha256")]
     Sha256,
     #[serde(rename = "sha384")]
@@ -52,8 +50,6 @@ pub enum AuthAlgorithm {
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum EncryptionAlgorithm {
-    #[serde(rename = "3des")]
-    _3des,
     #[serde(rename = "aes-128")]
     Aes128,
     #[serde(rename = "aes-128-ccm-12")]
@@ -62,8 +58,6 @@ pub enum EncryptionAlgorithm {
     Aes128Ccm16,
     #[serde(rename = "aes-128-ccm-8")]
     Aes128Ccm8,
-    #[serde(rename = "aes-128-ctr")]
-    Aes128Ctr,
     #[serde(rename = "aes-128-gcm-12")]
     Aes128Gcm12,
     #[serde(rename = "aes-128-gcm-16")]
@@ -78,8 +72,6 @@ pub enum EncryptionAlgorithm {
     Aes192Ccm16,
     #[serde(rename = "aes-192-ccm-8")]
     Aes192Ccm8,
-    #[serde(rename = "aes-192-ctr")]
-    Aes192Ctr,
     #[serde(rename = "aes-192-gcm-12")]
     Aes192Gcm12,
     #[serde(rename = "aes-192-gcm-16")]
@@ -94,8 +86,6 @@ pub enum EncryptionAlgorithm {
     Aes256Ccm16,
     #[serde(rename = "aes-256-ccm-8")]
     Aes256Ccm8,
-    #[serde(rename = "aes-256-ctr")]
-    Aes256Ctr,
     #[serde(rename = "aes-256-gcm-12")]
     Aes256Gcm12,
     #[serde(rename = "aes-256-gcm-16")]
@@ -313,7 +303,7 @@ impl RestEndpoint for Request<'_> {
 /// any codegen-side simplification -- keeps `required`, `oneOf`/mutex
 /// constraints, `enum`, ranges and descriptions that the generated struct's
 /// `Option<T>` fields alone do not express).
-pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the vpn/ikepolicies:post operation\", \"properties\": {\"ikepolicy\": {\"description\": \"An `ikepolicy` object.\", \"properties\": {\"auth_algorithm\": {\"description\": \"The authentication hash algorithm. Valid values\\nare `sha1`, `sha256`, `sha384`, `sha512`, `aes-xcbc`,\\n`aes-cmac`.\\nThe default is `sha1`.\", \"enum\": [\"aes-cmac\", \"aes-xcbc\", \"sha1\", \"sha256\", \"sha384\", \"sha512\"], \"type\": \"string\"}, \"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"encryption_algorithm\": {\"description\": \"The encryption algorithm. A valid value is\\n`3des`, `aes-128`, `aes-192`, `aes-256`, `aes-128-ctr`,\\n`aes-192-ctr`, `aes-256-ctr`. Additional values for AES\\nCCM and GCM modes are defined (e.g. `aes-256-ccm-16`, `aes-256-gcm-16`)\\nfor all combinations of key length 128, 192, 256 bits and ICV length\\n8, 12, 16 octets.\\nDefault is `aes-128`.\", \"enum\": [\"3des\", \"aes-128\", \"aes-128-ccm-12\", \"aes-128-ccm-16\", \"aes-128-ccm-8\", \"aes-128-ctr\", \"aes-128-gcm-12\", \"aes-128-gcm-16\", \"aes-128-gcm-8\", \"aes-192\", \"aes-192-ccm-12\", \"aes-192-ccm-16\", \"aes-192-ccm-8\", \"aes-192-ctr\", \"aes-192-gcm-12\", \"aes-192-gcm-16\", \"aes-192-gcm-8\", \"aes-256\", \"aes-256-ccm-12\", \"aes-256-ccm-16\", \"aes-256-ccm-8\", \"aes-256-ctr\", \"aes-256-gcm-12\", \"aes-256-gcm-16\", \"aes-256-gcm-8\"], \"type\": \"string\"}, \"ike_version\": {\"description\": \"The IKE version. A valid value is `v1` or\\n`v2`. Default is `v1`.\", \"enum\": [\"v1\", \"v2\"], \"type\": \"string\"}, \"lifetime\": {\"description\": \"The lifetime of the security association. The\\nlifetime consists of a unit and integer value. You can omit either\\nthe unit or value portion of the lifetime. Default unit is seconds\\nand default value is 3600.\", \"type\": \"string\"}, \"name\": {\"description\": \"Human-readable name of the resource.\\nDefault is an empty string.\", \"type\": \"string\"}, \"pfs\": {\"description\": \"Perfect forward secrecy (PFS). A valid value is\\n`Group2`, `Group5`, `Group14` to `Group31`. Default is\\n`Group5`.\", \"enum\": [\"group14\", \"group15\", \"group16\", \"group17\", \"group18\", \"group19\", \"group2\", \"group20\", \"group21\", \"group22\", \"group23\", \"group24\", \"group25\", \"group26\", \"group27\", \"group28\", \"group29\", \"group30\", \"group31\", \"group5\"], \"type\": \"string\"}, \"phase1_negotiation_mode\": {\"description\": \"The IKE mode. A valid value is `main`, which is\\nthe default.\", \"enum\": [\"aggressive\", \"main\"], \"type\": \"string\"}, \"tenant_id\": {\"description\": \"The ID of the project.\", \"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
+pub const BODY_SCHEMA: &str = "{\"description\": \"Request of the vpn/ikepolicies:post operation\", \"properties\": {\"ikepolicy\": {\"description\": \"An `ikepolicy` object.\", \"properties\": {\"auth_algorithm\": {\"description\": \"The authentication hash algorithm. Valid values\\nare `sha1`, `sha256`, `sha384`, `sha512`, `aes-xcbc`,\\n`aes-cmac`.\\nThe default is `sha1`.\", \"enum\": [\"aes-cmac\", \"aes-xcbc\", \"sha256\", \"sha384\", \"sha512\"], \"type\": \"string\"}, \"description\": {\"description\": \"A human-readable description for the resource.\\nDefault is an empty string.\", \"maxLength\": 255, \"type\": \"string\"}, \"encryption_algorithm\": {\"description\": \"The encryption algorithm. A valid value is\\n`3des`, `aes-128`, `aes-192`, `aes-256`, `aes-128-ctr`,\\n`aes-192-ctr`, `aes-256-ctr`. Additional values for AES\\nCCM and GCM modes are defined (e.g. `aes-256-ccm-16`, `aes-256-gcm-16`)\\nfor all combinations of key length 128, 192, 256 bits and ICV length\\n8, 12, 16 octets.\\nDefault is `aes-128`.\", \"enum\": [\"aes-128\", \"aes-128-ccm-12\", \"aes-128-ccm-16\", \"aes-128-ccm-8\", \"aes-128-gcm-12\", \"aes-128-gcm-16\", \"aes-128-gcm-8\", \"aes-192\", \"aes-192-ccm-12\", \"aes-192-ccm-16\", \"aes-192-ccm-8\", \"aes-192-gcm-12\", \"aes-192-gcm-16\", \"aes-192-gcm-8\", \"aes-256\", \"aes-256-ccm-12\", \"aes-256-ccm-16\", \"aes-256-ccm-8\", \"aes-256-gcm-12\", \"aes-256-gcm-16\", \"aes-256-gcm-8\"], \"type\": \"string\"}, \"ike_version\": {\"description\": \"The IKE version. A valid value is `v1` or\\n`v2`. Default is `v1`.\", \"enum\": [\"v1\", \"v2\"], \"type\": \"string\"}, \"lifetime\": {\"description\": \"The lifetime of the security association. The\\nlifetime consists of a unit and integer value. You can omit either\\nthe unit or value portion of the lifetime. Default unit is seconds\\nand default value is 3600.\", \"type\": \"string\"}, \"name\": {\"description\": \"Human-readable name of the resource.\\nDefault is an empty string.\", \"type\": \"string\"}, \"pfs\": {\"description\": \"Perfect forward secrecy (PFS). A valid value is\\n`Group2`, `Group5`, `Group14` to `Group31`. Default is\\n`Group5`.\", \"enum\": [\"group14\", \"group15\", \"group16\", \"group17\", \"group18\", \"group19\", \"group2\", \"group20\", \"group21\", \"group22\", \"group23\", \"group24\", \"group25\", \"group26\", \"group27\", \"group28\", \"group29\", \"group30\", \"group31\", \"group5\"], \"type\": \"string\"}, \"phase1_negotiation_mode\": {\"description\": \"The IKE mode. A valid value is `main`, which is\\nthe default.\", \"enum\": [\"aggressive\", \"main\"], \"type\": \"string\"}, \"tenant_id\": {\"description\": \"The ID of the project.\", \"maxLength\": 255, \"type\": \"string\"}}, \"type\": \"object\"}}, \"type\": \"object\"}";
 
 #[cfg(test)]
 mod tests {

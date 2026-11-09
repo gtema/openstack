@@ -95,10 +95,6 @@ pub enum AuthAlgorithm {
     #[serde(rename = "aes-xcbc")]
     AesXcbc,
 
-    // Sha1
-    #[serde(rename = "sha1")]
-    Sha1,
-
     // Sha256
     #[serde(rename = "sha256")]
     Sha256,
@@ -118,7 +114,6 @@ impl std::str::FromStr for AuthAlgorithm {
         match input {
             "aes-cmac" => Ok(Self::AesCmac),
             "aes-xcbc" => Ok(Self::AesXcbc),
-            "sha1" => Ok(Self::Sha1),
             "sha256" => Ok(Self::Sha256),
             "sha384" => Ok(Self::Sha384),
             "sha512" => Ok(Self::Sha512),
@@ -151,10 +146,6 @@ impl std::str::FromStr for EncapsulationMode {
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum EncryptionAlgorithm {
-    // _3des
-    #[serde(rename = "3des")]
-    _3des,
-
     // Aes128
     #[serde(rename = "aes-128")]
     Aes128,
@@ -170,10 +161,6 @@ pub enum EncryptionAlgorithm {
     // Aes128Ccm8
     #[serde(rename = "aes-128-ccm-8")]
     Aes128Ccm8,
-
-    // Aes128Ctr
-    #[serde(rename = "aes-128-ctr")]
-    Aes128Ctr,
 
     // Aes128Gcm12
     #[serde(rename = "aes-128-gcm-12")]
@@ -203,10 +190,6 @@ pub enum EncryptionAlgorithm {
     #[serde(rename = "aes-192-ccm-8")]
     Aes192Ccm8,
 
-    // Aes192Ctr
-    #[serde(rename = "aes-192-ctr")]
-    Aes192Ctr,
-
     // Aes192Gcm12
     #[serde(rename = "aes-192-gcm-12")]
     Aes192Gcm12,
@@ -235,10 +218,6 @@ pub enum EncryptionAlgorithm {
     #[serde(rename = "aes-256-ccm-8")]
     Aes256Ccm8,
 
-    // Aes256Ctr
-    #[serde(rename = "aes-256-ctr")]
-    Aes256Ctr,
-
     // Aes256Gcm12
     #[serde(rename = "aes-256-gcm-12")]
     Aes256Gcm12,
@@ -256,12 +235,10 @@ impl std::str::FromStr for EncryptionAlgorithm {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
-            "3des" => Ok(Self::_3des),
             "aes-128" => Ok(Self::Aes128),
             "aes-128-ccm-12" => Ok(Self::Aes128Ccm12),
             "aes-128-ccm-16" => Ok(Self::Aes128Ccm16),
             "aes-128-ccm-8" => Ok(Self::Aes128Ccm8),
-            "aes-128-ctr" => Ok(Self::Aes128Ctr),
             "aes-128-gcm-12" => Ok(Self::Aes128Gcm12),
             "aes-128-gcm-16" => Ok(Self::Aes128Gcm16),
             "aes-128-gcm-8" => Ok(Self::Aes128Gcm8),
@@ -269,7 +246,6 @@ impl std::str::FromStr for EncryptionAlgorithm {
             "aes-192-ccm-12" => Ok(Self::Aes192Ccm12),
             "aes-192-ccm-16" => Ok(Self::Aes192Ccm16),
             "aes-192-ccm-8" => Ok(Self::Aes192Ccm8),
-            "aes-192-ctr" => Ok(Self::Aes192Ctr),
             "aes-192-gcm-12" => Ok(Self::Aes192Gcm12),
             "aes-192-gcm-16" => Ok(Self::Aes192Gcm16),
             "aes-192-gcm-8" => Ok(Self::Aes192Gcm8),
@@ -277,7 +253,6 @@ impl std::str::FromStr for EncryptionAlgorithm {
             "aes-256-ccm-12" => Ok(Self::Aes256Ccm12),
             "aes-256-ccm-16" => Ok(Self::Aes256Ccm16),
             "aes-256-ccm-8" => Ok(Self::Aes256Ccm8),
-            "aes-256-ctr" => Ok(Self::Aes256Ctr),
             "aes-256-gcm-12" => Ok(Self::Aes256Gcm12),
             "aes-256-gcm-16" => Ok(Self::Aes256Gcm16),
             "aes-256-gcm-8" => Ok(Self::Aes256Gcm8),
