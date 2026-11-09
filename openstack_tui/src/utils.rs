@@ -13,9 +13,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use eyre::Result;
-use lazy_static::lazy_static;
 use ratatui::prelude::*;
 use std::path::PathBuf;
+use std::sync::LazyLock;
 use tracing_error::ErrorLayer;
 use tracing_subscriber::{
     self, Layer, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt,
@@ -23,19 +23,20 @@ use tracing_subscriber::{
 
 const VERSION_MESSAGE: &str = concat!(env!("CARGO_PKG_VERSION"),);
 
-lazy_static! {
-    pub static ref PROJECT_NAME: String = env!("CARGO_CRATE_NAME").to_uppercase().clone();
-    pub static ref DATA_FOLDER: Option<PathBuf> =
-        std::env::var(format!("{}_DATA", PROJECT_NAME.clone()))
-            .ok()
-            .map(PathBuf::from);
-    pub static ref CONFIG_FOLDER: Option<PathBuf> =
-        std::env::var(format!("{}_CONFIG", PROJECT_NAME.clone()))
-            .ok()
-            .map(PathBuf::from);
-    pub static ref LOG_ENV: String = format!("{}_LOGLEVEL", PROJECT_NAME.clone());
-    pub static ref LOG_FILE: String = format!("{}.log", env!("CARGO_PKG_NAME"));
-}
+pub static PROJECT_NAME: LazyLock<String> =
+    LazyLock::new(|| env!("CARGO_CRATE_NAME").to_uppercase());
+pub static DATA_FOLDER: LazyLock<Option<PathBuf>> = LazyLock::new(|| {
+    std::env::var(format!("{}_DATA", *PROJECT_NAME))
+        .ok()
+        .map(PathBuf::from)
+});
+pub static CONFIG_FOLDER: LazyLock<Option<PathBuf>> = LazyLock::new(|| {
+    std::env::var(format!("{}_CONFIG", *PROJECT_NAME))
+        .ok()
+        .map(PathBuf::from)
+});
+pub static LOG_ENV: LazyLock<String> = LazyLock::new(|| format!("{}_LOGLEVEL", *PROJECT_NAME));
+pub static LOG_FILE: LazyLock<String> = LazyLock::new(|| format!("{}.log", env!("CARGO_PKG_NAME")));
 
 pub fn initialize_panic_handler() -> Result<()> {
     let (panic_hook, eyre_hook) = color_eyre::config::HookBuilder::default()

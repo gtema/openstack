@@ -5048,7 +5048,6 @@ dependencies = [
  "futures",
  "itertools 0.15.0",
  "jsonschema",
- "lazy_static",
  "open",
  "openstack_sdk",
  "pretty_assertions",
