@@ -35,7 +35,7 @@ pub struct OsDetach<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) os_detach: Option<OsDetach<'a>>,
 
     /// id parameter for /v3/volumes/{id}/action API

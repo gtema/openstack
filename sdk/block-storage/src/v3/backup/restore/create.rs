@@ -41,7 +41,7 @@ pub struct Restore<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) restore: Option<Restore<'a>>,
 
     /// id parameter for /v3/backups/{id}/restore API

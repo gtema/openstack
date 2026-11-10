@@ -74,7 +74,7 @@ pub struct Item<'a> {
     pub(crate) allocations: BTreeMap<Cow<'a, str>, AllocationsItem<'a>>,
 
     #[serde()]
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) consumer_generation: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]

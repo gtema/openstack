@@ -59,7 +59,7 @@ pub struct Snapshot<'a> {
 
     /// The UUID of the volume.
     #[serde()]
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) volume_id: Option<Cow<'a, str>>,
 }
 

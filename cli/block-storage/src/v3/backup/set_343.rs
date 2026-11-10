@@ -121,12 +121,16 @@ impl BackupCommand {
             let mut backup_builder = set_343::BackupBuilder::default();
             if let Some(val) = &lbackup.description {
                 backup_builder.description(Some(val.into()));
+            } else if lbackup.no_description {
+                backup_builder.description(None);
             }
             if let Some(val) = &lbackup.metadata {
                 backup_builder.metadata(val.iter().cloned());
             }
             if let Some(val) = &lbackup.name {
                 backup_builder.name(Some(val.into()));
+            } else if lbackup.no_name {
+                backup_builder.name(None);
             }
             ep_builder.backup(
                 backup_builder

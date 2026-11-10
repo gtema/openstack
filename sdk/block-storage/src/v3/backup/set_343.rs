@@ -61,7 +61,7 @@ impl<'a> BackupBuilder<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) backup: Option<Backup<'a>>,
 
     /// id parameter for /v3/backups/{id} API

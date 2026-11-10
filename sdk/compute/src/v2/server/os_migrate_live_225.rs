@@ -53,7 +53,7 @@ pub struct OsMigrateLive<'a> {
     /// pick one, or specify a host with microversion >= 2.30 and without
     /// `force=True` set.
     #[serde()]
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) host: Option<Cow<'a, str>>,
 }
 

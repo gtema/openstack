@@ -45,7 +45,7 @@ pub struct Flavor<'a> {
     /// A free-form description of the flavor. Limited to 65535 characters in
     /// length. Only printable characters are allowed.
     #[serde()]
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 }
 

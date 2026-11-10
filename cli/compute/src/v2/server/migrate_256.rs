@@ -122,6 +122,8 @@ impl ServerCommand {
             let mut migrate_builder = migrate_256::MigrateBuilder::default();
             if let Some(val) = &lmigrate.host {
                 migrate_builder.host(Some(val.into()));
+            } else if lmigrate.no_host {
+                migrate_builder.host(None);
             }
             ep_builder.migrate(
                 migrate_builder
