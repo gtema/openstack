@@ -21,6 +21,7 @@ openstack_types.workspace = true
 http.workspace = true
 serde_json.workspace = true
 tracing.workspace = true
+openstack-sdk-auth-passkey = { version = "0.22", path = "../../sdk/auth-passkey/", optional = true }
 webauthn-authenticator-rs = { workspace = true, optional = true }
 webauthn-rs-proto = { workspace = true, optional = true }
 
@@ -30,4 +31,4 @@ workspace = true
 [features]
 default = []
 keystone_ng = ["openstack_sdk/keystone_ng", "openstack_types/keystone_ng"]
-passkey = ["keystone_ng", "openstack_sdk/passkey", "dep:webauthn-authenticator-rs", "dep:webauthn-rs-proto", "dep:base64"]
+passkey = ["keystone_ng", "openstack_sdk/passkey", "dep:openstack-sdk-auth-passkey", "dep:webauthn-authenticator-rs", "dep:webauthn-rs-proto", "dep:base64"]
