@@ -66,7 +66,7 @@ pub struct Request<'a> {
     #[builder(private, setter(into, name = "_allocations"))]
     pub(crate) allocations: BTreeMap<Cow<'a, str>, AllocationsItem<'a>>,
 
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) consumer_generation: Option<i32>,
 
     #[builder(setter(into))]

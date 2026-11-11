@@ -84,7 +84,7 @@ pub struct Snapshot<'a> {
     pub(crate) name: Option<Option<Cow<'a, str>>>,
 
     #[serde(rename = "ref")]
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) _ref: Option<Value>,
 
     #[serde()]

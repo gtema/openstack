@@ -99,6 +99,8 @@ impl ServerCommand {
             let mut unshelve_builder = unshelve_291::UnshelveBuilder::default();
             if let Some(val) = &lunshelve.availability_zone {
                 unshelve_builder.availability_zone(Some(val.into()));
+            } else if lunshelve.no_availability_zone {
+                unshelve_builder.availability_zone(None);
             }
             if let Some(val) = &lunshelve.host {
                 unshelve_builder.host(val);

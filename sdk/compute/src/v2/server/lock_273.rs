@@ -39,7 +39,7 @@ pub struct Lock<'a> {
 pub struct Request<'a> {
     /// The action to lock a server. This parameter can be `null`. Up to
     /// microversion 2.73, this parameter should be `null`.
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) lock: Option<Lock<'a>>,
 
     /// id parameter for /v2.1/servers/{id}/action API

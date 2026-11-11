@@ -98,6 +98,8 @@ impl VolumeCommand {
             let mut os_detach_builder = os_detach::OsDetachBuilder::default();
             if let Some(val) = &los_detach.attachment_id {
                 os_detach_builder.attachment_id(Some(val.into()));
+            } else if los_detach.no_attachment_id {
+                os_detach_builder.attachment_id(None);
             }
             ep_builder.os_detach(
                 os_detach_builder

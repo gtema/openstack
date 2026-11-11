@@ -41,7 +41,7 @@ pub struct Unshelve<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) unshelve: Option<Unshelve<'a>>,
 
     /// id parameter for /v2.1/servers/{id}/action API

@@ -29,7 +29,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct OsTerminateConnection {
     #[serde()]
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) connector: Option<Value>,
 }
 

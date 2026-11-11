@@ -106,9 +106,13 @@ impl RestoreCommand {
             let mut restore_builder = create::RestoreBuilder::default();
             if let Some(val) = &lrestore.name {
                 restore_builder.name(Some(val.into()));
+            } else if lrestore.no_name {
+                restore_builder.name(None);
             }
             if let Some(val) = &lrestore.volume_id {
                 restore_builder.volume_id(Some(val.into()));
+            } else if lrestore.no_volume_id {
+                restore_builder.volume_id(None);
             }
             ep_builder.restore(
                 restore_builder

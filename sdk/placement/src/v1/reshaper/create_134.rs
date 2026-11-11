@@ -75,7 +75,7 @@ pub struct AllocationsItemStruct<'a> {
     /// The generation of the consumer. Should be set to null when indicating
     /// that the caller expects the consumer does not yet exist.
     #[serde()]
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) consumer_generation: Option<i32>,
 
     /// A dictionary associating request group suffixes with a list of uuids

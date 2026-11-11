@@ -39,7 +39,7 @@ pub struct Migrate<'a> {
 pub struct Request<'a> {
     /// The action to cold migrate a server. This parameter can be `null`. Up
     /// to microversion 2.55, this parameter should be `null`.
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) migrate: Option<Migrate<'a>>,
 
     /// id parameter for /v2.1/servers/{id}/action API

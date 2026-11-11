@@ -115,6 +115,7 @@ pub mod trigger_crash_dump_217;
 pub mod unlock_21;
 pub mod unpause;
 pub mod unrescue;
+pub mod unshelve_21;
 pub mod unshelve_277;
 pub mod unshelve_291;
 pub mod volume_attachment;
@@ -254,6 +255,7 @@ pub enum ServerCommands {
     Unlock21(Box<unlock_21::ServerCommand>),
     Unpause(Box<unpause::ServerCommand>),
     Unrescue(Box<unrescue::ServerCommand>),
+    Unshelve21(Box<unshelve_21::ServerCommand>),
     Unshelve277(Box<unshelve_277::ServerCommand>),
     #[command(visible_alias = "unshelve")]
     Unshelve291(Box<unshelve_291::ServerCommand>),
@@ -399,6 +401,7 @@ impl ServerCommand {
             ServerCommands::Unlock21(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unpause(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unrescue(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::Unshelve21(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unshelve277(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unshelve291(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::VolumeAttachment(cmd) => cmd.take_action(parsed_args, session).await,

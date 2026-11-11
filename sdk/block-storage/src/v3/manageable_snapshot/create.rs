@@ -92,7 +92,7 @@ pub struct Snapshot<'a> {
     /// about the required elements in the structure, see the documentation for
     /// the volume driver.
     #[serde(rename = "ref")]
-    #[builder(setter(into))]
+    #[builder(default, setter(into))]
     pub(crate) _ref: Option<Value>,
 
     /// The UUID of the volume.
