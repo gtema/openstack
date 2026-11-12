@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0](https://github.com/gtema/openstack/compare/openstack-sdk-auth-token-v0.22.7...openstack-sdk-auth-token-v0.23.0) - 2026-11-12
+
+### Other
+
+- release ([#1986](https://github.com/gtema/openstack/pull/1986))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-sdk-auth-token-v0.22.6...openstack-sdk-auth-token-v0.22.7) - 2026-09-07
 
 ### Fixed
