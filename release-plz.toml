@@ -47,6 +47,9 @@ version_group = "cli"
 name = "openstack-cli-compute"
 version_group = "cli"
 [[package]]
+name = "openstack-cli-config"
+version_group = "cli"
+[[package]]
 name = "openstack-cli-container-infrastructure-management"
 version_group = "cli"
 [[package]]
