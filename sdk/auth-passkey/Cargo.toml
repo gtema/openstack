@@ -20,6 +20,7 @@ serde.workspace = true
 serde_json.workspace = true
 reqwest.workspace = true
 thiserror.workspace = true
+tokio = { workspace = true, features = ["rt"] }
 url.workspace = true
 webauthn-authenticator-rs.workspace = true
 webauthn-rs-proto.workspace = true

@@ -24,6 +24,7 @@ use clap::Args;
 use eyre::{OptionExt, WrapErr, eyre};
 use tracing::{error, info, warn};
 
+use openstack_sdk_auth_passkey::with_authenticator;
 use webauthn_authenticator_rs::WebauthnAuthenticator;
 use webauthn_authenticator_rs::prelude::Url;
 
@@ -519,11 +520,12 @@ impl PasskeyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let pk_request: register::RegisterStartResponse = ep.query_async(client).await?;
 
-        let mut auth = webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new();
-        match auth.do_registration(
-            Url::parse("http://localhost:8080")?,
-            convert_api_parameters_to_webauthn(pk_request)?,
-        ) {
+        let challenge = convert_api_parameters_to_webauthn(pk_request)?;
+        let origin = Url::parse("http://localhost:8080")?;
+        match with_authenticator(move |auth| auth.do_registration(origin, challenge))
+            .await
+            .map_err(|e| eyre!("Authenticator error: {e}"))?
+        {
             Ok(rsp) => {
                 let ep = get_finish_registration_endpoint(
                     user_id,

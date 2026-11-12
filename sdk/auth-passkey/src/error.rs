@@ -89,6 +89,18 @@ pub enum PasskeyError {
         source: url::ParseError,
     },
 
+    /// No usable FIDO2 authenticator was found.
+    #[error("no FIDO2 authenticator found")]
+    NoAuthenticator,
+
+    /// Blocking authenticator task failed.
+    #[error("authenticator task failed: {}", source)]
+    Join {
+        /// The source of the error.
+        #[from]
+        source: tokio::task::JoinError,
+    },
+
     /// WebAuthn.
     #[error(transparent)]
     WebAuthn {

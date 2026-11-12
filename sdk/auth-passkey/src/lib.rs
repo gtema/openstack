@@ -28,6 +28,7 @@
 
 use async_trait::async_trait;
 
+mod authenticator;
 mod error;
 mod finish;
 mod start;
@@ -40,6 +41,7 @@ use openstack_sdk_auth_core::{
     execute_auth_request,
 };
 
+pub use authenticator::with_authenticator;
 pub use error::PasskeyError;
 use finish::*;
 use start::PasskeyAuthenticationStartResponse;
@@ -110,15 +112,14 @@ impl OpenStackAuthType for WebAuthnAuthenticator {
 
         use webauthn_authenticator_rs::WebauthnAuthenticator;
 
-        let mut auth = webauthn_authenticator_rs::mozilla::MozillaAuthenticator::new();
-        let mut passkey_auth: AuthFinishRequestBuilder = AuthFinishRequestBuilder::try_from(
-            auth.do_authentication(
-                // TODO: the url contains path, while authenticator may only want domain info
-                identity_url.clone(),
-                req.try_into()?,
-            )
-            .map_err(PasskeyError::from)?,
-        )?;
+        let challenge = req.try_into()?;
+        let origin = identity_url.clone();
+        // TODO: the url contains path, while authenticator may only want domain info
+        let assertion = with_authenticator(move |auth| auth.do_authentication(origin, challenge))
+            .await?
+            .map_err(PasskeyError::from)?;
+        let mut passkey_auth: AuthFinishRequestBuilder =
+            AuthFinishRequestBuilder::try_from(assertion)?;
 
         let auth_finish_ep = identity_url
             .join("auth/passkey/finish")
