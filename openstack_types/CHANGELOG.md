@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0](https://github.com/gtema/openstack/compare/openstack_types-v0.22.8...openstack_types-v0.23.0) - 2026-11-12
+
+### Added
+
+- Latest codegenerator content ([#2111](https://github.com/gtema/openstack/pull/2111))
+- *(rust)* Roll out --wait to block-storage/manila ([#2001](https://github.com/gtema/openstack/pull/2001))
+
+### Fixed
+
+- Address required-but-nullable ([#2114](https://github.com/gtema/openstack/pull/2114))
+- *(rust)* Lowercase header names ([#1991](https://github.com/gtema/openstack/pull/1991))
+
 ## [0.22.8](https://github.com/gtema/openstack/compare/openstack_types-v0.22.7...openstack_types-v0.22.8) - 2026-09-07
 
 ### Added

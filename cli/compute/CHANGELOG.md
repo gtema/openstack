@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0](https://github.com/gtema/openstack/compare/openstack-cli-compute-v0.13.8...openstack-cli-compute-v0.14.0) - 2026-11-12
+
+### Added
+
+- Latest codegenerator content ([#2111](https://github.com/gtema/openstack/pull/2111))
+
+### Fixed
+
+- Address required-but-nullable ([#2114](https://github.com/gtema/openstack/pull/2114))
+
 ## [0.13.8](https://github.com/gtema/openstack/compare/openstack-cli-compute-v0.13.7...openstack-cli-compute-v0.13.8) - 2026-09-07
 
 ### Added

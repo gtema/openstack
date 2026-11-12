@@ -1,7 +1,7 @@
 [package]
 name = "openstack-cli-identity"
 description = "OpenStack CLI Identity commands"
-version = "0.13.8"
+version = "0.14.0"
 license.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -21,7 +21,7 @@ openstack_types.workspace = true
 http.workspace = true
 serde_json.workspace = true
 tracing.workspace = true
-openstack-sdk-auth-passkey = { version = "0.22", path = "../../sdk/auth-passkey/", optional = true }
+openstack-sdk-auth-passkey = { version = "0.23", path = "../../sdk/auth-passkey/", optional = true }
 webauthn-authenticator-rs = { workspace = true, optional = true }
 webauthn-rs-proto = { workspace = true, optional = true }
 
