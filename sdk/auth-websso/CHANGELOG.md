@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0](https://github.com/gtema/openstack/compare/openstack-sdk-auth-websso-v0.22.7...openstack-sdk-auth-websso-v0.23.0) - 2026-11-12
+
+### Fixed
+
+- *(auth)* Unblock external auth plugins ([#2015](https://github.com/gtema/openstack/pull/2015))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-sdk-auth-websso-v0.22.6...openstack-sdk-auth-websso-v0.22.7) - 2026-09-07
 
 ### Added

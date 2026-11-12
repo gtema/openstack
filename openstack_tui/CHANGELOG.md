@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.8...openstack_tui-v0.14.0) - 2026-11-12
+
+### Added
+
+- *(tui)* Add Ctrl-E header toggle ([#2100](https://github.com/gtema/openstack/pull/2100))
+- *(tui)* Add search in resource tables ([#2014](https://github.com/gtema/openstack/pull/2014))
+
+### Fixed
+
+- Handle missing service version ([#1987](https://github.com/gtema/openstack/pull/1987))
+
+### Other
+
+- Drop use of lazy-static ([#2112](https://github.com/gtema/openstack/pull/2112))
+- *(tui)* Replace serde_yaml with yaml_serde ([#2035](https://github.com/gtema/openstack/pull/2035))
+
 ## [0.13.8](https://github.com/gtema/openstack/compare/openstack_tui-v0.13.7...openstack_tui-v0.13.8) - 2026-09-07
 
 ### Added

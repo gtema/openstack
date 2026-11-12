@@ -6,6 +6,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.8...openstack_cli-v0.14.0) - 2026-11-12
+
+### Added
+
+- *(config)* Add `clouds add` command ([#1888](https://github.com/gtema/openstack/pull/1888))
+- *(config)* Add osc config command scaffolding ([#2007](https://github.com/gtema/openstack/pull/2007))
+- Extend 'osc auth' commands ([#1990](https://github.com/gtema/openstack/pull/1990))
+- *(sdk)* Split CloudConfig to public and secure ([#2021](https://github.com/gtema/openstack/pull/2021))
+- *(sdk)* Add more project cleanup resources ([#2003](https://github.com/gtema/openstack/pull/2003))
+- *(sdk)* Extend project-cleanup providers ([#2000](https://github.com/gtema/openstack/pull/2000))
+- Extend cleanup providers + functional test ([#1999](https://github.com/gtema/openstack/pull/1999))
+- *(sdk)* Add project-cleanup subsystem core engine ([#1996](https://github.com/gtema/openstack/pull/1996))
+
+### Fixed
+
+- *(auth)* Unblock external auth plugins ([#2015](https://github.com/gtema/openstack/pull/2015))
+- *(cli)* Respect enable_hints config option ([#2006](https://github.com/gtema/openstack/pull/2006))
+- *(cli)* Disable auto --version flag on plugin subcommands ([#1989](https://github.com/gtema/openstack/pull/1989))
+- *(sdk)* Log full resource on cleanup failure ([#2023](https://github.com/gtema/openstack/pull/2023))
+- *(deps)* update rust crate petgraph to 0.8 ([#2009](https://github.com/gtema/openstack/pull/2009))
+
+### Other
+
+- *(deps)* Bump parking_lot from 0.12.5 to 0.13.0 ([#2057](https://github.com/gtema/openstack/pull/2057))
+- *(sdk)* Disable on-disk auth cache in mock tests ([#1985](https://github.com/gtema/openstack/pull/1985))
+
 ## [0.13.8](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.7...openstack_cli-v0.13.8) - 2026-09-07
 
 ### Added

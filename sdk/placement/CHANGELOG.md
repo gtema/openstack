@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0](https://github.com/gtema/openstack/compare/openstack-sdk-placement-v0.22.8...openstack-sdk-placement-v0.23.0) - 2026-11-12
+
+### Fixed
+
+- Address required-but-nullable ([#2114](https://github.com/gtema/openstack/pull/2114))
+
 ## [0.22.8](https://github.com/gtema/openstack/compare/openstack-sdk-placement-v0.22.7...openstack-sdk-placement-v0.22.8) - 2026-09-07
 
 ### Added

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0](https://github.com/gtema/openstack/compare/openstack-sdk-auth-passkey-v0.22.7...openstack-sdk-auth-passkey-v0.23.0) - 2026-11-12
+
+### Added
+
+- Use native ctap2 passkey authenticator ([#2116](https://github.com/gtema/openstack/pull/2116))
+
+### Other
+
+- Bump webauthn to 0.6 ([#2085](https://github.com/gtema/openstack/pull/2085))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-sdk-auth-passkey-v0.22.6...openstack-sdk-auth-passkey-v0.22.7) - 2026-09-07
 
 ### Fixed
