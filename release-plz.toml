@@ -15,13 +15,13 @@ version_group = "sdk"
 name = "openstack_cli"
 changelog_include = ["openstack_sdk"]
 git_release_enable = true
-version_group = "bins"
+version_group = "cli"
 
 [[package]]
 name = "openstack_tui"
 changelog_include = ["openstack_tui"]
 git_release_enable = true
-version_group = "bins"
+version_group = "cli"
 
 [[package]]
 name = "openstack_types"
@@ -31,9 +31,6 @@ version_group = "sdk"
 # remaining packages grouped for the version alignment
 
 ## CLI group
-[[package]]
-name = "openstack_cli"
-version_group = "cli"
 [[package]]
 name = "openstack-cli-api"
 version_group = "cli"
