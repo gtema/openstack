@@ -1,4 +1,19 @@
 {
   "schema_version": 1,
-  "plugins": []
+  "plugins": [
+    {
+      "name": "s11auth",
+      "description": "OIDC-via-Keycloak browser SSO for Keystone (SysEleven s11auth)",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "download_url": "https://github.com/gtema/osc-plugin-s11auth/releases/download/v0.1.0/s11auth_wasm_plugin.wasm",
+          "sha256": "682bfb2477ae1db1089d637269530ac3ed6e61c7dec810cb8b33258b8aa3a371",
+          "source_repo": "gtema/osc-plugin-s11auth",
+          "abi_version": "1",
+          "min_cli_version": "0.14.0"
+        }
+      ]
+    }
+  ]
 }

@@ -426,32 +426,50 @@ fn dsse_pae(payload_type: &str, payload: &[u8]) -> Vec<u8> {
 }
 
 /// Best-effort extraction of a Fulcio identity extension's string value.
-/// These extensions hold their content as a primitive ASN.1 string TLV
-/// (tag + DER length + UTF-8 bytes); rather than pull in a generic ASN.1
-/// value parser for this one shape, the two-or-more byte header is skipped
-/// directly.
+///
+/// Fulcio encodes these in two shapes: the legacy extensions (`1.3.6.1.4.1.57264.1.1`
+/// through `.1.7`, e.g. the OIDC issuer and source repository) carry the raw
+/// UTF-8 string with no ASN.1 wrapper, while the v2 extensions (`.1.8` and up)
+/// wrap it in a DER `UTF8String`. Both are accepted; the value is only treated
+/// as DER if it is a `UTF8String` whose declared length covers the rest of the
+/// value exactly, since a raw string never starts with the `0x0c` tag byte.
 fn extension_string(cert: &X509Certificate, oid: &str) -> Option<String> {
     let ext = cert
         .extensions()
         .iter()
         .find(|e| e.oid.to_id_string() == oid)?;
-    decode_der_string_content(ext.value)
+    decode_extension_string(ext.value)
+}
+
+fn decode_extension_string(value: &[u8]) -> Option<String> {
+    decode_der_string_content(value)
+        .or_else(|| std::str::from_utf8(value).ok().map(|s| s.to_string()))
 }
 
 fn decode_der_string_content(value: &[u8]) -> Option<String> {
-    let (_tag, rest) = value.split_first()?;
+    const UTF8_STRING_TAG: u8 = 0x0c;
+    let (tag, rest) = value.split_first()?;
+    if *tag != UTF8_STRING_TAG {
+        return None;
+    }
     let (len_byte, rest) = rest.split_first()?;
-    let content = if *len_byte < 0x80 {
-        rest.get(..*len_byte as usize)?
+    let (len, body) = if *len_byte < 0x80 {
+        (*len_byte as usize, rest)
     } else {
         let n = (*len_byte & 0x7f) as usize;
+        if n == 0 || n > std::mem::size_of::<usize>() {
+            return None;
+        }
         let len_bytes = rest.get(..n)?;
         let len = len_bytes
             .iter()
             .fold(0usize, |acc, b| (acc << 8) | *b as usize);
-        rest.get(n..n + len)?
+        (len, rest.get(n..)?)
     };
-    std::str::from_utf8(content).ok().map(|s| s.to_string())
+    if body.len() != len {
+        return None;
+    }
+    std::str::from_utf8(body).ok().map(|s| s.to_string())
 }
 
 fn subject_alternative_name_uri(cert: &X509Certificate) -> Option<String> {
@@ -487,6 +505,33 @@ mod tests {
         // UTF8String (tag 0x0c), length 5, "hello"
         let der = [0x0c, 0x05, b'h', b'e', b'l', b'l', b'o'];
         assert_eq!(decode_der_string_content(&der).as_deref(), Some("hello"));
+    }
+
+    #[test]
+    fn decode_extension_string_accepts_raw_utf8() {
+        // Legacy Fulcio extensions (e.g. OIDC issuer, `.1.1`) are not DER-wrapped.
+        let raw = b"https://token.actions.githubusercontent.com";
+        assert_eq!(
+            decode_extension_string(raw).as_deref(),
+            Some("https://token.actions.githubusercontent.com")
+        );
+        assert_eq!(
+            decode_extension_string(b"gtema/osc-plugin-s11auth").as_deref(),
+            Some("gtema/osc-plugin-s11auth")
+        );
+    }
+
+    #[test]
+    fn decode_extension_string_accepts_der_utf8() {
+        let der = [0x0c, 0x05, b'h', b'e', b'l', b'l', b'o'];
+        assert_eq!(decode_extension_string(&der).as_deref(), Some("hello"));
+    }
+
+    #[test]
+    fn decode_der_string_content_rejects_length_mismatch() {
+        // Raw string that happens to look like a header must not be mis-decoded.
+        assert_eq!(decode_der_string_content(b"ht"), None);
+        assert_eq!(decode_der_string_content(&[0x0c, 0x09, b'a']), None);
     }
 
     /// A synthetic root -> intermediate -> leaf certificate chain, shaped
