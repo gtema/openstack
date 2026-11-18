@@ -5,6 +5,14 @@ permissions:
   contents: read
 
 on:
+  # Run on main too so the rust-cache is seeded on the default branch
+  # and can be restored by PR branches.
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - '.github/workflows/functional.yml'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -50,20 +58,22 @@ jobs:
 
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921 # stable
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            ~/.cache/pip
-            target/
-          key: ${{ runner.os }}-devstack-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-devstack-
-            ${{ runner.os }}-
+          toolchain: stable
+
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
+
+      - name: Install cargo-nextest
+        uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8 # v2.87.28
+        with:
+          tool: cargo-nextest
+
+      # Compile before devstack so the build is cached and off the critical path
+      - name: Build functional tests
+        run: cargo nextest run --test functional --no-run
 
       - name: Deploy devstack
         uses: EmilienM/devstack-action@fc61cc16ba19c4224a70b0b4d7e3e4907fac51e7 # v0.20
@@ -76,16 +86,6 @@ jobs:
           # that volume. The functional test exercises volume backups.
           enabled_services: swift,c-bak
           log_dir: /tmp/devstack-logs
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921 # stable
-        with:
-          toolchain: stable
-
-      - name: Install cargo-nextest
-        uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8 # v2.87.28
-        with:
-          tool: cargo-nextest
 
       - name: Execute functional tests
         env:
