@@ -38,7 +38,7 @@ pub struct DhcpAgentCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum DhcpAgentCommands {
-    List(list::DhcpAgentsCommand),
+    List(Box<list::DhcpAgentsCommand>),
 }
 
 impl DhcpAgentCommand {

@@ -39,20 +39,20 @@ pub struct ExtraSpecsCommand {
 pub enum ExtraSpecsCommands {
     /// Creates extra specs for a flavor, by ID.
     #[command(about = "Create Extra Specs For A Flavor")]
-    Create(create::ExtraSpecCommand),
+    Create(Box<create::ExtraSpecCommand>),
     /// Deletes an extra spec, by key, for a flavor, by ID.
     #[command(about = "Delete An Extra Spec For A Flavor")]
-    Delete(delete::ExtraSpecCommand),
+    Delete(Box<delete::ExtraSpecCommand>),
     /// Lists all extra specs for a flavor, by ID.
     #[command(about = "List Extra Specs For A Flavor", alias = "list")]
-    List21(list_21::ExtraSpecsCommand),
+    List21(Box<list_21::ExtraSpecsCommand>),
     /// Shows an extra spec, by key, for a flavor, by ID.
     #[command(about = "Show An Extra Spec For A Flavor", alias = "show")]
-    Show21(show_21::ExtraSpecCommand),
+    Show21(Box<show_21::ExtraSpecCommand>),
     /// Updates an extra spec, by key, for a flavor, by ID.
     #[command(about = "Update An Extra Spec For A Flavor
 ")]
-    Set(set::ExtraSpecCommand),
+    Set(Box<set::ExtraSpecCommand>),
 }
 
 impl ExtraSpecsCommand {

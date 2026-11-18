@@ -42,7 +42,7 @@ pub struct SubnetPoolCommand {
 pub enum SubnetPoolCommands {
     AddPrefixes(Box<add_prefixes::SubnetpoolCommand>),
     Create(Box<create::SubnetpoolCommand>),
-    Delete(delete::SubnetpoolCommand),
+    Delete(Box<delete::SubnetpoolCommand>),
     List(Box<list::SubnetpoolsCommand>),
     RemovePrefixes(Box<remove_prefixes::SubnetpoolCommand>),
     Set(Box<set::SubnetpoolCommand>),

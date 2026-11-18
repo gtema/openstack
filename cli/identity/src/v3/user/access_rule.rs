@@ -86,9 +86,9 @@ pub struct AccessRuleCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AccessRuleCommands {
-    Delete(delete::AccessRuleCommand),
-    List(list::AccessRulesCommand),
-    Show(show::AccessRuleCommand),
+    Delete(Box<delete::AccessRuleCommand>),
+    List(Box<list::AccessRulesCommand>),
+    Show(Box<show::AccessRuleCommand>),
 }
 
 impl AccessRuleCommand {

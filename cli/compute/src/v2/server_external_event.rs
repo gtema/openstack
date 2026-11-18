@@ -49,12 +49,12 @@ pub struct ServerExternalEventCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ServerExternalEventCommands {
-    Create20(create_20::ServerExternalEventCommand),
-    Create251(create_251::ServerExternalEventCommand),
-    Create276(create_276::ServerExternalEventCommand),
-    Create282(create_282::ServerExternalEventCommand),
+    Create20(Box<create_20::ServerExternalEventCommand>),
+    Create251(Box<create_251::ServerExternalEventCommand>),
+    Create276(Box<create_276::ServerExternalEventCommand>),
+    Create282(Box<create_282::ServerExternalEventCommand>),
     #[command(visible_alias = "create")]
-    Create293(create_293::ServerExternalEventCommand),
+    Create293(Box<create_293::ServerExternalEventCommand>),
 }
 
 impl ServerExternalEventCommand {

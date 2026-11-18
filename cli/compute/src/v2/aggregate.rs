@@ -51,23 +51,23 @@ pub struct AggregateCommand {
 pub enum AggregateCommands {
     /// Adds a host to an aggregate.
     #[command(about = "Add Host")]
-    AddHost(add_host::AggregateCommand),
+    AddHost(Box<add_host::AggregateCommand>),
     #[command(visible_alias = "create")]
-    Create21(create_21::AggregateCommand),
-    CacheImage(image::cache_281::ImageCommand),
-    Delete(delete::AggregateCommand),
+    Create21(Box<create_21::AggregateCommand>),
+    CacheImage(Box<image::cache_281::ImageCommand>),
+    Delete(Box<delete::AggregateCommand>),
     #[command(visible_alias = "list")]
-    List21(list_21::AggregatesCommand),
+    List21(Box<list_21::AggregatesCommand>),
     /// Removes a host from an aggregate.
     #[command(about = "Remove Host")]
-    RemoveHost(remove_host::AggregateCommand),
+    RemoveHost(Box<remove_host::AggregateCommand>),
     #[command(visible_alias = "show")]
-    Show21(show_21::AggregateCommand),
+    Show21(Box<show_21::AggregateCommand>),
     #[command(visible_alias = "set")]
-    Set21(set_21::AggregateCommand),
+    Set21(Box<set_21::AggregateCommand>),
     /// Creates or replaces metadata for an aggregate.
     #[command(about = "Create Or Update Aggregate Metadata")]
-    SetMetadata(set_metadata::AggregateCommand),
+    SetMetadata(Box<set_metadata::AggregateCommand>),
 }
 
 impl AggregateCommand {

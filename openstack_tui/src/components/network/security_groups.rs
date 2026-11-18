@@ -192,8 +192,10 @@ mod tests {
 
     #[test]
     fn normalise_filter_preserves_existing() {
-        let mut f = NetworkSecurityGroupList::default();
-        f.sort_key = Some(Vec::from(["id".into()]));
+        let f = NetworkSecurityGroupList {
+            sort_key: Some(Vec::from(["id".into()])),
+            ..Default::default()
+        };
         let norm = NetworkSecurityGroupsBehaviour::normalise_filter(f);
         assert_eq!(norm.sort_key, Some(Vec::from(["id".into()])));
     }

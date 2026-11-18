@@ -42,12 +42,12 @@ pub struct InterfaceCommand {
 #[derive(Subcommand)]
 pub enum InterfaceCommands {
     #[command(visible_alias = "create")]
-    Create249(create_249::InterfaceCommand),
-    Delete(delete::InterfaceCommand),
+    Create249(Box<create_249::InterfaceCommand>),
+    Delete(Box<delete::InterfaceCommand>),
     #[command(visible_alias = "list")]
-    List21(list_21::InterfacesCommand),
+    List21(Box<list_21::InterfacesCommand>),
     #[command(visible_alias = "show")]
-    Show21(show_21::InterfaceCommand),
+    Show21(Box<show_21::InterfaceCommand>),
 }
 
 impl InterfaceCommand {

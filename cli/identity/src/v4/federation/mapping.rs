@@ -38,11 +38,11 @@ pub struct MappingCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum MappingCommands {
-    Create(create::MappingCommand),
-    Delete(delete::MappingCommand),
-    List(list::MappingsCommand),
-    Set(set::MappingCommand),
-    Show(show::MappingCommand),
+    Create(Box<create::MappingCommand>),
+    Delete(Box<delete::MappingCommand>),
+    List(Box<list::MappingsCommand>),
+    Set(Box<set::MappingCommand>),
+    Show(Box<show::MappingCommand>),
 }
 
 impl MappingCommand {

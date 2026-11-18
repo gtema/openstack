@@ -493,6 +493,7 @@ mod tests {
     use crate::test::client::FakeOpenStackClient;
     use crate::test::internal::{ExpectedUrl, PagedTestClient};
 
+    #[allow(dead_code)]
     #[derive(Debug, Default)]
     struct Dummy {
         with_keyset: bool,

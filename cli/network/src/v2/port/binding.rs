@@ -41,7 +41,7 @@ pub struct BindingCommand {
 pub enum BindingCommands {
     Activate(Box<activate::BindingCommand>),
     Create(Box<create::BindingCommand>),
-    Delete(delete::BindingCommand),
+    Delete(Box<delete::BindingCommand>),
     List(Box<list::BindingsCommand>),
     // Set(Box<set::BindingCommand>),
     // Show(Box<show::BindingCommand>),

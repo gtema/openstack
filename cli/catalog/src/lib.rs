@@ -34,8 +34,8 @@ pub struct CatalogCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum CatalogCommands {
-    List(list::ListCommand),
-    Show(show::ShowCommand),
+    List(Box<list::ListCommand>),
+    Show(Box<show::ShowCommand>),
 }
 
 impl CatalogCommand {

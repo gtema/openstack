@@ -36,7 +36,7 @@ pub struct UserCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum UserCommands {
-    Role(role::RoleCommand),
+    Role(Box<role::RoleCommand>),
 }
 
 impl UserCommand {

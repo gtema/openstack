@@ -36,7 +36,7 @@ pub struct PasswordCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PasswordCommands {
-    Set(set::PasswordCommand),
+    Set(Box<set::PasswordCommand>),
 }
 
 impl PasswordCommand {

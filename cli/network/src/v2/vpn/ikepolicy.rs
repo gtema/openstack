@@ -39,11 +39,11 @@ pub struct IkepolicyCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum IkepolicyCommands {
-    Create(create::IkepolicyCommand),
-    Delete(delete::IkepolicyCommand),
-    List(list::IkepoliciesCommand),
-    Set(set::IkepolicyCommand),
-    Show(show::IkepolicyCommand),
+    Create(Box<create::IkepolicyCommand>),
+    Delete(Box<delete::IkepolicyCommand>),
+    List(Box<list::IkepoliciesCommand>),
+    Set(Box<set::IkepolicyCommand>),
+    Show(Box<show::IkepolicyCommand>),
 }
 
 impl IkepolicyCommand {

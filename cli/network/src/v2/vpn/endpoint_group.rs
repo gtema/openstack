@@ -41,11 +41,11 @@ pub struct EndpointGroupCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum EndpointGroupCommands {
-    Create(create::EndpointGroupCommand),
-    Delete(delete::EndpointGroupCommand),
-    List(list::EndpointGroupsCommand),
-    Set(set::EndpointGroupCommand),
-    Show(show::EndpointGroupCommand),
+    Create(Box<create::EndpointGroupCommand>),
+    Delete(Box<delete::EndpointGroupCommand>),
+    List(Box<list::EndpointGroupsCommand>),
+    Set(Box<set::EndpointGroupCommand>),
+    Show(Box<show::EndpointGroupCommand>),
 }
 
 impl EndpointGroupCommand {

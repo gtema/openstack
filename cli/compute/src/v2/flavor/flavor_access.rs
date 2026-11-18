@@ -37,16 +37,16 @@ pub struct FlavorAccessCommand {
 pub enum FlavorAccessCommands {
     /// Adds flavor access to a tenant and flavor.
     #[command(about = "Add Flavor Access To Tenant (addTenantAccess Action)")]
-    Add(add_tenant_access::FlavorCommand),
+    Add(Box<add_tenant_access::FlavorCommand>),
     /// Lists flavor access information.
     #[command(
         about = "List Flavor Access Information For Given Flavor",
         alias = "list"
     )]
-    List21(list_21::FlavorAccessesCommand),
+    List21(Box<list_21::FlavorAccessesCommand>),
     /// Removes flavor access from a tenant and flavor.
     #[command(about = "Remove Flavor Access From Tenant (removeTenantAccess Action)")]
-    Remove(remove_tenant_access::FlavorCommand),
+    Remove(Box<remove_tenant_access::FlavorCommand>),
 }
 
 impl FlavorAccessCommand {

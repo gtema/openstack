@@ -35,7 +35,7 @@ pub struct StatCommand {
 #[derive(Subcommand)]
 pub enum StatCommands {
     #[command(visible_alias = "get")]
-    Show(get::StatCommand),
+    Show(Box<get::StatCommand>),
 }
 
 impl StatCommand {

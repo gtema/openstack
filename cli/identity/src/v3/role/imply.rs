@@ -37,10 +37,10 @@ pub struct ImplyCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ImplyCommands {
-    Delete(delete::ImplyCommand),
-    List(list::ImpliesCommand),
-    Set(set::ImplyCommand),
-    Show(show::ImplyCommand),
+    Delete(Box<delete::ImplyCommand>),
+    List(Box<list::ImpliesCommand>),
+    Set(Box<set::ImplyCommand>),
+    Show(Box<show::ImplyCommand>),
 }
 
 impl ImplyCommand {

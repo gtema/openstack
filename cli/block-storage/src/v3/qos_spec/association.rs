@@ -33,7 +33,7 @@ pub struct AssociationCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AssociationCommands {
-    List(list::AssociationsCommand),
+    List(Box<list::AssociationsCommand>),
 }
 
 impl AssociationCommand {

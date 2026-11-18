@@ -34,7 +34,7 @@ pub struct IdentityProviderCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum IdentityProviderCommands {
-    Protocol(protocol::ProtocolCommand),
+    Protocol(Box<protocol::ProtocolCommand>),
 }
 
 impl IdentityProviderCommand {

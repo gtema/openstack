@@ -32,7 +32,7 @@ pub struct AllocationCandidateCommand {
 #[derive(Subcommand)]
 pub enum AllocationCandidateCommands {
     #[command(visible_alias = "list")]
-    List110(list_110::AllocationCandidateCommand),
+    List110(Box<list_110::AllocationCandidateCommand>),
 }
 
 impl AllocationCandidateCommand {

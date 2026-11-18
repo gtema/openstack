@@ -39,9 +39,9 @@ pub struct PortAssociationCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PortAssociationCommands {
-    Create(create::PortAssociationCommand),
-    Delete(delete::PortAssociationCommand),
-    List(list::PortAssociationsCommand),
+    Create(Box<create::PortAssociationCommand>),
+    Delete(Box<delete::PortAssociationCommand>),
+    List(Box<list::PortAssociationsCommand>),
 }
 
 impl PortAssociationCommand {

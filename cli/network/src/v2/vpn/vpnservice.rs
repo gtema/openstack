@@ -38,11 +38,11 @@ pub struct VpnserviceCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum VpnserviceCommands {
-    Create(create::VpnserviceCommand),
-    Delete(delete::VpnserviceCommand),
-    List(list::VpnservicesCommand),
-    Set(set::VpnserviceCommand),
-    Show(show::VpnserviceCommand),
+    Create(Box<create::VpnserviceCommand>),
+    Delete(Box<delete::VpnserviceCommand>),
+    List(Box<list::VpnservicesCommand>),
+    Set(Box<set::VpnserviceCommand>),
+    Show(Box<show::VpnserviceCommand>),
 }
 
 impl VpnserviceCommand {

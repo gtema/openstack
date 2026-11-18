@@ -35,9 +35,9 @@ pub struct ObjectStoreCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ObjectStoreCommands {
-    Account(account::AccountCommand),
-    Container(container::ContainerCommand),
-    Object(object::ObjectCommand),
+    Account(Box<account::AccountCommand>),
+    Container(Box<container::ContainerCommand>),
+    Object(Box<object::ObjectCommand>),
 }
 
 impl ObjectStoreCommand {

@@ -41,14 +41,14 @@ pub struct InventoryCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum InventoryCommands {
-    Create(create::InventoryCommand),
-    Delete(delete::InventoryCommand),
+    Create(Box<create::InventoryCommand>),
+    Delete(Box<delete::InventoryCommand>),
     #[command(visible_alias = "purge")]
-    Purge15(delete_all_15::InventoryCommand),
-    List(list::InventoriesCommand),
-    Replace(replace::InventoryCommand),
-    Set(set::InventoryCommand),
-    Show(show::InventoryCommand),
+    Purge15(Box<delete_all_15::InventoryCommand>),
+    List(Box<list::InventoriesCommand>),
+    Replace(Box<replace::InventoryCommand>),
+    Set(Box<set::InventoryCommand>),
+    Show(Box<show::InventoryCommand>),
 }
 
 impl InventoryCommand {

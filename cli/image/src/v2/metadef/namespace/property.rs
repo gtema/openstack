@@ -41,12 +41,12 @@ pub struct PropertyCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PropertyCommands {
-    Create(create::PropertyCommand),
-    Delete(delete::PropertyCommand),
-    List(list::PropertyCommand),
-    Purge(delete_all::PropertyCommand),
-    Set(set::PropertyCommand),
-    Show(show::PropertyCommand),
+    Create(Box<create::PropertyCommand>),
+    Delete(Box<delete::PropertyCommand>),
+    List(Box<list::PropertyCommand>),
+    Purge(Box<delete_all::PropertyCommand>),
+    Set(Box<set::PropertyCommand>),
+    Show(Box<show::PropertyCommand>),
 }
 
 impl PropertyCommand {

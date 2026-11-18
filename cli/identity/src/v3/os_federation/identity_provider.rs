@@ -41,12 +41,12 @@ pub struct IdentityProviderCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum IdentityProviderCommands {
-    Create(create::IdentityProviderCommand),
-    Delete(delete::IdentityProviderCommand),
-    List(list::IdentityProvidersCommand),
-    Protocol(protocol::ProtocolCommand),
-    Set(set::IdentityProviderCommand),
-    Show(show::IdentityProviderCommand),
+    Create(Box<create::IdentityProviderCommand>),
+    Delete(Box<delete::IdentityProviderCommand>),
+    List(Box<list::IdentityProvidersCommand>),
+    Protocol(Box<protocol::ProtocolCommand>),
+    Set(Box<set::IdentityProviderCommand>),
+    Show(Box<show::IdentityProviderCommand>),
 }
 
 impl IdentityProviderCommand {

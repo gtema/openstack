@@ -75,12 +75,12 @@ pub struct AuthCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AuthCommands {
-    Catalog(catalog::CatalogCommand),
-    Domain(domain::DomainCommand),
-    Federation(os_federation::OsFederationCommand),
-    Project(project::ProjectCommand),
-    System(system::SystemCommand),
-    Token(token::TokenCommand),
+    Catalog(Box<catalog::CatalogCommand>),
+    Domain(Box<domain::DomainCommand>),
+    Federation(Box<os_federation::OsFederationCommand>),
+    Project(Box<project::ProjectCommand>),
+    System(Box<system::SystemCommand>),
+    Token(Box<token::TokenCommand>),
 }
 
 impl AuthCommand {

@@ -35,7 +35,7 @@ pub struct RoleInferenceCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RoleInferenceCommands {
-    List(list::RoleInferencesCommand),
+    List(Box<list::RoleInferencesCommand>),
 }
 
 impl RoleInferenceCommand {

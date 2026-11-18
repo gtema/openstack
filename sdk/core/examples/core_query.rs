@@ -1,6 +1,6 @@
 //! Example for sending API request expecting data to be returned
 //!
-//! `OS_CLOUD=devstack FLAVOR_ID=... cargo run -p openstack_sdk --example query`
+//! `OS_CLOUD=devstack FLAVOR_ID=... cargo run -p openstack_sdk_core --example core_query`
 //!
 use derive_builder::Builder;
 // use serde_json::Value;
@@ -62,10 +62,10 @@ async fn main() -> Result<(), OpenStackError> {
     ep_builder.id(env::var("FLAVOR_ID").expect("FLAVOR_ID variable must be set"));
 
     // Build the endpoint
-    let ep = ep_builder.build().unwrap();
+    let _ep = ep_builder.build().unwrap();
 
     // // Execute query keeping data as raw json_value
-    // let data_raw: Value = ep.query_async(&client).await?;
+    // let data_raw: Value = _ep.query_async(&client).await?;
 
     // println!("Flavor raw json {:?}", serde_json::to_string(&data_raw)?);
     Ok(())

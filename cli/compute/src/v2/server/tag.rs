@@ -57,16 +57,16 @@ pub struct TagCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum TagCommands {
-    Add(set_226::TagCommand),
-    Check(show_226::TagCommand),
+    Add(Box<set_226::TagCommand>),
+    Check(Box<show_226::TagCommand>),
     #[command(visible_alias = "delete")]
-    Delete226(delete_226::TagCommand),
+    Delete226(Box<delete_226::TagCommand>),
     #[command(visible_alias = "list")]
-    List226(list_226::TagsCommand),
+    List226(Box<list_226::TagsCommand>),
     #[command(visible_alias = "purge")]
-    Purge226(delete_all_226::TagCommand),
+    Purge226(Box<delete_all_226::TagCommand>),
     #[command(visible_alias = "replace")]
-    Replace226(replace_226::TagCommand),
+    Replace226(Box<replace_226::TagCommand>),
 }
 
 impl TagCommand {

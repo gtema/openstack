@@ -37,7 +37,7 @@ pub struct ResourceFilterCommand {
 #[derive(Subcommand)]
 pub enum ResourceFilterCommands {
     #[command(visible_alias = "list")]
-    List333(list_333::ResourceFiltersCommand),
+    List333(Box<list_333::ResourceFiltersCommand>),
 }
 
 impl ResourceFilterCommand {

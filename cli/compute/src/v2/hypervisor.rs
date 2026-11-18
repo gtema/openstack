@@ -41,9 +41,9 @@ pub struct HypervisorCommand {
 #[derive(Subcommand)]
 pub enum HypervisorCommands {
     #[command(visible_alias = "list")]
-    List21(list_21::HypervisorsCommand),
+    List21(Box<list_21::HypervisorsCommand>),
     #[command(visible_alias = "show")]
-    Show21(show_21::HypervisorCommand),
+    Show21(Box<show_21::HypervisorCommand>),
 }
 
 impl HypervisorCommand {

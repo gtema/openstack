@@ -34,7 +34,7 @@ pub struct FlavorCapabilityCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum FlavorCapabilityCommands {
-    List(list::FlavorCapabilitiesCommand),
+    List(Box<list::FlavorCapabilitiesCommand>),
 }
 
 impl FlavorCapabilityCommand {

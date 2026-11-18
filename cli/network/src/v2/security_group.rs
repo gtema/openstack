@@ -39,7 +39,7 @@ pub struct SecurityGroupCommand {
 #[derive(Subcommand)]
 pub enum SecurityGroupCommands {
     Create(Box<create::SecurityGroupCommand>),
-    Delete(delete::SecurityGroupCommand),
+    Delete(Box<delete::SecurityGroupCommand>),
     List(Box<list::SecurityGroupsCommand>),
     Set(Box<set::SecurityGroupCommand>),
     Show(Box<show::SecurityGroupCommand>),

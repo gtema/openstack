@@ -41,7 +41,7 @@ pub struct AliasMinimumPacketRateRuleCommand {
 #[derive(Subcommand)]
 pub enum AliasMinimumPacketRateRuleCommands {
     Create(Box<create::AliasMinimumPacketRateRuleCommand>),
-    Delete(delete::AliasMinimumPacketRateRuleCommand),
+    Delete(Box<delete::AliasMinimumPacketRateRuleCommand>),
     List(Box<list::AliasMinimumPacketRateRulesCommand>),
     Set(Box<set::AliasMinimumPacketRateRuleCommand>),
     Show(Box<show::AliasMinimumPacketRateRuleCommand>),

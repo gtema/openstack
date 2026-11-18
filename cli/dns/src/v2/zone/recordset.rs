@@ -36,11 +36,11 @@ pub struct RecordsetCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RecordsetCommands {
-    Create(create::RecordsetCommand),
-    Delete(delete::RecordsetCommand),
-    List(list::RecordsetsCommand),
-    Show(show::RecordsetCommand),
-    Set(set::RecordsetCommand),
+    Create(Box<create::RecordsetCommand>),
+    Delete(Box<delete::RecordsetCommand>),
+    List(Box<list::RecordsetsCommand>),
+    Show(Box<show::RecordsetCommand>),
+    Set(Box<set::RecordsetCommand>),
 }
 
 impl RecordsetCommand {

@@ -44,7 +44,7 @@ pub struct AliasBandwidthLimitRuleCommand {
 #[derive(Subcommand)]
 pub enum AliasBandwidthLimitRuleCommands {
     Create(Box<create::AliasBandwidthLimitRuleCommand>),
-    Delete(delete::AliasBandwidthLimitRuleCommand),
+    Delete(Box<delete::AliasBandwidthLimitRuleCommand>),
     List(Box<list::AliasBandwidthLimitRulesCommand>),
     Set(Box<set::AliasBandwidthLimitRuleCommand>),
     Show(Box<show::AliasBandwidthLimitRuleCommand>),

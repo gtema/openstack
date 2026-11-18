@@ -34,7 +34,7 @@ pub struct NamespacesCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum NamespacesCommands {
-    Show(get::NamespacesCommand),
+    Show(Box<get::NamespacesCommand>),
 }
 
 impl NamespacesCommand {

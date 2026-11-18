@@ -74,10 +74,10 @@ pub struct AggregateCommand {
 #[derive(Subcommand)]
 pub enum AggregateCommands {
     #[command(visible_alias = "list")]
-    List11(list_11::AggregateCommand),
+    List11(Box<list_11::AggregateCommand>),
     #[command(visible_alias = "set")]
-    Set119(set_119::AggregateCommand),
-    Set11(set_11::AggregateCommand),
+    Set119(Box<set_119::AggregateCommand>),
+    Set11(Box<set_11::AggregateCommand>),
 }
 
 impl AggregateCommand {

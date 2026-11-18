@@ -46,18 +46,18 @@ pub struct AllocationCommand {
 #[derive(Subcommand)]
 pub enum AllocationCommands {
     #[command(visible_alias = "create")]
-    Create138(create_138::AllocationCommand),
-    Create134(create_134::AllocationCommand),
-    Create128(create_128::AllocationCommand),
-    Create113(create_113::AllocationCommand),
-    Delete(delete::AllocationCommand),
+    Create138(Box<create_138::AllocationCommand>),
+    Create134(Box<create_134::AllocationCommand>),
+    Create128(Box<create_128::AllocationCommand>),
+    Create113(Box<create_113::AllocationCommand>),
+    Delete(Box<delete::AllocationCommand>),
     #[command(visible_alias = "set")]
-    Set138(set_138::AllocationCommand),
-    Set128(set_128::AllocationCommand),
-    Set112(set_112::AllocationCommand),
-    Set18(set_18::AllocationCommand),
-    Set10(set_10::AllocationCommand),
-    Show(show::AllocationCommand),
+    Set138(Box<set_138::AllocationCommand>),
+    Set128(Box<set_128::AllocationCommand>),
+    Set112(Box<set_112::AllocationCommand>),
+    Set18(Box<set_18::AllocationCommand>),
+    Set10(Box<set_10::AllocationCommand>),
+    Show(Box<show::AllocationCommand>),
 }
 
 impl AllocationCommand {

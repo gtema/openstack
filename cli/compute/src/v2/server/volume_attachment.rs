@@ -45,18 +45,18 @@ pub struct VolumeAttachmentCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum VolumeAttachmentCommands {
-    Create20(create_20::VolumeAttachmentCommand),
-    Create249(create_249::VolumeAttachmentCommand),
+    Create20(Box<create_20::VolumeAttachmentCommand>),
+    Create249(Box<create_249::VolumeAttachmentCommand>),
     #[command(visible_alias = "create")]
-    Create279(create_279::VolumeAttachmentCommand),
-    Delete(delete::VolumeAttachmentCommand),
+    Create279(Box<create_279::VolumeAttachmentCommand>),
+    Delete(Box<delete::VolumeAttachmentCommand>),
     #[command(visible_alias = "list")]
-    List20(list_20::VolumeAttachmentsCommand),
-    Set20(set_20::VolumeAttachmentCommand),
+    List20(Box<list_20::VolumeAttachmentsCommand>),
+    Set20(Box<set_20::VolumeAttachmentCommand>),
     #[command(visible_alias = "set")]
-    Set285(set_285::VolumeAttachmentCommand),
+    Set285(Box<set_285::VolumeAttachmentCommand>),
     #[command(visible_alias = "show")]
-    Show20(show_20::VolumeAttachmentCommand),
+    Show20(Box<show_20::VolumeAttachmentCommand>),
 }
 
 impl VolumeAttachmentCommand {

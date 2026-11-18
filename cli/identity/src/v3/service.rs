@@ -43,11 +43,11 @@ pub struct ServiceCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ServiceCommands {
-    Create(create::ServiceCommand),
-    Delete(delete::ServiceCommand),
-    List(list::ServicesCommand),
-    Set(set::ServiceCommand),
-    Show(show::ServiceCommand),
+    Create(Box<create::ServiceCommand>),
+    Delete(Box<delete::ServiceCommand>),
+    List(Box<list::ServicesCommand>),
+    Set(Box<set::ServiceCommand>),
+    Show(Box<show::ServiceCommand>),
 }
 
 impl ServiceCommand {

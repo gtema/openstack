@@ -39,11 +39,11 @@ pub struct IpsecpolicyCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum IpsecpolicyCommands {
-    Create(create::IpsecpolicyCommand),
-    Delete(delete::IpsecpolicyCommand),
-    List(list::IpsecpoliciesCommand),
-    Set(set::IpsecpolicyCommand),
-    Show(show::IpsecpolicyCommand),
+    Create(Box<create::IpsecpolicyCommand>),
+    Delete(Box<delete::IpsecpolicyCommand>),
+    List(Box<list::IpsecpoliciesCommand>),
+    Set(Box<set::IpsecpolicyCommand>),
+    Show(Box<show::IpsecpolicyCommand>),
 }
 
 impl IpsecpolicyCommand {

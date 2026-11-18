@@ -39,7 +39,7 @@ pub struct SubnetCommand {
 #[derive(Subcommand)]
 pub enum SubnetCommands {
     Create(Box<create::SubnetCommand>),
-    Delete(delete::SubnetCommand),
+    Delete(Box<delete::SubnetCommand>),
     List(Box<list::SubnetsCommand>),
     Set(Box<set::SubnetCommand>),
     Show(Box<show::SubnetCommand>),

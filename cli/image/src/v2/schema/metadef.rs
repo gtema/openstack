@@ -44,16 +44,16 @@ pub struct MetadefCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum MetadefCommands {
-    Namespace(namespace::NamespaceCommand),
-    Namespaces(namespaces::NamespacesCommand),
-    Object(object::ObjectCommand),
-    Objects(objects::ObjectsCommand),
-    Properties(properties::PropertiesCommand),
-    Property(property::PropertyCommand),
-    ResourceType(resource_type::ResourceTypeCommand),
-    ResourceTypes(resource_types::ResourceTypesCommand),
-    Tag(tag::TagCommand),
-    Tags(tags::TagsCommand),
+    Namespace(Box<namespace::NamespaceCommand>),
+    Namespaces(Box<namespaces::NamespacesCommand>),
+    Object(Box<object::ObjectCommand>),
+    Objects(Box<objects::ObjectsCommand>),
+    Properties(Box<properties::PropertiesCommand>),
+    Property(Box<property::PropertyCommand>),
+    ResourceType(Box<resource_type::ResourceTypeCommand>),
+    ResourceTypes(Box<resource_types::ResourceTypesCommand>),
+    Tag(Box<tag::TagCommand>),
+    Tags(Box<tags::TagsCommand>),
 }
 
 impl MetadefCommand {

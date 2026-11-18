@@ -36,11 +36,11 @@ pub struct ObjectCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ObjectCommands {
-    Delete(delete::ObjectCommand),
-    Download(download::ObjectCommand),
-    List(list::ObjectsCommand),
-    Show(show::ObjectCommand),
-    Upload(upload::ObjectCommand),
+    Delete(Box<delete::ObjectCommand>),
+    Download(Box<download::ObjectCommand>),
+    List(Box<list::ObjectsCommand>),
+    Show(Box<show::ObjectCommand>),
+    Upload(Box<upload::ObjectCommand>),
 }
 
 impl ObjectCommand {

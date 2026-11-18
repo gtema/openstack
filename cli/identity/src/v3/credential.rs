@@ -45,11 +45,11 @@ pub struct CredentialCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum CredentialCommands {
-    Create(create::CredentialCommand),
-    Delete(delete::CredentialCommand),
-    List(list::CredentialsCommand),
-    Set(set::CredentialCommand),
-    Show(show::CredentialCommand),
+    Create(Box<create::CredentialCommand>),
+    Delete(Box<delete::CredentialCommand>),
+    List(Box<list::CredentialsCommand>),
+    Set(Box<set::CredentialCommand>),
+    Show(Box<show::CredentialCommand>),
 }
 
 impl CredentialCommand {

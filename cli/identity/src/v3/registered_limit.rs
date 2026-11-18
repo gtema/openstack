@@ -43,11 +43,11 @@ pub struct RegisteredLimitCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RegisteredLimitCommands {
-    Create(create::RegisteredLimitCommand),
-    Delete(delete::RegisteredLimitCommand),
-    List(list::RegisteredLimitsCommand),
-    Set(set::RegisteredLimitCommand),
-    Show(show::RegisteredLimitCommand),
+    Create(Box<create::RegisteredLimitCommand>),
+    Delete(Box<delete::RegisteredLimitCommand>),
+    List(Box<list::RegisteredLimitsCommand>),
+    Set(Box<set::RegisteredLimitCommand>),
+    Show(Box<show::RegisteredLimitCommand>),
 }
 
 impl RegisteredLimitCommand {

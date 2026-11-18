@@ -37,7 +37,7 @@ pub struct ServiceCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ServiceCommands {
-    List(list::ServicesCommand),
+    List(Box<list::ServicesCommand>),
 }
 
 impl ServiceCommand {

@@ -34,7 +34,7 @@ pub struct MemberCommand {
 #[derive(Subcommand)]
 pub enum MemberCommands {
     /// Show Member Schema
-    Show(get::MemberCommand),
+    Show(Box<get::MemberCommand>),
 }
 
 impl MemberCommand {

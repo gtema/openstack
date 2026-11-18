@@ -34,8 +34,8 @@ pub struct ExtensionCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ExtensionCommands {
-    List(list::ExtensionsCommand),
-    Show(show::ExtensionCommand),
+    List(Box<list::ExtensionsCommand>),
+    Show(Box<show::ExtensionCommand>),
 }
 
 impl ExtensionCommand {

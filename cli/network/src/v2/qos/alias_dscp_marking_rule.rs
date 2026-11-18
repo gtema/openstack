@@ -41,7 +41,7 @@ pub struct AliasDscpMarkingRuleCommand {
 #[derive(Subcommand)]
 pub enum AliasDscpMarkingRuleCommands {
     Create(Box<create::AliasDscpMarkingRuleCommand>),
-    Delete(delete::AliasDscpMarkingRuleCommand),
+    Delete(Box<delete::AliasDscpMarkingRuleCommand>),
     List(Box<list::AliasDscpMarkingRulesCommand>),
     Set(Box<set::AliasDscpMarkingRuleCommand>),
     Show(Box<show::AliasDscpMarkingRuleCommand>),

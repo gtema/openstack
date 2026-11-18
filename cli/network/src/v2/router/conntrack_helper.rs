@@ -39,11 +39,11 @@ pub struct ConntrackHelperCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ConntrackHelperCommands {
-    Create(create::ConntrackHelperCommand),
-    Delete(delete::ConntrackHelperCommand),
-    List(list::ConntrackHelpersCommand),
-    Set(set::ConntrackHelperCommand),
-    Show(show::ConntrackHelperCommand),
+    Create(Box<create::ConntrackHelperCommand>),
+    Delete(Box<delete::ConntrackHelperCommand>),
+    List(Box<list::ConntrackHelpersCommand>),
+    Set(Box<set::ConntrackHelperCommand>),
+    Show(Box<show::ConntrackHelperCommand>),
 }
 
 impl ConntrackHelperCommand {

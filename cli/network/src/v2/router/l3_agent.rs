@@ -36,7 +36,7 @@ pub struct L3AgentCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum L3AgentCommands {
-    List(list::L3AgentsCommand),
+    List(Box<list::L3AgentsCommand>),
 }
 
 impl L3AgentCommand {

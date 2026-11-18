@@ -43,16 +43,16 @@ pub struct QuotaSetCommand {
 #[derive(Subcommand)]
 pub enum QuotaSetCommands {
     #[command(visible_alias = "defaults")]
-    Defaults20(defaults_20::QuotaSetCommand),
+    Defaults20(Box<defaults_20::QuotaSetCommand>),
     #[command(visible_alias = "delete")]
-    Delete20(delete_20::QuotaSetCommand),
+    Delete20(Box<delete_20::QuotaSetCommand>),
     #[command(visible_alias = "details")]
-    Details20(details_20::QuotaSetCommand),
+    Details20(Box<details_20::QuotaSetCommand>),
     #[command(visible_alias = "set")]
-    Set257(set_257::QuotaSetCommand),
-    Set236(set_236::QuotaSetCommand),
+    Set257(Box<set_257::QuotaSetCommand>),
+    Set236(Box<set_236::QuotaSetCommand>),
     #[command(visible_alias = "show")]
-    Show20(show_20::QuotaSetCommand),
+    Show20(Box<show_20::QuotaSetCommand>),
 }
 
 impl QuotaSetCommand {

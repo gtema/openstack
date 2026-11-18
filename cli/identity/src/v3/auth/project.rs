@@ -36,7 +36,7 @@ pub struct ProjectCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ProjectCommands {
-    List(list::ProjectsCommand),
+    List(Box<list::ProjectsCommand>),
 }
 
 impl ProjectCommand {

@@ -50,16 +50,16 @@ pub enum RouterCommands {
     AddExtraroute(Box<add_extraroutes::RouterCommand>),
     AddRouterInterface(Box<add_router_interface::RouterCommand>),
     ConntrackHelper(Box<conntrack_helper::ConntrackHelperCommand>),
-    Create(create::RouterCommand),
-    Delete(delete::RouterCommand),
-    L3Agent(l3_agent::L3AgentCommand),
-    List(list::RoutersCommand),
+    Create(Box<create::RouterCommand>),
+    Delete(Box<delete::RouterCommand>),
+    L3Agent(Box<l3_agent::L3AgentCommand>),
+    List(Box<list::RoutersCommand>),
     RemoveExternalGateway(Box<remove_external_gateways::RouterCommand>),
     RemoveExtraroute(Box<remove_extraroutes::RouterCommand>),
     RemoveRouterInterface(Box<remove_router_interface::RouterCommand>),
-    Set(set::RouterCommand),
-    Show(show::RouterCommand),
-    Tag(tag::TagCommand),
+    Set(Box<set::RouterCommand>),
+    Show(Box<show::RouterCommand>),
+    Tag(Box<tag::TagCommand>),
 }
 
 impl RouterCommand {

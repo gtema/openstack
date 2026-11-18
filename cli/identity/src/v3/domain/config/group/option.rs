@@ -39,10 +39,10 @@ pub struct OptionCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum OptionCommands {
-    Default(default::OptionCommand),
-    Delete(delete::OptionCommand),
-    Set(set::OptionCommand),
-    Show(show::OptionCommand),
+    Default(Box<default::OptionCommand>),
+    Delete(Box<delete::OptionCommand>),
+    Set(Box<set::OptionCommand>),
+    Show(Box<show::OptionCommand>),
 }
 
 impl OptionCommand {

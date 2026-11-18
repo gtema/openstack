@@ -34,7 +34,7 @@ pub struct PropertiesCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PropertiesCommands {
-    Show(get::PropertiesCommand),
+    Show(Box<get::PropertiesCommand>),
 }
 
 impl PropertiesCommand {

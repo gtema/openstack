@@ -1,7 +1,7 @@
 //! Example for using paged combinator to list all available flavors (paginating through the
 //! results)
 //!
-//! `OS_CLOUD=devstack FLAVOR_MIN_RAM=32768 cargo run -p openstack_sdk --example paged`
+//! `OS_CLOUD=devstack FLAVOR_MIN_RAM=32768 cargo run -p openstack_sdk_core --example core_paged`
 
 #![allow(dead_code)]
 
@@ -111,10 +111,10 @@ async fn main() -> Result<(), OpenStackError> {
     }
 
     // Build the endpoint with parameters
-    let ep = ep_builder.build().unwrap();
+    let _ep = ep_builder.build().unwrap();
 
     // Execute the query enabling pagination
-    // let data: Vec<Flavor> = paged(ep, Pagination::Limit(100))
+    // let data: Vec<Flavor> = paged(_ep, Pagination::Limit(100))
     //     .query_async(&client)
     //     .await?;
 

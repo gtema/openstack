@@ -34,7 +34,7 @@ pub struct ProtocolCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ProtocolCommands {
-    Websso(websso::WebssoCommand),
+    Websso(Box<websso::WebssoCommand>),
 }
 
 impl ProtocolCommand {

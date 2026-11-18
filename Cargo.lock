@@ -4312,7 +4312,6 @@ dependencies = [
  "openstack-cli-core",
  "openstack_sdk",
  "openstack_sdk_core",
- "openstack_types",
  "regex",
  "serde",
  "serde_json",
@@ -4378,7 +4377,6 @@ dependencies = [
  "bytes",
  "derive_builder",
  "dialoguer",
- "dyn-clone",
  "http",
  "inventory",
  "jiff 1.0.1",
@@ -4862,7 +4860,6 @@ dependencies = [
 name = "openstack-types-container-infrastructure-management"
 version = "0.23.0"
 dependencies = [
- "openstack-types-core",
  "serde",
  "serde_json",
  "structable",
@@ -4880,7 +4877,6 @@ dependencies = [
 name = "openstack-types-dns"
 version = "0.23.0"
 dependencies = [
- "openstack-types-core",
  "serde",
  "serde_json",
  "structable",
@@ -4890,7 +4886,6 @@ dependencies = [
 name = "openstack-types-identity"
 version = "0.23.0"
 dependencies = [
- "openstack-types-core",
  "serde",
  "serde_json",
  "structable",
@@ -4900,7 +4895,6 @@ dependencies = [
 name = "openstack-types-image"
 version = "0.23.0"
 dependencies = [
- "openstack-types-core",
  "serde",
  "serde_json",
  "structable",
@@ -4910,7 +4904,6 @@ dependencies = [
 name = "openstack-types-load-balancer"
 version = "0.23.0"
 dependencies = [
- "openstack-types-core",
  "serde",
  "serde_json",
  "structable",
@@ -4930,9 +4923,7 @@ dependencies = [
 name = "openstack-types-object-store"
 version = "0.23.0"
 dependencies = [
- "openstack-types-core",
  "serde",
- "serde_json",
  "structable",
 ]
 
@@ -4940,7 +4931,6 @@ dependencies = [
 name = "openstack-types-placement"
 version = "0.23.0"
 dependencies = [
- "openstack-types-core",
  "serde",
  "serde_json",
  "structable",
@@ -5061,14 +5051,12 @@ dependencies = [
 name = "openstack_sdk_core"
 version = "0.23.0"
 dependencies = [
- "arc-swap",
  "async-trait",
  "base64 0.23.1",
  "bytes",
  "config",
  "derive_builder",
  "dirs",
- "dyn-clone",
  "futures",
  "futures-util",
  "http",
@@ -9405,7 +9393,6 @@ dependencies = [
  "schemars 1.2.3",
  "semver",
  "serde_json",
- "syn 3.0.10",
 ]
 
 [[package]]

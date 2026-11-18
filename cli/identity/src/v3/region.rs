@@ -45,11 +45,11 @@ pub struct RegionCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RegionCommands {
-    Create(create::RegionCommand),
-    Delete(delete::RegionCommand),
-    List(list::RegionsCommand),
-    Set(set::RegionCommand),
-    Show(show::RegionCommand),
+    Create(Box<create::RegionCommand>),
+    Delete(Box<delete::RegionCommand>),
+    List(Box<list::RegionsCommand>),
+    Set(Box<set::RegionCommand>),
+    Show(Box<show::RegionCommand>),
 }
 
 impl RegionCommand {

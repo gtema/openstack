@@ -42,22 +42,20 @@ pub struct AuthCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AuthCommands {
-    Cache(cache::CacheCommand),
-    Login(login::LoginCommand),
-    Logout(logout::LogoutCommand),
-    Show(show::ShowCommand),
-    Status(status::StatusCommand),
+    Cache(Box<cache::CacheCommand>),
+    Login(Box<login::LoginCommand>),
+    Logout(Box<logout::LogoutCommand>),
+    Show(Box<show::ShowCommand>),
+    Status(Box<status::StatusCommand>),
 }
 
 impl ConnectionRequirementsProvider for AuthCommands {
     fn connection_requirements(&self) -> ConnectionRequirements {
         match self {
-            AuthCommands::Login(login::LoginCommand { renew: true, .. }) => {
-                ConnectionRequirements {
-                    needs_auth: true,
-                    renew: true,
-                }
-            }
+            AuthCommands::Login(login) if login.renew => ConnectionRequirements {
+                needs_auth: true,
+                renew: true,
+            },
             AuthCommands::Status(_) => ConnectionRequirements {
                 needs_auth: false,
                 renew: false,
@@ -114,7 +112,7 @@ mod tests {
         let cmd = parse(&["logout"]);
         assert!(matches!(
             cmd.command,
-            AuthCommands::Logout(logout::LogoutCommand { local: false })
+            AuthCommands::Logout(ref c) if !c.local
         ));
         let req = cmd.command.connection_requirements();
         assert!(!req.needs_auth);
@@ -126,7 +124,7 @@ mod tests {
         let cmd = parse(&["logout", "--local"]);
         assert!(matches!(
             cmd.command,
-            AuthCommands::Logout(logout::LogoutCommand { local: true })
+            AuthCommands::Logout(ref c) if c.local
         ));
     }
 

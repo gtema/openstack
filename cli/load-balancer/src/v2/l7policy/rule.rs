@@ -38,11 +38,11 @@ pub struct RuleCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RuleCommands {
-    Create(create::RuleCommand),
-    Delete(delete::RuleCommand),
-    List(list::RulesCommand),
-    Set(set::RuleCommand),
-    Show(show::RuleCommand),
+    Create(Box<create::RuleCommand>),
+    Delete(Box<delete::RuleCommand>),
+    List(Box<list::RulesCommand>),
+    Set(Box<set::RuleCommand>),
+    Show(Box<show::RuleCommand>),
 }
 
 impl RuleCommand {

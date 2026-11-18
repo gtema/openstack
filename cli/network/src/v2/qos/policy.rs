@@ -46,8 +46,8 @@ pub struct PolicyCommand {
 pub enum PolicyCommands {
     BandwidthLimitRule(Box<bandwidth_limit_rule::BandwidthLimitRuleCommand>),
     Create(Box<create::PolicyCommand>),
-    Delete(delete::PolicyCommand),
-    DscpMarkingRule(dscp_marking_rule::DscpMarkingRuleCommand),
+    Delete(Box<delete::PolicyCommand>),
+    DscpMarkingRule(Box<dscp_marking_rule::DscpMarkingRuleCommand>),
     List(Box<list::PoliciesCommand>),
     MinimumBandwidthRule(Box<minimum_bandwidth_rule::MinimumBandwidthRuleCommand>),
     MinimumPacketRateRule(Box<minimum_packet_rate_rule::MinimumPacketRateRuleCommand>),

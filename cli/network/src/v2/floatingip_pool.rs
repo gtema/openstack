@@ -33,7 +33,7 @@ pub struct FloatingIPPoolCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum FloatingIPPoolCommands {
-    List(list::FloatingipPoolsCommand),
+    List(Box<list::FloatingipPoolsCommand>),
 }
 
 impl FloatingIPPoolCommand {

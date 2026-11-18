@@ -34,7 +34,7 @@ pub struct LoggableResourceCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum LoggableResourceCommands {
-    List(list::LoggableResourcesCommand),
+    List(Box<list::LoggableResourcesCommand>),
 }
 
 impl LoggableResourceCommand {

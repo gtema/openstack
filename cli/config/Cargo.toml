@@ -14,7 +14,6 @@ authors.workspace = true
 # Keep in sync with .github/workflows/ci.yml's `rust_ver` — the workspace
 # default build includes this crate, so a mismatch breaks CI.
 rust-version = "1.97"
-homepage.workspace = true
 repository.workspace = true
 
 [dependencies]

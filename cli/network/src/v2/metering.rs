@@ -37,9 +37,9 @@ pub struct MeteringCommand {
 #[derive(Subcommand)]
 pub enum MeteringCommands {
     #[command(visible_alias = "label")]
-    MeteringLabel(metering_label::MeteringLabelCommand),
+    MeteringLabel(Box<metering_label::MeteringLabelCommand>),
     #[command(visible_alias = "label-rule")]
-    MeteringLabelRule(metering_label_rule::MeteringLabelRuleCommand),
+    MeteringLabelRule(Box<metering_label_rule::MeteringLabelRuleCommand>),
 }
 
 impl MeteringCommand {

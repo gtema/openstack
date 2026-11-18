@@ -46,17 +46,17 @@ pub struct KeypairCommand {
 #[derive(Subcommand)]
 pub enum KeypairCommands {
     #[command(visible_alias = "create")]
-    Create292(create_292::KeypairCommand),
-    Create210(create_210::KeypairCommand),
-    Create22(create_22::KeypairCommand),
-    Create21(create_21::KeypairCommand),
-    Create20(create_20::KeypairCommand),
+    Create292(Box<create_292::KeypairCommand>),
+    Create210(Box<create_210::KeypairCommand>),
+    Create22(Box<create_22::KeypairCommand>),
+    Create21(Box<create_21::KeypairCommand>),
+    Create20(Box<create_20::KeypairCommand>),
     #[command(visible_alias = "delete")]
-    Delete20(delete_20::KeypairCommand),
+    Delete20(Box<delete_20::KeypairCommand>),
     #[command(visible_alias = "list")]
-    List20(list_20::KeypairsCommand),
+    List20(Box<list_20::KeypairsCommand>),
     #[command(visible_alias = "show")]
-    Show20(show_20::KeypairCommand),
+    Show20(Box<show_20::KeypairCommand>),
 }
 
 impl KeypairCommand {
