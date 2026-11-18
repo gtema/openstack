@@ -56,7 +56,7 @@ use openstack_sdk_auth_core::{AuthState, authtoken::AuthToken, authtoken_scope::
 /// out and immediately 401 (or worse, land a non-idempotent request exactly at expiry).
 /// This margin is only for "is this usable right now" checks; persistence-time
 /// filtering (deciding what is worth writing to the cache) keeps using `None`.
-const VALIDITY_MARGIN: chrono::TimeDelta = chrono::TimeDelta::seconds(60);
+const VALIDITY_MARGIN: std::time::Duration = std::time::Duration::from_secs(60);
 
 /// Cache files older than this are considered abandoned (stale credentials, a
 /// toolchain bump that changed the hash, ...) and are garbage-collected on
@@ -72,7 +72,7 @@ const CACHE_FORMAT_VERSION: u8 = 1;
 /// fairly long TTL is used here (unlike the short [`VALIDITY_MARGIN`] applied
 /// to auth tokens). Entries older than this are treated as a cache miss and
 /// re-discovered over HTTP.
-const MAX_DISCOVERY_CACHE_AGE: chrono::TimeDelta = chrono::TimeDelta::hours(24);
+const MAX_DISCOVERY_CACHE_AGE: std::time::Duration = std::time::Duration::from_secs(24 * 3600);
 
 /// On-disk format version for the discovery cache file. Kept separate from
 /// [`CACHE_FORMAT_VERSION`] since the two caches evolve independently.
@@ -408,8 +408,10 @@ impl State {
         let entries = self.load_discovery_state()?;
         let key = discovery_cache_key(service_type, region, interface);
         let entry = entries.0.get(&key)?;
-        let now = chrono::Utc::now().timestamp();
-        if now - entry.discovered_at > MAX_DISCOVERY_CACHE_AGE.num_seconds() {
+        let now = jiff::Timestamp::now().as_second();
+        if now - entry.discovered_at
+            > i64::try_from(MAX_DISCOVERY_CACHE_AGE.as_secs()).unwrap_or(i64::MAX)
+        {
             trace!("Discovery cache entry for `{}` is stale", key);
             return None;
         }
@@ -435,7 +437,7 @@ impl State {
         let entry = DiscoveryEntry {
             url: url.to_string(),
             data,
-            discovered_at: chrono::Utc::now().timestamp(),
+            discovered_at: jiff::Timestamp::now().as_second(),
         };
         self.save_discovery_entry_to_file(&key, &entry);
     }
@@ -934,7 +936,8 @@ mod tests {
                 token: AuthTokenType {
                     user: Default::default(),
                     catalog: Some(vec![]),
-                    expires_at: chrono::Utc::now() + chrono::TimeDelta::hours(1),
+                    expires_at: openstack_sdk_auth_core::types::TokenTimestamp::now()
+                        + std::time::Duration::from_secs(3600),
                     ..Default::default()
                 },
             }),
@@ -947,6 +950,56 @@ mod tests {
         let bytes = postcard::to_stdvec(&token).unwrap();
         let deserialized: AuthToken = postcard::from_bytes(&bytes).unwrap();
         assert_eq!(deserialized.token.expose_secret(), "tr");
+    }
+
+    /// The on-disk auth cache is positional postcard. Timestamps were written
+    /// by chrono as RFC3339 strings; build such bytes by hand (plain strings in
+    /// the timestamp positions) and make sure they still decode.
+    #[test]
+    fn test_postcard_decodes_legacy_chrono_token() {
+        let none = None::<()>;
+        // AuthToken { token, auth_info: Some(AuthResponse { token: TokenInfo { .. } }) }
+        // TokenInfo: application_credential, catalog, domain, expires_at,
+        // issued_at, project, roles, system, user{domain, id, name, pwd_expires}
+        let legacy = (
+            "legacy-secret",
+            Some((
+                none,
+                none,
+                none,
+                "2026-03-04T05:06:07.123456Z",
+                Some("2026-03-04T04:06:07+00:00"),
+                none,
+                none,
+                none,
+                (none, "uid", "uname", None::<String>),
+            )),
+        );
+        let bytes = postcard::to_stdvec(&legacy).unwrap();
+        let token: AuthToken = postcard::from_bytes(&bytes).unwrap();
+        assert_eq!(token.token.expose_secret(), "legacy-secret");
+        let info = token.auth_info.expect("auth_info").token;
+        assert_eq!(
+            info.expires_at,
+            "2026-03-04T05:06:07.123456Z"
+                .parse::<openstack_sdk_auth_core::types::TokenTimestamp>()
+                .unwrap()
+        );
+        assert_eq!(
+            info.issued_at,
+            Some(
+                "2026-03-04T04:06:07Z"
+                    .parse::<openstack_sdk_auth_core::types::TokenTimestamp>()
+                    .unwrap()
+            )
+        );
+
+        // New format must be byte-identical to the legacy string encoding.
+        let ts: jiff::Timestamp = "2026-03-04T05:06:07.123456Z".parse().unwrap();
+        assert_eq!(
+            postcard::to_stdvec(&ts).unwrap(),
+            postcard::to_stdvec("2026-03-04T05:06:07.123456Z").unwrap()
+        );
     }
 
     #[test]
@@ -1176,7 +1229,8 @@ mod tests {
                 token: TokenInfo {
                     user: Default::default(),
                     catalog: Some(vec![]),
-                    expires_at: chrono::Utc::now() - chrono::TimeDelta::hours(1),
+                    expires_at: openstack_sdk_auth_core::types::TokenTimestamp::now()
+                        - std::time::Duration::from_secs(3600),
                     ..Default::default()
                 },
             }),
@@ -1308,8 +1362,8 @@ mod tests {
         let entry = DiscoveryEntry {
             url: "http://example.com/".into(),
             data: vec![9, 9, 9],
-            discovered_at: chrono::Utc::now().timestamp()
-                - MAX_DISCOVERY_CACHE_AGE.num_seconds()
+            discovered_at: jiff::Timestamp::now().as_second()
+                - i64::try_from(MAX_DISCOVERY_CACHE_AGE.as_secs()).unwrap_or(i64::MAX)
                 - 10,
         };
         s.save_discovery_entry_to_file(&key, &entry);

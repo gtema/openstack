@@ -74,7 +74,8 @@ mod tests {
                     }]
                 }));
             });
-            let expires = (chrono::Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+            let expires =
+                (jiff::Timestamp::now() + jiff::SignedDuration::from_hours(1)).to_string();
             server.mock(|when, then| {
                 when.method(httpmock::Method::POST).path("/v3/auth/tokens");
                 then.status(StatusCode::CREATED)
@@ -416,7 +417,7 @@ mod tests {
             }));
         });
 
-        let expires = (chrono::Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let expires = (jiff::Timestamp::now() + jiff::SignedDuration::from_hours(1)).to_string();
         // Token response resolves to a *fully populated* scope (id + name +
         // domain), while the request config below only sets `project_id`.
         let token_mock = server.mock(|when, then| {

@@ -23,4 +23,5 @@ pub mod auth_helper;
 pub mod authtoken;
 pub mod v3_token_info;
 
+pub use openstack_sdk_auth_core::types::TokenTimestamp;
 pub use openstack_sdk_auth_core::{Auth, AuthError, AuthState};

@@ -17,7 +17,6 @@
 //! all the API requests.
 
 use async_trait::async_trait;
-use chrono::TimeDelta;
 use eyre::{Result, eyre};
 use openstack_sdk::{
     AsyncOpenStack, MicroVersionStrategy, RenewHandle,
@@ -62,7 +61,7 @@ use crate::error::TuiError;
 /// How long before token expiry the background renewal task re-authenticates.
 /// The TUI is long-running, so it enables proactive renewal unconditionally
 /// instead of checking/renewing per-request.
-const AUTO_RENEW_MARGIN: TimeDelta = TimeDelta::seconds(59 * 60);
+const AUTO_RENEW_MARGIN: std::time::Duration = std::time::Duration::from_secs(59 * 60);
 
 /// Cloud worker struct
 pub(crate) struct Cloud {

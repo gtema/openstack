@@ -25,7 +25,7 @@
 
 use std::path::PathBuf;
 
-use chrono::Utc;
+use jiff::Timestamp;
 
 use openstack_sdk_plugin_wasm::error::WasmPluginError;
 use openstack_sdk_plugin_wasm::lockfile::{self, PluginEntry, PluginLockfile, TrustInfo};
@@ -202,7 +202,7 @@ async fn update_walks_every_outcome() -> Result<(), Box<dyn std::error::Error>> 
             version: "1.0.0".into(),
             sha256: "deadbeef".into(),
             source: PathBuf::from("/tmp/ghost.wasm"),
-            installed_at: Utc::now(),
+            installed_at: Timestamp::now(),
             trust: TrustInfo {
                 confirmed_by_user: true,
                 allow_unsigned: true,

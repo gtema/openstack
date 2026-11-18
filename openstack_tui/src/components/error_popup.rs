@@ -83,7 +83,7 @@ impl ErrorPopup {
             if let Some(dir) = crate::utils::get_data_dir() {
                 let crash_data_path = dir.join(format!(
                     "crash.{}.txt",
-                    chrono::Local::now().format("%Y-%m-%dT%H%M%S")
+                    jiff::ZonedDateTime::now().strftime("%Y-%m-%dT%H%M%S")
                 ));
                 let mut crash_data_file = std::fs::File::create(&crash_data_path)?;
                 crash_data_file.write_all(b"[error]\n")?;

@@ -196,7 +196,6 @@ impl From<ReceiptAuthError> for AuthError {
 
 #[cfg(test)]
 mod tests {
-    use chrono::Local;
     use httpmock::MockServer;
     use reqwest::{Client, StatusCode};
     use secrecy::{ExposeSecret, SecretString};
@@ -230,7 +229,7 @@ mod tests {
                     name: "uname".into(),
                     ..Default::default()
                 },
-                expires_at: Local::now(),
+                expires_at: openstack_sdk_auth_core::types::TokenTimestamp::now(),
                 ..Default::default()
             },
             required_auth_methods: vec![vec!["totp".into(), "password".into()]],
@@ -283,7 +282,7 @@ mod tests {
                     name: "uname".into(),
                     ..Default::default()
                 },
-                expires_at: Local::now(),
+                expires_at: openstack_sdk_auth_core::types::TokenTimestamp::now(),
                 ..Default::default()
             },
             required_auth_methods: vec![vec!["totp".into(), "password".into()]],

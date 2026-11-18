@@ -295,7 +295,7 @@ mod tests {
                 "links": [{"rel": "self", "href": format!("{base_url}/v3/")}]}]}),
             );
         });
-        let expires = (chrono::Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let expires = (jiff::Timestamp::now() + jiff::SignedDuration::from_hours(1)).to_string();
         server.mock(|when, then| {
             when.method(httpmock::Method::POST).path("/v3/auth/tokens");
             then.status(201).header("x-subject-token", "test-token").json_body(serde_json::json!({"token": {

@@ -17,7 +17,6 @@
 
 use std::borrow::Cow;
 
-use chrono::{DateTime, NaiveDate, Utc};
 use url::Url;
 
 use serde_json::{Value, json};
@@ -94,19 +93,6 @@ impl ParamValue<'static> for f32 {
 impl ParamValue<'static> for f64 {
     fn as_value(&self) -> Cow<'static, str> {
         self.to_string().into()
-    }
-}
-
-impl ParamValue<'static> for DateTime<Utc> {
-    fn as_value(&self) -> Cow<'static, str> {
-        self.to_rfc3339_opts(chrono::SecondsFormat::Secs, true)
-            .into()
-    }
-}
-
-impl ParamValue<'static> for NaiveDate {
-    fn as_value(&self) -> Cow<'static, str> {
-        format!("{}", self.format("%Y-%m-%d")).into()
     }
 }
 

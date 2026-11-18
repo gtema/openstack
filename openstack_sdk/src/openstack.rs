@@ -24,7 +24,6 @@ use std::sync::{Arc, OnceLock};
 
 use tracing::instrument;
 
-use chrono::TimeDelta;
 use openstack_sdk_auth_core::{
     Auth,
     authtoken_scope::AuthTokenScope,
@@ -380,7 +379,7 @@ impl OpenStack {
     }
 
     /// Return the current authentication status.
-    pub fn get_auth_state(&self, offset: Option<TimeDelta>) -> Option<AuthState> {
+    pub fn get_auth_state(&self, offset: Option<std::time::Duration>) -> Option<AuthState> {
         self.inner.get_auth_state(offset)
     }
 

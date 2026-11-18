@@ -26,7 +26,6 @@ use std::{fs::File, io::Read};
 use arc_swap::ArcSwap;
 use async_trait::async_trait;
 use bytes::Bytes;
-use chrono::TimeDelta;
 use futures::io::{Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
 use http::{HeaderMap, HeaderName, HeaderValue, Response as HttpResponse, StatusCode, header};
@@ -916,7 +915,7 @@ impl AsyncOpenStack {
     /// renew (unauthenticated session), once the last `AsyncOpenStack`
     /// sharing this session is dropped, or when the returned handle is
     /// dropped.
-    pub fn enable_auto_renew(&self, margin: TimeDelta) -> RenewHandle {
+    pub fn enable_auto_renew(&self, margin: std::time::Duration) -> RenewHandle {
         // Only `session` is held weakly — it's the field whose refcount
         // marks "is any AsyncOpenStack for this session still alive".
         // Everything else is cloned strong: none of it keeps `session`
@@ -957,9 +956,11 @@ impl AsyncOpenStack {
                     let Some(auth_info) = &token.auth_info else {
                         return;
                     };
-                    (auth_info.token.expires_at - margin - chrono::Utc::now())
-                        .to_std()
-                        .unwrap_or(Duration::ZERO)
+                    auth_info
+                        .token
+                        .expires_at
+                        .remaining()
+                        .saturating_sub(margin)
                     // `client` (and its strong `session` ref) drops here,
                     // before the sleep below.
                 };
@@ -1023,9 +1024,7 @@ impl AsyncOpenStack {
                         }
                         let expires_at =
                             if let Auth::AuthToken(t) = &client.auth_snapshot.load().auth {
-                                t.auth_info
-                                    .as_ref()
-                                    .map(|i| i.token.expires_at.to_rfc3339())
+                                t.auth_info.as_ref().map(|i| i.token.expires_at.to_string())
                             } else {
                                 None
                             };
@@ -1576,7 +1575,7 @@ impl AsyncOpenStack {
     /// Return current authentication status
     ///
     /// Offset can be used to calculate imminent expiration.
-    pub fn get_auth_state(&self, offset: Option<TimeDelta>) -> Option<AuthState> {
+    pub fn get_auth_state(&self, offset: Option<std::time::Duration>) -> Option<AuthState> {
         let session = self.session.read();
         if let Auth::AuthToken(token) = &session.auth {
             return Some(token.get_state(offset));
@@ -1786,7 +1785,7 @@ impl AsyncOpenStack {
 
 #[cfg(test)]
 mod tests {
-    use chrono::{TimeDelta, Utc};
+
     use httpmock::MockServer;
     use secrecy::ExposeSecret;
     use serde_json::json;
@@ -1820,7 +1819,8 @@ mod tests {
 
         let token_info = AuthResponse {
             token: openstack_sdk_auth_core::types::TokenInfo {
-                expires_at: Utc::now() + chrono::TimeDelta::hours(1),
+                expires_at: openstack_sdk_auth_core::types::TokenTimestamp::now()
+                    + std::time::Duration::from_secs(3600),
                 project: Some(openstack_sdk_auth_core::types::Project {
                     id: Some("test-project".into()),
                     name: Some("TestProject".into()),
@@ -1998,7 +1998,7 @@ mod tests {
             .await;
 
         // Re-auth: identity returns new token
-        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let expires = (jiff::Timestamp::now() + jiff::SignedDuration::from_hours(1)).to_string();
         let mock_reauth = server
             .mock_async(|when, then| {
                 when.method(httpmock::Method::POST).path("/auth/tokens");
@@ -2195,7 +2195,7 @@ mod tests {
             .await;
 
         // Re-auth: identity returns new token
-        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let expires = (jiff::Timestamp::now() + jiff::SignedDuration::from_hours(1)).to_string();
         let _mock_reauth = server
             .mock_async(|when, then| {
                 when.method(httpmock::Method::POST).path("/auth/tokens");
@@ -2264,7 +2264,7 @@ mod tests {
             .await;
 
         // Re-auth: identity returns new token
-        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let expires = (jiff::Timestamp::now() + jiff::SignedDuration::from_hours(1)).to_string();
         let _mock_reauth = server
             .mock_async(|when, then| {
                 when.method(httpmock::Method::POST).path("/auth/tokens");
@@ -2394,11 +2394,11 @@ mod tests {
         let client = create_test_client(&server, "test-token", 0, None);
 
         // Token expires in 1 hour, offset 2 hours → not valid
-        let auth_state = client.get_auth_state(Some(TimeDelta::hours(2)));
+        let auth_state = client.get_auth_state(Some(Duration::from_secs(2 * 3600)));
         assert!(!matches!(auth_state.unwrap(), AuthState::Valid));
 
         // Token expires in 1 hour, offset 30 minutes → valid
-        let auth_state = client.get_auth_state(Some(TimeDelta::minutes(30)));
+        let auth_state = client.get_auth_state(Some(Duration::from_secs(30 * 60)));
         assert!(matches!(auth_state.unwrap(), AuthState::Valid));
     }
 
@@ -2432,7 +2432,7 @@ mod tests {
             .await;
 
         // Re-auth: identity returns new token
-        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let expires = (jiff::Timestamp::now() + jiff::SignedDuration::from_hours(1)).to_string();
         let _mock_reauth = server
             .mock_async(|when, then| {
                 when.method(httpmock::Method::POST).path("/auth/tokens");
@@ -2715,7 +2715,7 @@ mod tests {
             })
             .await;
 
-        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let expires = (jiff::Timestamp::now() + jiff::SignedDuration::from_hours(1)).to_string();
         let _mock_reauth = server
             .mock_async(|when, then| {
                 when.method(httpmock::Method::POST).path("/auth/tokens");
@@ -2776,7 +2776,7 @@ mod tests {
         // token-exchange (method=`token`), which Keystone pins to the
         // *original* token's expiry and therefore can never actually renew
         // a session (see the doc comment on `enable_auto_renew`).
-        let expires = (Utc::now() + chrono::TimeDelta::hours(1)).to_rfc3339();
+        let expires = (jiff::Timestamp::now() + jiff::SignedDuration::from_hours(1)).to_string();
         let mock_reauth = server
             .mock_async(|when, then| {
                 when.method(httpmock::Method::POST)
@@ -2817,12 +2817,13 @@ mod tests {
             if let Auth::AuthToken(t) = &mut guard.auth
                 && let Some(info) = &mut t.auth_info
             {
-                info.token.expires_at = Utc::now() + chrono::TimeDelta::milliseconds(100);
+                info.token.expires_at = openstack_sdk_auth_core::types::TokenTimestamp::now()
+                    + std::time::Duration::from_millis(100);
             }
         }
         let generation_before = client.auth_snapshot.load().auth_generation;
 
-        let _handle = client.enable_auto_renew(TimeDelta::milliseconds(50));
+        let _handle = client.enable_auto_renew(Duration::from_millis(50));
         tokio::time::sleep(Duration::from_millis(500)).await;
 
         mock_reauth.assert_async().await;
@@ -2856,11 +2857,12 @@ mod tests {
             if let Auth::AuthToken(t) = &mut guard.auth
                 && let Some(info) = &mut t.auth_info
             {
-                info.token.expires_at = Utc::now() + chrono::TimeDelta::milliseconds(150);
+                info.token.expires_at = openstack_sdk_auth_core::types::TokenTimestamp::now()
+                    + std::time::Duration::from_millis(150);
             }
         }
 
-        let handle = client.enable_auto_renew(TimeDelta::milliseconds(50));
+        let handle = client.enable_auto_renew(Duration::from_millis(50));
         drop(client);
         tokio::time::sleep(Duration::from_millis(400)).await;
 
@@ -2887,7 +2889,8 @@ mod tests {
             token: SecretString::from(secret),
             auth_info: Some(AuthResponse {
                 token: openstack_sdk_auth_core::types::TokenInfo {
-                    expires_at: Utc::now() + chrono::TimeDelta::hours(1),
+                    expires_at: openstack_sdk_auth_core::types::TokenTimestamp::now()
+                        + std::time::Duration::from_secs(3600),
                     ..Default::default()
                 },
             }),

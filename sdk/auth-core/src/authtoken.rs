@@ -194,8 +194,8 @@ impl AuthToken {
     /// Detect authentication validity (valid/expired/unset)
     ///
     /// Offset can be used to calculate imminent expiration.
-    pub fn get_state(&self, expiration_offset: Option<chrono::TimeDelta>) -> AuthState {
-        let expiration = chrono::Utc::now();
+    pub fn get_state(&self, expiration_offset: Option<std::time::Duration>) -> AuthState {
+        let expiration = TokenTimestamp::now();
         let soon_expiration = match expiration_offset {
             Some(offset) => expiration + offset,
             None => expiration,
@@ -321,7 +321,6 @@ impl TryFrom<http::Response<bytes::Bytes>> for AuthToken {
 
 #[cfg(test)]
 mod tests {
-    use chrono::Local;
     use http::response::Builder;
     use reqwest::Response;
     use secrecy::ExposeSecret;
@@ -346,7 +345,7 @@ mod tests {
                     name: "uname".into(),
                     ..Default::default()
                 },
-                expires_at: Local::now(),
+                expires_at: TokenTimestamp::now(),
                 ..Default::default()
             },
             required_auth_methods: vec![vec!["totp".into(), "password".into()]],
@@ -622,21 +621,21 @@ mod tests {
             String::new(),
             Some(AuthResponse {
                 token: TokenInfo {
-                    expires_at: chrono::Utc::now() + chrono::TimeDelta::milliseconds(500),
+                    expires_at: TokenTimestamp::now() + std::time::Duration::from_millis(500),
                     ..Default::default()
                 },
             }),
         );
         // With zero offset, soon_expiration == expiration, so AboutToExpire is unreachable
         assert!(matches!(
-            auth.get_state(Some(chrono::TimeDelta::zero())),
+            auth.get_state(Some(std::time::Duration::ZERO)),
             AuthState::Valid
         ));
     }
 
     #[test]
     fn test_auth_token_get_state_expires_exactly_at_offset() {
-        let expires = chrono::Utc::now() + chrono::TimeDelta::minutes(10);
+        let expires = TokenTimestamp::now() + std::time::Duration::from_secs(60 * 10);
         let auth = AuthToken::new(
             String::new(),
             Some(AuthResponse {
@@ -647,7 +646,7 @@ mod tests {
             }),
         );
         assert!(matches!(
-            auth.get_state(Some(chrono::TimeDelta::minutes(10))),
+            auth.get_state(Some(std::time::Duration::from_secs(10 * 60))),
             AuthState::AboutToExpire
         ));
     }
@@ -658,7 +657,7 @@ mod tests {
             String::new(),
             Some(AuthResponse {
                 token: TokenInfo {
-                    expires_at: chrono::Utc::now() + chrono::TimeDelta::seconds(1),
+                    expires_at: TokenTimestamp::now() + std::time::Duration::from_secs(1),
                     ..Default::default()
                 },
             }),
@@ -668,7 +667,7 @@ mod tests {
 
     #[test]
     fn test_auth_token_get_state_expires_exactly_now() {
-        let now = chrono::Utc::now();
+        let now = TokenTimestamp::now();
         let auth = AuthToken::new(
             String::new(),
             Some(AuthResponse {
@@ -679,7 +678,7 @@ mod tests {
             }),
         );
         assert!(matches!(
-            auth.get_state(Some(chrono::TimeDelta::minutes(1))),
+            auth.get_state(Some(std::time::Duration::from_secs(60))),
             AuthState::Expired
         ));
     }

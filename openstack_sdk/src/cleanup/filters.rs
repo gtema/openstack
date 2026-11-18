@@ -17,7 +17,7 @@
 
 use std::collections::HashMap;
 
-use chrono::DateTime;
+use jiff::Timestamp;
 
 use crate::cleanup::types::PlannedResource;
 
@@ -45,10 +45,10 @@ pub fn evaluate_filters(resource: &PlannedResource, filters: &HashMap<String, St
         let Some(res_val) = resource.raw.get(key).and_then(|v| v.as_str()) else {
             return false;
         };
-        let Ok(res_date) = DateTime::parse_from_rfc3339(res_val) else {
+        let Ok(res_date) = res_val.parse::<Timestamp>() else {
             return false;
         };
-        let Ok(cmp_date) = DateTime::parse_from_rfc3339(value) else {
+        let Ok(cmp_date) = value.parse::<Timestamp>() else {
             return false;
         };
         res_date <= cmp_date

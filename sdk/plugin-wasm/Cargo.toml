@@ -14,7 +14,7 @@ repository.workspace = true
 [dependencies]
 async-trait.workspace = true
 base64.workspace = true
-chrono.workspace = true
+jiff.workspace = true
 dialoguer.workspace = true
 dirs.workspace = true
 extism.workspace = true
