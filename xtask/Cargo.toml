@@ -15,7 +15,6 @@ serde_json = { workspace = true }
 schemars = { workspace = true }
 semver = { version = "^1.0" }
 regex = { workspace = true }
-syn = { version = "^3.0", features = ["full", "extra-traits"] }
 
 [package.metadata.dist]
 dist = false
@@ -41,3 +40,6 @@ bench = false
 [lib]
 name = "xtask"
 path = "src/lib.rs"
+
+[lints]
+workspace = true

@@ -6,7 +6,6 @@ license.workspace = true
 edition.workspace = true
 authors.workspace = true
 rust-version.workspace = true
-homepage.workspace = true
 repository.workspace = true
 
 [dependencies]
@@ -15,7 +14,6 @@ clap = { workspace = true }
 openstack-cli-core.workspace = true
 openstack_sdk = { workspace = true, features = ["async", "object_store", "identity"] }
 openstack_sdk_core.workspace = true
-openstack_types.workspace = true
 eyre = { workspace = true }
 http = { workspace = true }
 regex.workspace = true

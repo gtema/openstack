@@ -155,3 +155,6 @@ required-features = ["fuzzing"]
 test = false
 doc = false
 bench = false
+
+[lints]
+workspace = true

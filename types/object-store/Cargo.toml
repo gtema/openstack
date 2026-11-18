@@ -6,13 +6,10 @@ license.workspace = true
 edition.workspace = true
 authors.workspace = true
 rust-version.workspace = true
-homepage.workspace = true
 repository.workspace = true
 
 [dependencies]
-openstack-types-core.workspace = true
 serde = { workspace = true }
-serde_json = { workspace = true }
 structable = { workspace = true }
 
 [dev-dependencies]

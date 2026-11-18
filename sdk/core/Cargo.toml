@@ -8,7 +8,6 @@ authors = ["Artem Goncharov (gtema)"]
 rust-version.workspace = true
 edition.workspace = true
 license.workspace = true
-homepage.workspace = true
 repository.workspace = true
 
 [features]
@@ -27,7 +26,6 @@ interactive = ["openstack-sdk-auth-core/interactive"]
 fuzzing = []
 
 [dependencies]
-arc-swap.workspace = true
 async-trait.workspace = true
 base64.workspace = true
 bytes.workspace = true
@@ -35,7 +33,6 @@ jiff.workspace = true
 config = { workspace = true, features = ["yaml"] }
 derive_builder.workspace = true
 dirs.workspace = true
-dyn-clone = { version = "1.0" }
 futures.workspace = true
 futures-util.workspace = true
 http.workspace = true
@@ -44,11 +41,11 @@ openstack-sdk-auth-core.workspace = true
 postcard = { version = "1.1", default-features = false, features = ["use-std"] }
 regex.workspace = true
 reqwest = { workspace = true, default-features = false }
-schemars = { version = "^1.2", optional = true }
+schemars = { workspace = true, optional = true }
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-serde_urlencoded = "^0.7"
+serde_urlencoded.workspace = true
 sha2.workspace = true
 tempfile.workspace = true
 thiserror.workspace = true
