@@ -13,8 +13,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Show current auth information
-use chrono::prelude::*;
 use clap::Parser;
+use openstack_sdk::auth::TokenTimestamp;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tracing::info;
@@ -64,11 +64,11 @@ pub struct Auth {
 
     /// Issued at of the token
     #[structable(optional, serialize)]
-    pub issued_at: Option<DateTime<Utc>>,
+    pub issued_at: Option<TokenTimestamp>,
 
     /// Token expiration time
     #[structable(serialize)]
-    pub expires_at: DateTime<Utc>,
+    pub expires_at: TokenTimestamp,
 }
 
 impl TryFrom<&AuthResponse> for Auth {

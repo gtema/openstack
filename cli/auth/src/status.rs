@@ -13,8 +13,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Show current authentication status without requiring a fresh authorization
-use chrono::prelude::*;
 use clap::Parser;
+use openstack_sdk::auth::TokenTimestamp;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -51,7 +51,7 @@ pub struct Status {
 
     /// Token expiration time.
     #[structable(optional)]
-    pub expires_at: Option<DateTime<Utc>>,
+    pub expires_at: Option<TokenTimestamp>,
 
     /// On-disk auth cache file in use, if the cache is enabled.
     #[structable(optional)]

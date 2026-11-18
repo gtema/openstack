@@ -21,7 +21,7 @@ fuzzing = []
 [dependencies]
 async-trait.workspace = true
 bytes.workspace = true
-chrono.workspace = true
+jiff.workspace = true
 derive_builder.workspace = true
 dialoguer = { workspace = true, optional = true }
 dyn-clone = { version = "1.0" }

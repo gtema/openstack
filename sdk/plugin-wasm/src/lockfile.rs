@@ -27,7 +27,7 @@ use std::fs;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
-use chrono::{DateTime, Utc};
+use jiff::Timestamp;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
@@ -70,7 +70,7 @@ pub struct ProvenanceRecord {
     /// audit-path check is performed) — informational only.
     pub rekor_log_index: Option<String>,
     /// When this verification was performed.
-    pub verified_at: DateTime<Utc>,
+    pub verified_at: Timestamp,
 }
 
 /// A single installed `name@version` plugin record.
@@ -87,7 +87,7 @@ pub struct PluginEntry {
     /// again after install).
     pub source: PathBuf,
     /// When this entry was installed.
-    pub installed_at: DateTime<Utc>,
+    pub installed_at: Timestamp,
     /// Trust metadata for this entry.
     pub trust: TrustInfo,
     /// Whether this entry was installed with an explicit `@version` (`true`)
@@ -252,7 +252,7 @@ mod tests {
                 version: "1.0.0".into(),
                 sha256: "deadbeef".into(),
                 source: PathBuf::from("/tmp/demo.wasm"),
-                installed_at: Utc::now(),
+                installed_at: jiff::Timestamp::now(),
                 trust: TrustInfo {
                     confirmed_by_user: true,
                     allow_unsigned: true,
@@ -292,6 +292,44 @@ mod tests {
         let reloaded2 = PluginLockfile::load()?;
         assert_eq!(reloaded2, lf2);
 
+        Ok(())
+    }
+
+    /// A lockfile written by the chrono based implementation (RFC3339
+    /// strings, `Z` or numeric offsets) must still load unchanged.
+    #[test]
+    fn lockfile_loads_legacy_chrono_timestamps() -> Result<(), Box<dyn std::error::Error>> {
+        let json = r#"{
+            "plugins": {
+                "demo@1.0.0": {
+                    "name": "demo", "version": "1.0.0", "sha256": "deadbeef",
+                    "source": "/tmp/demo.wasm",
+                    "installed_at": "2026-03-04T05:06:07.123456789Z",
+                    "trust": {"confirmed_by_user": true, "allow_unsigned": false},
+                    "provenance": {
+                        "source_repo": "o/r", "workflow_ref": null,
+                        "oidc_issuer": null, "rekor_log_index": null,
+                        "verified_at": "2026-03-04T07:06:07+02:00"
+                    }
+                }
+            },
+            "active": {"demo": "1.0.0"}
+        }"#;
+        let lf: PluginLockfile = serde_json::from_str(json)?;
+        let entry = lf.plugins.get("demo@1.0.0").ok_or("missing entry")?;
+        assert_eq!(
+            entry.installed_at,
+            "2026-03-04T05:06:07.123456789Z".parse::<Timestamp>()?
+        );
+        let prov = entry.provenance.as_ref().ok_or("missing provenance")?;
+        assert_eq!(
+            prov.verified_at,
+            "2026-03-04T05:06:07Z".parse::<Timestamp>()?
+        );
+
+        // Re-serializing still produces something loadable.
+        let again: PluginLockfile = serde_json::from_str(&serde_json::to_string(&lf)?)?;
+        assert_eq!(again, lf);
         Ok(())
     }
 }

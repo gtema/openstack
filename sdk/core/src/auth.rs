@@ -23,6 +23,7 @@ use std::collections::{HashMap, HashSet};
 
 use secrecy::SecretString;
 
+pub use openstack_sdk_auth_core::types::TokenTimestamp;
 pub use openstack_sdk_auth_core::{Auth, AuthError, AuthState, find_auth_plugin};
 
 pub mod auth_helper;

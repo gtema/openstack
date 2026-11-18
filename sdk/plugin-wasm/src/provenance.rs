@@ -35,7 +35,7 @@
 
 use base64::Engine as _;
 use base64::engine::general_purpose::STANDARD as BASE64;
-use chrono::Utc;
+use jiff::Timestamp;
 use ring::signature::{self, UnparsedPublicKey};
 use serde::Deserialize;
 use x509_parser::certificate::X509Certificate;
@@ -397,7 +397,7 @@ pub fn verify_attestation(
         workflow_ref,
         oidc_issuer,
         rekor_log_index,
-        verified_at: Utc::now(),
+        verified_at: Timestamp::now(),
     })
 }
 

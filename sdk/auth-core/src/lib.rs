@@ -65,11 +65,11 @@
 //! Tokens can be checked for validity with an optional expiration threshold:
 //!
 //! ```no_run
-//! use chrono::TimeDelta;
+//! use std::time::Duration;
 //! use openstack_sdk_auth_core::AuthState;
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! # let auth = openstack_sdk_auth_core::AuthToken::default();
-//! let offset = TimeDelta::minutes(5);
+//! let offset = Duration::from_secs(5 * 60);
 //! match auth.get_state(Some(offset)) {
 //!     AuthState::Valid => println!("Token is valid"),
 //!     AuthState::AboutToExpire => println!("Token will expire within 5 minutes"),
@@ -328,7 +328,6 @@
 //!
 //! ```no_run
 //! use openstack_sdk_auth_core::{AuthTokenScope, AuthError, Auth, AuthReceiptResponse, AuthReceipt};
-//! use chrono::Local;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! # fn simulate_auth_result() -> Result<Auth, AuthError> {
@@ -376,14 +375,14 @@
 //! tokens before they expire:
 //!
 //! ```
-//! use chrono::TimeDelta;
-//! use openstack_sdk_auth_core::{AuthToken, AuthState, types::{AuthResponse, TokenInfo, User, Project}};
+//! use std::time::Duration;
+//! use openstack_sdk_auth_core::{AuthToken, AuthState, types::{AuthResponse, TokenInfo, User, Project, TokenTimestamp}};
 //! use secrecy::SecretString;
 //!
 //! // Create a token with expiration info
 //! let auth_info = AuthResponse {
 //!     token: TokenInfo {
-//!         expires_at: chrono::Utc::now() + TimeDelta::hours(24),
+//!         expires_at: TokenTimestamp::now() + std::time::Duration::from_secs(3600 * 24),
 //!         user: User::default(),
 //!         ..Default::default()
 //!     },
@@ -391,7 +390,7 @@
 //! let token = AuthToken::new("my-token", Some(auth_info));
 //!
 //! // Check with 5-minute buffer for proactive refresh
-//! match token.get_state(Some(TimeDelta::minutes(5))) {
+//! match token.get_state(Some(Duration::from_secs(5 * 60))) {
 //!     AuthState::Valid => {
 //!         println!("Token is valid");
 //!     }
@@ -745,7 +744,7 @@ mod tests {
             String::new(),
             Some(AuthResponse {
                 token: TokenInfo {
-                    expires_at: chrono::Utc::now() - chrono::TimeDelta::days(1),
+                    expires_at: TokenTimestamp::now() - std::time::Duration::from_secs(3600 * 24),
                     ..Default::default()
                 },
             }),
@@ -759,13 +758,13 @@ mod tests {
             String::new(),
             Some(AuthResponse {
                 token: TokenInfo {
-                    expires_at: chrono::Utc::now() + chrono::TimeDelta::minutes(10),
+                    expires_at: TokenTimestamp::now() + std::time::Duration::from_secs(60 * 10),
                     ..Default::default()
                 },
             }),
         );
         assert!(matches!(
-            auth.get_state(Some(chrono::TimeDelta::minutes(15))),
+            auth.get_state(Some(std::time::Duration::from_secs(15 * 60))),
             AuthState::AboutToExpire
         ));
     }
@@ -776,7 +775,7 @@ mod tests {
             String::new(),
             Some(AuthResponse {
                 token: TokenInfo {
-                    expires_at: chrono::Utc::now() + chrono::TimeDelta::days(1),
+                    expires_at: TokenTimestamp::now() + std::time::Duration::from_secs(3600 * 24),
                     ..Default::default()
                 },
             }),
@@ -1220,7 +1219,7 @@ mod tests {
                     name: "user".to_string(),
                     ..Default::default()
                 },
-                expires_at: chrono::Local::now(),
+                expires_at: TokenTimestamp::now(),
                 ..Default::default()
             },
             required_auth_methods: vec![vec!["totp".to_string()]],

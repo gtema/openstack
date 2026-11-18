@@ -20,7 +20,7 @@ path = "src/bin/ostui.rs"
 
 [dependencies]
 async-trait.workspace = true
-chrono = { workspace= true }
+jiff = { workspace = true, features = ["tz-system", "tzdb-zoneinfo"] }
 clap = { workspace = true, features = ["cargo", "derive", "env", "wrap_help", "unicode", "string", "unstable-styles"] }
 color-eyre = { workspace = true }
 config = { workspace = true, features = ["json", "yaml"] }

@@ -3220,9 +3220,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ac703058abac89e5c39b0b879dce2b6b14a4ba36600c7e7e3d0c60a6883ef3c"
 dependencies = [
  "defmt",
- "jiff-core",
- "jiff-static",
+ "jiff-core 0.1.2",
+ "jiff-static 0.2.39",
  "jiff-tzdb-platform",
+ "log",
+ "portable-atomic",
+ "portable-atomic-util",
+ "serde_core",
+ "windows-link",
+]
+
+[[package]]
+name = "jiff"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ed5d126d72eb017f10b302e73bdeca446bea405ee449af4d9e7866d6b082d83e"
+dependencies = [
+ "jiff-core 1.0.1",
+ "jiff-static 1.0.1",
  "log",
  "portable-atomic",
  "portable-atomic-util",
@@ -3241,15 +3256,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "jiff-core"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6b46a105a9874634dd96231021526bf24ca04955a5998c59a9c7666e634b7b8"
+dependencies = [
+ "log",
+]
+
+[[package]]
 name = "jiff-static"
 version = "0.2.39"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6dc32470c67eb7d0e9ccb74303fa925313dc04cecb1aa048beaa6f391e36a93d"
 dependencies = [
- "jiff-core",
+ "jiff-core 0.1.2",
  "proc-macro2",
  "quote",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "jiff-static"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c0127e9bde3c6130d6169e7d8d68676e4be69c4bf7573c308b6f960a5089c428"
+dependencies = [
+ "jiff-core 1.0.1",
+ "proc-macro2",
+ "quote",
+ "syn 3.0.10",
 ]
 
 [[package]]
@@ -4049,7 +4085,6 @@ dependencies = [
 name = "openstack-cli-auth"
 version = "0.14.0"
 dependencies = [
- "chrono",
  "clap",
  "dialoguer",
  "eyre",
@@ -4341,12 +4376,12 @@ version = "0.23.0"
 dependencies = [
  "async-trait",
  "bytes",
- "chrono",
  "derive_builder",
  "dialoguer",
  "dyn-clone",
  "http",
  "inventory",
+ "jiff 1.0.1",
  "reqwest",
  "secrecy",
  "serde",
@@ -4515,9 +4550,9 @@ version = "0.23.0"
 dependencies = [
  "async-trait",
  "bytes",
- "chrono",
  "httpmock",
  "inventory",
+ "jiff 1.0.1",
  "openstack-sdk-auth-core",
  "openstack-sdk-auth-password",
  "openstack-sdk-auth-token",
@@ -4760,11 +4795,11 @@ version = "0.1.1"
 dependencies = [
  "async-trait",
  "base64 0.23.1",
- "chrono",
  "dialoguer",
  "dirs",
  "extism",
  "httpmock",
+ "jiff 1.0.1",
  "openstack-sdk-auth-core",
  "openstack-sdk-websso-host",
  "rcgen",
@@ -4807,7 +4842,6 @@ dependencies = [
 name = "openstack-types-block-storage"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4818,7 +4852,6 @@ dependencies = [
 name = "openstack-types-compute"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4829,7 +4862,6 @@ dependencies = [
 name = "openstack-types-container-infrastructure-management"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4840,7 +4872,6 @@ dependencies = [
 name = "openstack-types-core"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "serde",
  "serde_json",
 ]
@@ -4849,7 +4880,6 @@ dependencies = [
 name = "openstack-types-dns"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4860,7 +4890,6 @@ dependencies = [
 name = "openstack-types-identity"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4871,7 +4900,6 @@ dependencies = [
 name = "openstack-types-image"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4882,7 +4910,6 @@ dependencies = [
 name = "openstack-types-load-balancer"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4893,7 +4920,6 @@ dependencies = [
 name = "openstack-types-network"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4904,7 +4930,6 @@ dependencies = [
 name = "openstack-types-object-store"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4915,7 +4940,6 @@ dependencies = [
 name = "openstack-types-placement"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-core",
  "serde",
  "serde_json",
@@ -4970,13 +4994,13 @@ dependencies = [
  "arc-swap",
  "async-trait",
  "bytes",
- "chrono",
  "derive_builder",
  "futures",
  "futures-util",
  "http",
  "httpmock",
  "inventory",
+ "jiff 1.0.1",
  "openstack-sdk-auth-applicationcredential",
  "openstack-sdk-auth-core",
  "openstack-sdk-auth-federation",
@@ -5041,7 +5065,6 @@ dependencies = [
  "async-trait",
  "base64 0.23.1",
  "bytes",
- "chrono",
  "config",
  "derive_builder",
  "dirs",
@@ -5051,6 +5074,7 @@ dependencies = [
  "http",
  "httpmock",
  "itertools 0.15.0",
+ "jiff 1.0.1",
  "openstack-sdk-auth-core",
  "postcard",
  "regex",
@@ -5075,7 +5099,6 @@ name = "openstack_tui"
 version = "0.14.0"
 dependencies = [
  "async-trait",
- "chrono",
  "clap",
  "color-eyre",
  "config",
@@ -5087,6 +5110,7 @@ dependencies = [
  "eyre",
  "futures",
  "itertools 0.15.0",
+ "jiff 1.0.1",
  "jsonschema",
  "open",
  "openstack_sdk",
@@ -5115,7 +5139,6 @@ dependencies = [
 name = "openstack_types"
 version = "0.23.0"
 dependencies = [
- "chrono",
  "openstack-types-block-storage",
  "openstack-types-compute",
  "openstack-types-container-infrastructure-management",
@@ -6874,7 +6897,7 @@ dependencies = [
  "hex",
  "indexmap 1.9.3",
  "indexmap 2.14.2",
- "jiff",
+ "jiff 0.2.39",
  "schemars 0.9.0",
  "schemars 1.2.3",
  "serde_core",

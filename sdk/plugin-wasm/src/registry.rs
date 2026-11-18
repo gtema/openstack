@@ -39,7 +39,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, OnceLock, RwLock};
 
-use chrono::Utc;
+use jiff::Timestamp;
 
 use crate::error::WasmPluginError;
 use crate::index::{self, IndexEntry, IndexVersion};
@@ -232,7 +232,7 @@ pub fn install(
             version: version.clone(),
             sha256,
             source: src_path.to_path_buf(),
-            installed_at: Utc::now(),
+            installed_at: Timestamp::now(),
             trust: TrustInfo {
                 confirmed_by_user: true,
                 allow_unsigned: true,
@@ -532,7 +532,7 @@ pub fn finalize_install(
             version: pending.version.clone(),
             sha256,
             source: PathBuf::from(format!("registry:{}", pending.source_repo)),
-            installed_at: Utc::now(),
+            installed_at: Timestamp::now(),
             trust: TrustInfo {
                 confirmed_by_user: true,
                 allow_unsigned,

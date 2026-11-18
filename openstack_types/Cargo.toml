@@ -39,7 +39,6 @@ openapi = []
 keystone_ng = ["openstack-types-identity/keystone_ng"]
 
 [dependencies]
-chrono = { workspace= true }
 openstack-types-block-storage = { path = "../types/block-storage/", version = "0.23", optional = true}
 openstack-types-compute = { path = "../types/compute/", version = "0.23", optional = true}
 openstack-types-container-infrastructure-management = { path = "../types/container-infrastructure-management/", version = "0.23", optional = true}
