@@ -38,11 +38,11 @@ pub struct SchemaCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum SchemaCommands {
-    Image(image::ImageCommand),
-    Images(images::ImagesCommand),
-    Member(member::MemberCommand),
-    Members(members::MembersCommand),
-    Metadef(metadef::MetadefCommand),
+    Image(Box<image::ImageCommand>),
+    Images(Box<images::ImagesCommand>),
+    Member(Box<member::MemberCommand>),
+    Members(Box<members::MembersCommand>),
+    Metadef(Box<metadef::MetadefCommand>),
 }
 
 impl SchemaCommand {

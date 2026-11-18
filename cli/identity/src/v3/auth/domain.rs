@@ -36,7 +36,7 @@ pub struct DomainCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum DomainCommands {
-    List(list::DomainsCommand),
+    List(Box<list::DomainsCommand>),
 }
 
 impl DomainCommand {

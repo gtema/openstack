@@ -47,9 +47,9 @@ pub struct AssistedVolumeSnapshotCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AssistedVolumeSnapshotCommands {
-    Create(create::AssistedVolumeSnapshotCommand),
+    Create(Box<create::AssistedVolumeSnapshotCommand>),
     #[command(visible_alias = "delete")]
-    Delete20(delete_20::AssistedVolumeSnapshotCommand),
+    Delete20(Box<delete_20::AssistedVolumeSnapshotCommand>),
 }
 
 impl AssistedVolumeSnapshotCommand {

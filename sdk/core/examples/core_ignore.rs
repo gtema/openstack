@@ -1,7 +1,7 @@
 //! Example for using ignore combinator to send API request not expecting any response. This is
 //! typically used for DELETE operations
 //!
-//! `OS_CLOUD=devstack FLAVOR_ID=... cargo run -p openstack_sdk --example ignore`
+//! `OS_CLOUD=devstack FLAVOR_ID=... cargo run -p openstack_sdk_core --example core_ignore`
 //!
 use std::borrow::Cow;
 use std::env;
@@ -64,10 +64,10 @@ async fn main() -> Result<(), OpenStackError> {
     ep_builder.id(env::var("FLAVOR_ID").expect("FLAVOR_ID variable must be set"));
 
     // Build the endpoint
-    let ep = ep_builder.build().unwrap();
+    let _ep = ep_builder.build().unwrap();
 
     // Execute query keeping data as raw json_value
-    // ignore(ep).query_async(&client).await?;
+    // ignore(_ep).query_async(&client).await?;
 
     // println!("Flavor was retrieved but we ignored the result");
     Ok(())

@@ -128,8 +128,10 @@ mod tests {
 
     #[test]
     fn normalise_filter_preserves_existing() {
-        let mut filter = ComputeFlavorList::default();
-        filter.sort_key = Some("id".into());
+        let filter = ComputeFlavorList {
+            sort_key: Some("id".into()),
+            ..Default::default()
+        };
         let norm = ComputeFlavorsBehaviour::normalise_filter(filter);
         assert_eq!(norm.sort_key, Some("id".into()));
     }

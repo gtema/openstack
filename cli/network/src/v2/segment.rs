@@ -40,11 +40,11 @@ pub struct SegmentCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum SegmentCommands {
-    Create(create::SegmentCommand),
-    Delete(delete::SegmentCommand),
-    List(list::SegmentsCommand),
-    Set(set::SegmentCommand),
-    Show(show::SegmentCommand),
+    Create(Box<create::SegmentCommand>),
+    Delete(Box<delete::SegmentCommand>),
+    List(Box<list::SegmentsCommand>),
+    Set(Box<set::SegmentCommand>),
+    Show(Box<show::SegmentCommand>),
 }
 
 impl SegmentCommand {

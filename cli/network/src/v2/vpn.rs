@@ -80,7 +80,7 @@ pub struct VpnCommand {
 #[derive(Subcommand)]
 pub enum VpnCommands {
     EndpointGroup(Box<endpoint_group::EndpointGroupCommand>),
-    Ikepolicy(ikepolicy::IkepolicyCommand),
+    Ikepolicy(Box<ikepolicy::IkepolicyCommand>),
     IpsecSiteConnection(Box<ipsec_site_connection::IpsecSiteConnectionCommand>),
     Ipsecpolicy(Box<ipsecpolicy::IpsecpolicyCommand>),
     Vpnservice(Box<vpnservice::VpnserviceCommand>),

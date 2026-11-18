@@ -46,15 +46,15 @@ pub struct NamespaceCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum NamespaceCommands {
-    Create(create::NamespaceCommand),
-    Delete(delete::NamespaceCommand),
-    List(list::NamespacesCommand),
-    Object(object::ObjectCommand),
-    Property(property::PropertyCommand),
-    ResourceTypeAssociation(resource_type::ResourceTypeCommand),
-    Set(set::NamespaceCommand),
-    Show(show::NamespaceCommand),
-    Tag(tag::TagCommand),
+    Create(Box<create::NamespaceCommand>),
+    Delete(Box<delete::NamespaceCommand>),
+    List(Box<list::NamespacesCommand>),
+    Object(Box<object::ObjectCommand>),
+    Property(Box<property::PropertyCommand>),
+    ResourceTypeAssociation(Box<resource_type::ResourceTypeCommand>),
+    Set(Box<set::NamespaceCommand>),
+    Show(Box<show::NamespaceCommand>),
+    Tag(Box<tag::TagCommand>),
 }
 
 impl NamespaceCommand {

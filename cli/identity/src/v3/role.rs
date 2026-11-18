@@ -54,14 +54,14 @@ pub struct RoleCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RoleCommands {
-    Assignment(role_assignment::RoleAssignmentCommand),
-    Create(create::RoleCommand),
-    Delete(delete::RoleCommand),
-    Imply(imply::ImplyCommand),
-    Inference(role_inference::RoleInferenceCommand),
-    List(list::RolesCommand),
-    Set(set::RoleCommand),
-    Show(show::RoleCommand),
+    Assignment(Box<role_assignment::RoleAssignmentCommand>),
+    Create(Box<create::RoleCommand>),
+    Delete(Box<delete::RoleCommand>),
+    Imply(Box<imply::ImplyCommand>),
+    Inference(Box<role_inference::RoleInferenceCommand>),
+    List(Box<list::RolesCommand>),
+    Set(Box<set::RoleCommand>),
+    Show(Box<show::RoleCommand>),
 }
 
 impl RoleCommand {

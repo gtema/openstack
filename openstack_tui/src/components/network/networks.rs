@@ -126,8 +126,10 @@ mod tests {
 
     #[test]
     fn normalise_filter_preserves_existing() {
-        let mut f = cloud_types::NetworkNetworkList::default();
-        f.sort_key = Some(Vec::from(["id".into()]));
+        let f = cloud_types::NetworkNetworkList {
+            sort_key: Some(Vec::from(["id".into()])),
+            ..Default::default()
+        };
         let norm = NetworkNetworksBehaviour::normalise_filter(f);
         assert_eq!(norm.sort_key, Some(Vec::from(["id".into()])));
     }

@@ -36,9 +36,9 @@ pub struct RemoteConsoleCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RemoteConsoleCommands {
-    Create26(create_26::RemoteConsoleCommand),
+    Create26(Box<create_26::RemoteConsoleCommand>),
     #[command(visible_alias = "create")]
-    Create28(create_28::RemoteConsoleCommand),
+    Create28(Box<create_28::RemoteConsoleCommand>),
 }
 
 impl RemoteConsoleCommand {

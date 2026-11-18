@@ -33,7 +33,7 @@ pub struct VersionCommand {
 #[derive(Subcommand)]
 pub enum VersionCommands {
     #[command(visible_alias = "get")]
-    Show(get::VersionCommand),
+    Show(Box<get::VersionCommand>),
 }
 
 impl VersionCommand {

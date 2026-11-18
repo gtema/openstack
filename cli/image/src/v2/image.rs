@@ -45,23 +45,23 @@ pub struct ImageCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ImageCommands {
-    Create(create::ImageCommand),
+    Create(Box<create::ImageCommand>),
     /// Deactivates an image. (Since Image API v2.3)
     ///
     /// By default, this operation is restricted to administrators only.
     #[command(about = "Deactivate image")]
-    Deactivate(deactivate::ImageCommand),
-    Delete(delete::ImageCommand),
+    Deactivate(Box<deactivate::ImageCommand>),
+    Delete(Box<delete::ImageCommand>),
     Download(Box<file::download::FileCommand>),
     List(Box<list::ImagesCommand>),
     /// Reactivates an image. (Since Image API v2.3)
     ///
     /// By default, this operation is restricted to administrators only
     #[command(about = "Reactivate image")]
-    Reactivate(reactivate::ImageCommand),
-    Set(patch::ImageCommand),
-    Show(show::ImageCommand),
-    Upload(file::upload::FileCommand),
+    Reactivate(Box<reactivate::ImageCommand>),
+    Set(Box<patch::ImageCommand>),
+    Show(Box<show::ImageCommand>),
+    Upload(Box<file::upload::FileCommand>),
 }
 
 impl ImageCommand {

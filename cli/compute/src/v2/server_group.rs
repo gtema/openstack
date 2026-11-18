@@ -42,14 +42,14 @@ pub struct ServerGroupCommand {
 #[derive(Subcommand)]
 pub enum ServerGroupCommands {
     #[command(visible_alias = "create")]
-    Create264(create_264::ServerGroupCommand),
-    Create215(create_215::ServerGroupCommand),
-    Create20(create_20::ServerGroupCommand),
-    Delete(delete::ServerGroupCommand),
+    Create264(Box<create_264::ServerGroupCommand>),
+    Create215(Box<create_215::ServerGroupCommand>),
+    Create20(Box<create_20::ServerGroupCommand>),
+    Delete(Box<delete::ServerGroupCommand>),
     #[command(visible_alias = "list")]
-    List20(list_20::ServerGroupsCommand),
+    List20(Box<list_20::ServerGroupsCommand>),
     #[command(visible_alias = "show")]
-    Show21(show_21::ServerGroupCommand),
+    Show21(Box<show_21::ServerGroupCommand>),
 }
 
 impl ServerGroupCommand {

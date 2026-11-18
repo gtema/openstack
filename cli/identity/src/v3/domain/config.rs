@@ -65,12 +65,12 @@ pub struct ConfigCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ConfigCommands {
-    Default(default::ConfigCommand),
-    Group(group::GroupCommand),
-    Purge(delete_all::ConfigCommand),
-    List(list::ConfigsCommand),
-    Replace(replace::ConfigCommand),
-    Set(set::ConfigCommand),
+    Default(Box<default::ConfigCommand>),
+    Group(Box<group::GroupCommand>),
+    Purge(Box<delete_all::ConfigCommand>),
+    List(Box<list::ConfigsCommand>),
+    Replace(Box<replace::ConfigCommand>),
+    Set(Box<set::ConfigCommand>),
 }
 
 impl ConfigCommand {

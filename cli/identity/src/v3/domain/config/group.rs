@@ -41,11 +41,11 @@ pub struct GroupCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum GroupCommands {
-    Default(default::GroupCommand),
-    Delete(delete::GroupCommand),
-    Option(option::OptionCommand),
-    Set(set::GroupCommand),
-    Show(show::GroupCommand),
+    Default(Box<default::GroupCommand>),
+    Delete(Box<delete::GroupCommand>),
+    Option(Box<option::OptionCommand>),
+    Set(Box<set::GroupCommand>),
+    Show(Box<show::GroupCommand>),
 }
 
 impl GroupCommand {

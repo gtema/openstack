@@ -40,13 +40,13 @@ pub struct MigrationCommand {
 #[derive(Subcommand)]
 pub enum MigrationCommands {
     #[command(visible_alias = "delete")]
-    Delete224(delete_224::MigrationCommand),
+    Delete224(Box<delete_224::MigrationCommand>),
     #[command(visible_alias = "force-complete")]
-    ForceComplete222(force_complete_222::MigrationCommand),
+    ForceComplete222(Box<force_complete_222::MigrationCommand>),
     #[command(visible_alias = "list")]
-    List223(list_223::MigrationsCommand),
+    List223(Box<list_223::MigrationsCommand>),
     #[command(visible_alias = "show")]
-    Show223(show_223::MigrationCommand),
+    Show223(Box<show_223::MigrationCommand>),
 }
 
 impl MigrationCommand {

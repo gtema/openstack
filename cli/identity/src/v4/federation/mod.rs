@@ -35,7 +35,7 @@ pub struct FederationCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum FederationCommands {
-    IdentityProvider(identity_provider::IdentityProviderCommand),
+    IdentityProvider(Box<identity_provider::IdentityProviderCommand>),
     //    Mapping(mapping::MappingCommand),
 }
 

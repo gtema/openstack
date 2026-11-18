@@ -43,10 +43,10 @@ pub struct FederationCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum FederationCommands {
-    IdentityProvider(identity_provider::IdentityProviderCommand),
-    Mapping(mapping::MappingCommand),
-    ServiceProvider(service_provider::ServiceProviderCommand),
-    Saml2Metadata(saml2::metadata::MetadataCommand),
+    IdentityProvider(Box<identity_provider::IdentityProviderCommand>),
+    Mapping(Box<mapping::MappingCommand>),
+    ServiceProvider(Box<service_provider::ServiceProviderCommand>),
+    Saml2Metadata(Box<saml2::metadata::MetadataCommand>),
 }
 
 impl FederationCommand {

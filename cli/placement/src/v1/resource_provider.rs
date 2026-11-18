@@ -46,20 +46,20 @@ pub struct ResourceProviderCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ResourceProviderCommands {
-    Aggregate(aggregate::AggregateCommand),
-    Allocation(allocation::AllocationCommand),
+    Aggregate(Box<aggregate::AggregateCommand>),
+    Allocation(Box<allocation::AllocationCommand>),
     #[command(visible_alias = "create")]
-    Create114(create_114::ResourceProviderCommand),
-    Create10(create_10::ResourceProviderCommand),
-    Delete(delete::ResourceProviderCommand),
-    Inventory(inventory::InventoryCommand),
-    List(list::ResourceProvidersCommand),
+    Create114(Box<create_114::ResourceProviderCommand>),
+    Create10(Box<create_10::ResourceProviderCommand>),
+    Delete(Box<delete::ResourceProviderCommand>),
+    Inventory(Box<inventory::InventoryCommand>),
+    List(Box<list::ResourceProvidersCommand>),
     #[command(visible_alias = "set")]
-    Set114(set_114::ResourceProviderCommand),
-    Set10(set_10::ResourceProviderCommand),
-    Show(show::ResourceProviderCommand),
+    Set114(Box<set_114::ResourceProviderCommand>),
+    Set10(Box<set_10::ResourceProviderCommand>),
+    Show(Box<show::ResourceProviderCommand>),
     Trait(r#trait::TraitCommand),
-    Usage(usage::UsageCommand),
+    Usage(Box<usage::UsageCommand>),
 }
 
 impl ResourceProviderCommand {

@@ -36,9 +36,9 @@ pub struct ExtensionCommand {
 #[derive(Subcommand)]
 pub enum ExtensionCommands {
     #[command(visible_alias = "list")]
-    List21(list_21::ExtensionsCommand),
+    List21(Box<list_21::ExtensionsCommand>),
     #[command(visible_alias = "show")]
-    Show21(show_21::ExtensionCommand),
+    Show21(Box<show_21::ExtensionCommand>),
 }
 
 impl ExtensionCommand {

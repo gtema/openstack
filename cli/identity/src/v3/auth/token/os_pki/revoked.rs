@@ -35,7 +35,7 @@ pub struct RevokedCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RevokedCommands {
-    Get(get::RevokedCommand),
+    Get(Box<get::RevokedCommand>),
 }
 
 impl RevokedCommand {

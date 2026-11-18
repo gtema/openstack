@@ -34,9 +34,9 @@ pub struct FloatingipCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum FloatingipCommands {
-    List(list::FloatingipsCommand),
-    Show(show::FloatingipCommand),
-    Set(set::FloatingipCommand),
+    List(Box<list::FloatingipsCommand>),
+    Show(Box<show::FloatingipCommand>),
+    Set(Box<set::FloatingipCommand>),
 }
 
 impl FloatingipCommand {

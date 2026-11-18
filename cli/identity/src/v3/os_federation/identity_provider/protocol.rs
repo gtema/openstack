@@ -54,11 +54,11 @@ pub struct ProtocolCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ProtocolCommands {
-    Create(create::ProtocolCommand),
-    Delete(delete::ProtocolCommand),
-    List(list::ProtocolsCommand),
-    Set(set::ProtocolCommand),
-    Show(show::ProtocolCommand),
+    Create(Box<create::ProtocolCommand>),
+    Delete(Box<delete::ProtocolCommand>),
+    List(Box<list::ProtocolsCommand>),
+    Set(Box<set::ProtocolCommand>),
+    Show(Box<show::ProtocolCommand>),
 }
 
 impl ProtocolCommand {

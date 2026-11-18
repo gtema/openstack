@@ -58,14 +58,14 @@ pub struct DomainCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum DomainCommands {
-    Create(create::DomainCommand),
-    Config(config::ConfigCommand),
-    Delete(delete::DomainCommand),
-    Group(group::GroupCommand),
-    List(list::DomainsCommand),
-    Set(set::DomainCommand),
-    Show(show::DomainCommand),
-    User(user::UserCommand),
+    Create(Box<create::DomainCommand>),
+    Config(Box<config::ConfigCommand>),
+    Delete(Box<delete::DomainCommand>),
+    Group(Box<group::GroupCommand>),
+    List(Box<list::DomainsCommand>),
+    Set(Box<set::DomainCommand>),
+    Show(Box<show::DomainCommand>),
+    User(Box<user::UserCommand>),
 }
 
 impl DomainCommand {

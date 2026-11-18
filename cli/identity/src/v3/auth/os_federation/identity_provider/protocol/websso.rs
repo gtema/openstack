@@ -35,8 +35,8 @@ pub struct WebssoCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum WebssoCommands {
-    Create(create::WebssoCommand),
-    Get(get::WebssoCommand),
+    Create(Box<create::WebssoCommand>),
+    Get(Box<get::WebssoCommand>),
 }
 
 impl WebssoCommand {

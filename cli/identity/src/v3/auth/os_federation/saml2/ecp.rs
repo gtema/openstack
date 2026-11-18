@@ -35,8 +35,8 @@ pub struct EcpCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum EcpCommands {
-    Create(create::EcpCommand),
-    Get(get::EcpCommand),
+    Create(Box<create::EcpCommand>),
+    Get(Box<get::EcpCommand>),
 }
 
 impl EcpCommand {

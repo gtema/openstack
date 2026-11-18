@@ -114,10 +114,10 @@ pub struct ApplicationCredentialCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ApplicationCredentialCommands {
-    Create(create::ApplicationCredentialCommand),
-    Delete(delete::ApplicationCredentialCommand),
-    List(list::ApplicationCredentialsCommand),
-    Show(show::ApplicationCredentialCommand),
+    Create(Box<create::ApplicationCredentialCommand>),
+    Delete(Box<delete::ApplicationCredentialCommand>),
+    List(Box<list::ApplicationCredentialsCommand>),
+    Show(Box<show::ApplicationCredentialCommand>),
 }
 
 impl ApplicationCredentialCommand {

@@ -34,7 +34,7 @@ pub struct RecordsetCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RecordsetCommands {
-    List(list::RecordsetsCommand),
+    List(Box<list::RecordsetsCommand>),
 }
 
 impl RecordsetCommand {

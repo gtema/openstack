@@ -35,7 +35,7 @@ pub struct ImageCommand {
 #[derive(Subcommand)]
 pub enum ImageCommands {
     /// Show Image Schema
-    Show(get::ImageCommand),
+    Show(Box<get::ImageCommand>),
 }
 
 impl ImageCommand {

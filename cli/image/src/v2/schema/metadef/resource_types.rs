@@ -34,7 +34,7 @@ pub struct ResourceTypesCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ResourceTypesCommands {
-    Show(get::ResourceTypesCommand),
+    Show(Box<get::ResourceTypesCommand>),
 }
 
 impl ResourceTypesCommand {

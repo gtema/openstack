@@ -34,7 +34,7 @@ pub struct UsageCommand {
 #[derive(Subcommand)]
 pub enum UsageCommands {
     #[command(visible_alias = "list")]
-    List19(list_19::UsagesCommand),
+    List19(Box<list_19::UsagesCommand>),
 }
 
 impl UsageCommand {

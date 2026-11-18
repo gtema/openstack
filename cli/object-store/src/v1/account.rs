@@ -32,8 +32,8 @@ pub struct AccountCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AccountCommands {
-    Show(show::AccountCommand),
-    Set(set::AccountCommand),
+    Show(Box<show::AccountCommand>),
+    Set(Box<set::AccountCommand>),
 }
 
 impl AccountCommand {

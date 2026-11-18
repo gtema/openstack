@@ -54,11 +54,11 @@ pub struct PortForwardingCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PortForwardingCommands {
-    Create(create::PortForwardingCommand),
-    Delete(delete::PortForwardingCommand),
-    List(list::PortForwardingsCommand),
-    Set(set::PortForwardingCommand),
-    Show(show::PortForwardingCommand),
+    Create(Box<create::PortForwardingCommand>),
+    Delete(Box<delete::PortForwardingCommand>),
+    List(Box<list::PortForwardingsCommand>),
+    Set(Box<set::PortForwardingCommand>),
+    Show(Box<show::PortForwardingCommand>),
 }
 
 impl PortForwardingCommand {

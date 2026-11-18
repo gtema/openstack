@@ -77,8 +77,10 @@ mod tests {
 
     #[test]
     fn normalise_filter_preserves_existing() {
-        let mut f = cloud_types::NetworkSubnetList::default();
-        f.sort_key = Some(Vec::from(["id".into()]));
+        let f = cloud_types::NetworkSubnetList {
+            sort_key: Some(Vec::from(["id".into()])),
+            ..Default::default()
+        };
         let norm = NetworkSubnetsBehaviour::normalise_filter(f);
         assert_eq!(norm.sort_key, Some(Vec::from(["id".into()])));
     }

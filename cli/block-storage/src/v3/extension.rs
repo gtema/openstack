@@ -33,7 +33,7 @@ pub struct ExtensionCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ExtensionCommands {
-    List(list::ExtensionsCommand),
+    List(Box<list::ExtensionsCommand>),
 }
 
 impl ExtensionCommand {

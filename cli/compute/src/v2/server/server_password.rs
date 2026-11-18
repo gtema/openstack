@@ -40,10 +40,10 @@ pub struct PasswordCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PasswordCommands {
-    Delete(delete::ServerPasswordCommand),
+    Delete(Box<delete::ServerPasswordCommand>),
     #[command(visible_alias = "show")]
-    Show21(get_21::ServerPasswordCommand),
-    ShowPlaintext(show_plaintext::ShowPlaintextCommand),
+    Show21(Box<get_21::ServerPasswordCommand>),
+    ShowPlaintext(Box<show_plaintext::ShowPlaintextCommand>),
 }
 
 impl PasswordCommand {

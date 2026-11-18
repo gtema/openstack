@@ -38,7 +38,7 @@ pub struct RbacPolicyCommand {
 #[derive(Subcommand)]
 pub enum RbacPolicyCommands {
     Create(Box<create::RbacPolicyCommand>),
-    Delete(delete::RbacPolicyCommand),
+    Delete(Box<delete::RbacPolicyCommand>),
     List(Box<list::RbacPoliciesCommand>),
     Set(Box<set::RbacPolicyCommand>),
     Show(Box<show::RbacPolicyCommand>),

@@ -31,7 +31,7 @@ pub struct AllocationCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AllocationCommands {
-    List(list::AllocationCommand),
+    List(Box<list::AllocationCommand>),
 }
 
 impl AllocationCommand {

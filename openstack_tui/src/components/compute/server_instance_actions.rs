@@ -121,9 +121,10 @@ mod tests {
     }
 
     fn make_filter() -> ComputeServerInstanceActionList {
-        let mut f = ComputeServerInstanceActionList::default();
-        f.server_id = "server-1".into();
-        f
+        ComputeServerInstanceActionList {
+            server_id: "server-1".into(),
+            ..Default::default()
+        }
     }
 
     #[test]

@@ -37,10 +37,10 @@ pub struct MeteringLabelCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum MeteringLabelCommands {
-    Create(create::MeteringLabelCommand),
-    Delete(delete::MeteringLabelCommand),
-    List(list::MeteringLabelsCommand),
-    Show(show::MeteringLabelCommand),
+    Create(Box<create::MeteringLabelCommand>),
+    Delete(Box<delete::MeteringLabelCommand>),
+    List(Box<list::MeteringLabelsCommand>),
+    Show(Box<show::MeteringLabelCommand>),
 }
 
 impl MeteringLabelCommand {

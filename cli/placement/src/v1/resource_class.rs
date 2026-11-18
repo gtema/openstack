@@ -40,15 +40,15 @@ pub struct ResourceClassCommand {
 #[derive(Subcommand)]
 pub enum ResourceClassCommands {
     #[command(visible_alias = "create")]
-    Create12(create_12::ResourceClassCommand),
+    Create12(Box<create_12::ResourceClassCommand>),
     #[command(visible_alias = "delete")]
-    Delete12(delete_12::ResourceClassCommand),
+    Delete12(Box<delete_12::ResourceClassCommand>),
     #[command(visible_alias = "list")]
-    List12(list_12::ResourceClassesCommand),
+    List12(Box<list_12::ResourceClassesCommand>),
     #[command(visible_alias = "set")]
-    Set17(set_17::ResourceClassCommand),
+    Set17(Box<set_17::ResourceClassCommand>),
     #[command(visible_alias = "show")]
-    Show12(show_12::ResourceClassCommand),
+    Show12(Box<show_12::ResourceClassCommand>),
 }
 
 impl ResourceClassCommand {

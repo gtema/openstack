@@ -33,7 +33,7 @@ pub struct RoleAssignmentCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RoleAssignmentCommands {
-    List(list::RoleAssignmentsCommand),
+    List(Box<list::RoleAssignmentsCommand>),
 }
 
 impl RoleAssignmentCommand {

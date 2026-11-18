@@ -35,7 +35,7 @@ pub struct MetadataCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum MetadataCommands {
-    Show(get::MetadataCommand),
+    Show(Box<get::MetadataCommand>),
 }
 
 impl MetadataCommand {

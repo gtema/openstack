@@ -40,13 +40,13 @@ pub struct TraitCommand {
 #[derive(Subcommand)]
 pub enum TraitCommands {
     #[command(visible_alias = "set")]
-    Create(set_16::TraitCommand),
+    Create(Box<set_16::TraitCommand>),
     #[command(visible_alias = "delete")]
-    Delete16(delete_16::TraitCommand),
+    Delete16(Box<delete_16::TraitCommand>),
     #[command(visible_alias = "list")]
-    List16(list_16::TraitsCommand),
+    List16(Box<list_16::TraitsCommand>),
     #[command(visible_alias = "show")]
-    Show16(show_16::TraitCommand),
+    Show16(Box<show_16::TraitCommand>),
 }
 
 impl TraitCommand {

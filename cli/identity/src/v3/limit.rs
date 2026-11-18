@@ -47,12 +47,12 @@ pub struct LimitCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum LimitCommands {
-    Create(create::LimitCommand),
-    Delete(delete::LimitCommand),
-    List(list::LimitsCommand),
-    Model(model::get::ModelCommand),
-    Set(set::LimitCommand),
-    Show(show::LimitCommand),
+    Create(Box<create::LimitCommand>),
+    Delete(Box<delete::LimitCommand>),
+    List(Box<list::LimitsCommand>),
+    Model(Box<model::get::ModelCommand>),
+    Set(Box<set::LimitCommand>),
+    Show(Box<show::LimitCommand>),
 }
 
 impl LimitCommand {

@@ -37,9 +37,9 @@ pub struct IpCommand {
 #[derive(Subcommand)]
 pub enum IpCommands {
     #[command(visible_alias = "list")]
-    List21(list_21::IpsCommand),
+    List21(Box<list_21::IpsCommand>),
     #[command(visible_alias = "show")]
-    Show21(show_21::IpCommand),
+    Show21(Box<show_21::IpCommand>),
 }
 
 impl IpCommand {

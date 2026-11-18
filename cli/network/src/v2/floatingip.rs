@@ -39,13 +39,13 @@ pub struct FloatingIPCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum FloatingIPCommands {
-    Create(create::FloatingipCommand),
-    Delete(delete::FloatingipCommand),
-    List(list::FloatingipsCommand),
-    PortForwarding(port_forwarding::PortForwardingCommand),
-    Set(set::FloatingipCommand),
-    Show(show::FloatingipCommand),
-    Tag(tag::TagCommand),
+    Create(Box<create::FloatingipCommand>),
+    Delete(Box<delete::FloatingipCommand>),
+    List(Box<list::FloatingipsCommand>),
+    PortForwarding(Box<port_forwarding::PortForwardingCommand>),
+    Set(Box<set::FloatingipCommand>),
+    Show(Box<show::FloatingipCommand>),
+    Tag(Box<tag::TagCommand>),
 }
 
 impl FloatingIPCommand {

@@ -45,19 +45,19 @@ pub struct LoadBalancerCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum LoadBalancerCommands {
-    Amphorae(amphorae::AmphoraeCommand),
-    AvailabilityZone(availability_zone::AvailabilityZoneCommand),
-    AvailabilityZoneProfile(availability_zone_profile::AvailabilityZoneProfileCommand),
-    Flavor(flavor::FlavorCommand),
-    FlavorProfile(flavor_profile::FlavorProfileCommand),
-    Healthmonitor(healthmonitor::HealthmonitorCommand),
-    L7policy(l7policy::L7PolicyCommand),
-    Listener(listener::ListenerCommand),
-    Loadbalancer(loadbalancer::LoadbalancerCommand),
-    Pool(pool::PoolCommand),
-    Provider(provider::ProviderCommand),
-    Quota(quota::QuotaCommand),
-    Version(version::VersionCommand),
+    Amphorae(Box<amphorae::AmphoraeCommand>),
+    AvailabilityZone(Box<availability_zone::AvailabilityZoneCommand>),
+    AvailabilityZoneProfile(Box<availability_zone_profile::AvailabilityZoneProfileCommand>),
+    Flavor(Box<flavor::FlavorCommand>),
+    FlavorProfile(Box<flavor_profile::FlavorProfileCommand>),
+    Healthmonitor(Box<healthmonitor::HealthmonitorCommand>),
+    L7policy(Box<l7policy::L7PolicyCommand>),
+    Listener(Box<listener::ListenerCommand>),
+    Loadbalancer(Box<loadbalancer::LoadbalancerCommand>),
+    Pool(Box<pool::PoolCommand>),
+    Provider(Box<provider::ProviderCommand>),
+    Quota(Box<quota::QuotaCommand>),
+    Version(Box<version::VersionCommand>),
 }
 
 impl LoadBalancerCommand {

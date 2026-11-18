@@ -42,9 +42,9 @@ pub struct AvailabilityZoneCommand {
 #[derive(Subcommand)]
 pub enum AvailabilityZoneCommands {
     #[command(visible_alias = "list")]
-    List21(list_21::AvailabilityZonesCommand),
+    List21(Box<list_21::AvailabilityZonesCommand>),
     #[command(visible_alias = "list-detail")]
-    ListDetail21(list_detail_21::AvailabilityZonesCommand),
+    ListDetail21(Box<list_detail_21::AvailabilityZonesCommand>),
 }
 
 impl AvailabilityZoneCommand {

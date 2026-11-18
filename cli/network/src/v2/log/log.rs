@@ -40,11 +40,11 @@ pub struct LogCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum LogCommands {
-    Create(create::LogCommand),
-    Delete(delete::LogCommand),
-    List(list::LogsCommand),
-    Set(set::LogCommand),
-    Show(show::LogCommand),
+    Create(Box<create::LogCommand>),
+    Delete(Box<delete::LogCommand>),
+    List(Box<list::LogsCommand>),
+    Set(Box<set::LogCommand>),
+    Show(Box<show::LogCommand>),
 }
 
 impl LogCommand {

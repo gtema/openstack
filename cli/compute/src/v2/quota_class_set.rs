@@ -63,9 +63,9 @@ pub struct QuotaClassSetCommand {
 #[derive(Subcommand)]
 pub enum QuotaClassSetCommands {
     #[command(visible_alias = "set")]
-    Set21(set_21::QuotaClassSetCommand),
+    Set21(Box<set_21::QuotaClassSetCommand>),
     #[command(visible_alias = "show")]
-    Show21(show_21::QuotaClassSetCommand),
+    Show21(Box<show_21::QuotaClassSetCommand>),
 }
 
 impl QuotaClassSetCommand {

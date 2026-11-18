@@ -34,7 +34,7 @@ pub struct AvailabilityZoneCapabilityCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AvailabilityZoneCapabilityCommands {
-    List(list::AvailabilityZoneCapabilitiesCommand),
+    List(Box<list::AvailabilityZoneCapabilitiesCommand>),
 }
 
 impl AvailabilityZoneCapabilityCommand {

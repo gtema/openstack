@@ -43,11 +43,11 @@ pub struct TagCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum TagCommands {
-    Add(set::TagCommand),
-    Check(show::TagCommand),
-    Delete(delete::TagCommand),
-    List(list::TagsCommand),
-    Purge(delete_all::TagCommand),
+    Add(Box<set::TagCommand>),
+    Check(Box<show::TagCommand>),
+    Delete(Box<delete::TagCommand>),
+    List(Box<list::TagsCommand>),
+    Purge(Box<delete_all::TagCommand>),
 }
 
 impl TagCommand {

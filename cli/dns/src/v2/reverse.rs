@@ -32,7 +32,7 @@ pub struct ReverseCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ReverseCommands {
-    Floatingip(floatingip::FloatingipCommand),
+    Floatingip(Box<floatingip::FloatingipCommand>),
 }
 
 impl ReverseCommand {

@@ -168,8 +168,10 @@ mod tests {
 
     #[test]
     fn normalise_filter_preserves_existing_sort_key() {
-        let mut filter = NetworkSecurityGroupRuleList::default();
-        filter.sort_key = Some(vec!["id".into()]);
+        let filter = NetworkSecurityGroupRuleList {
+            sort_key: Some(vec!["id".into()]),
+            ..Default::default()
+        };
         let norm = NetworkSecurityGroupRulesBehaviour::normalise_filter(filter);
         assert_eq!(norm.sort_key, Some(vec!["id".into()]));
     }

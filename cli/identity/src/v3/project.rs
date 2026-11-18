@@ -73,13 +73,13 @@ pub struct ProjectCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ProjectCommands {
-    Create(create::ProjectCommand),
-    Delete(delete::ProjectCommand),
-    Group(group::GroupCommand),
-    List(list::ProjectsCommand),
-    Set(set::ProjectCommand),
-    Show(show::ProjectCommand),
-    User(user::UserCommand),
+    Create(Box<create::ProjectCommand>),
+    Delete(Box<delete::ProjectCommand>),
+    Group(Box<group::GroupCommand>),
+    List(Box<list::ProjectsCommand>),
+    Set(Box<set::ProjectCommand>),
+    Show(Box<show::ProjectCommand>),
+    User(Box<user::UserCommand>),
 }
 
 impl ProjectCommand {

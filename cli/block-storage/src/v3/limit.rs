@@ -36,7 +36,7 @@ pub struct LimitCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum LimitCommands {
-    List(list::LimitCommand),
+    List(Box<list::LimitCommand>),
 }
 
 impl LimitCommand {

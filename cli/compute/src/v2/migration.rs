@@ -37,7 +37,7 @@ pub struct MigrationCommand {
 #[derive(Subcommand)]
 pub enum MigrationCommands {
     #[command(visible_alias = "get")]
-    Get20(get_20::MigrationCommand),
+    Get20(Box<get_20::MigrationCommand>),
 }
 
 impl MigrationCommand {

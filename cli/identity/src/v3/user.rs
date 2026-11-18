@@ -58,14 +58,14 @@ pub struct UserCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum UserCommands {
-    Create(create::UserCommand),
-    Delete(delete::UserCommand),
-    Groups(group::list::GroupsCommand),
-    List(list::UsersCommand),
-    Password(password::PasswordCommand),
-    Projects(project::list::ProjectsCommand),
-    Set(set::UserCommand),
-    Show(show::UserCommand),
+    Create(Box<create::UserCommand>),
+    Delete(Box<delete::UserCommand>),
+    Groups(Box<group::list::GroupsCommand>),
+    List(Box<list::UsersCommand>),
+    Password(Box<password::PasswordCommand>),
+    Projects(Box<project::list::ProjectsCommand>),
+    Set(Box<set::UserCommand>),
+    Show(Box<show::UserCommand>),
 }
 
 impl UserCommand {

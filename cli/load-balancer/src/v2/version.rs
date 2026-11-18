@@ -33,7 +33,7 @@ pub struct VersionCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum VersionCommands {
-    Get(get::VersionCommand),
+    Get(Box<get::VersionCommand>),
 }
 
 impl VersionCommand {

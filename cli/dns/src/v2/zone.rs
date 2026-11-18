@@ -38,13 +38,13 @@ pub struct ZoneCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ZoneCommands {
-    Create(create::ZoneCommand),
-    Delete(delete::ZoneCommand),
-    List(list::ZonesCommand),
-    Nameserver(nameserver::NameserverCommand),
-    Recordset(recordset::RecordsetCommand),
-    Show(show::ZoneCommand),
-    Set(set::ZoneCommand),
+    Create(Box<create::ZoneCommand>),
+    Delete(Box<delete::ZoneCommand>),
+    List(Box<list::ZonesCommand>),
+    Nameserver(Box<nameserver::NameserverCommand>),
+    Recordset(Box<recordset::RecordsetCommand>),
+    Show(Box<show::ZoneCommand>),
+    Set(Box<set::ZoneCommand>),
 }
 
 impl ZoneCommand {

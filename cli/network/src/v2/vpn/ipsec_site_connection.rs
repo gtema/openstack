@@ -39,11 +39,11 @@ pub struct IpsecSiteConnectionCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum IpsecSiteConnectionCommands {
-    Create(create::IpsecSiteConnectionCommand),
-    Delete(delete::IpsecSiteConnectionCommand),
-    List(list::IpsecSiteConnectionsCommand),
-    Set(set::IpsecSiteConnectionCommand),
-    Show(show::IpsecSiteConnectionCommand),
+    Create(Box<create::IpsecSiteConnectionCommand>),
+    Delete(Box<delete::IpsecSiteConnectionCommand>),
+    List(Box<list::IpsecSiteConnectionsCommand>),
+    Set(Box<set::IpsecSiteConnectionCommand>),
+    Show(Box<show::IpsecSiteConnectionCommand>),
 }
 
 impl IpsecSiteConnectionCommand {

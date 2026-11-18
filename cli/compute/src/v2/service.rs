@@ -40,13 +40,13 @@ pub struct ServiceCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ServiceCommands {
-    Delete(delete::ServiceCommand),
+    Delete(Box<delete::ServiceCommand>),
     #[command(visible_alias = "list")]
-    List20(list_20::ServicesCommand),
+    List20(Box<list_20::ServicesCommand>),
     #[command(visible_alias = "set")]
-    Set253(set_253::ServiceCommand),
-    Set211(set_211::ServiceCommand),
-    Set20(set_20::ServiceCommand),
+    Set253(Box<set_253::ServiceCommand>),
+    Set211(Box<set_211::ServiceCommand>),
+    Set20(Box<set_20::ServiceCommand>),
 }
 
 impl ServiceCommand {

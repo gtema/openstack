@@ -41,12 +41,12 @@ pub struct ObjectCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ObjectCommands {
-    Create(create::ObjectCommand),
-    Delete(delete::ObjectCommand),
-    List(list::ObjectsCommand),
-    Purge(delete_all::ObjectCommand),
-    Set(set::ObjectCommand),
-    Show(show::ObjectCommand),
+    Create(Box<create::ObjectCommand>),
+    Delete(Box<delete::ObjectCommand>),
+    List(Box<list::ObjectsCommand>),
+    Purge(Box<delete_all::ObjectCommand>),
+    Set(Box<set::ObjectCommand>),
+    Show(Box<show::ObjectCommand>),
 }
 
 impl ObjectCommand {

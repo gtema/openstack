@@ -41,7 +41,7 @@ pub struct PortCommand {
 pub enum PortCommands {
     Binding(Box<binding::BindingCommand>),
     Create(Box<create::PortCommand>),
-    Delete(delete::PortCommand),
+    Delete(Box<delete::PortCommand>),
     List(Box<list::PortsCommand>),
     Set(Box<set::PortCommand>),
     Show(Box<show::PortCommand>),

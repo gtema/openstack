@@ -39,8 +39,8 @@ pub struct TokenCommand {
 #[derive(Subcommand)]
 pub enum TokenCommands {
     //    Create(create::TokenCommand),
-    Delete(delete::TokenCommand),
-    Get(get::TokenCommand),
+    Delete(Box<delete::TokenCommand>),
+    Get(Box<get::TokenCommand>),
 }
 
 impl TokenCommand {

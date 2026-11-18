@@ -48,13 +48,13 @@ pub struct PluginCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PluginCommands {
-    Install(install::InstallCommand),
-    List(list::ListCommand),
-    Info(info::InfoCommand),
-    Remove(remove::RemoveCommand),
-    Verify(verify::VerifyCommand),
-    Search(search::SearchCommand),
-    Update(update::UpdateCommand),
+    Install(Box<install::InstallCommand>),
+    List(Box<list::ListCommand>),
+    Info(Box<info::InfoCommand>),
+    Remove(Box<remove::RemoveCommand>),
+    Verify(Box<verify::VerifyCommand>),
+    Search(Box<search::SearchCommand>),
+    Update(Box<update::UpdateCommand>),
 }
 
 impl PluginCommand {

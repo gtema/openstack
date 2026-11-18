@@ -32,7 +32,7 @@ pub struct NameserverCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum NameserverCommands {
-    List(list::NameserversCommand),
+    List(Box<list::NameserversCommand>),
 }
 
 impl NameserverCommand {

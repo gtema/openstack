@@ -34,7 +34,7 @@ pub struct TagCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum TagCommands {
-    Show(get::TagCommand),
+    Show(Box<get::TagCommand>),
 }
 
 impl TagCommand {

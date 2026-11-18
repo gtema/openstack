@@ -50,10 +50,10 @@ pub struct RoleCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RoleCommands {
-    Delete(delete::RoleCommand),
-    List(list::RolesCommand),
-    Set(set::RoleCommand),
-    Show(show::RoleCommand),
+    Delete(Box<delete::RoleCommand>),
+    List(Box<list::RolesCommand>),
+    Set(Box<set::RoleCommand>),
+    Show(Box<show::RoleCommand>),
 }
 
 impl RoleCommand {

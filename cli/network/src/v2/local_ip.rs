@@ -42,12 +42,12 @@ pub struct LocalIPCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum LocalIPCommands {
-    Create(create::LocalIpCommand),
-    Delete(delete::LocalIpCommand),
-    List(list::LocalIpsCommand),
-    PortAssociation(port_association::PortAssociationCommand),
-    Set(set::LocalIpCommand),
-    Show(show::LocalIpCommand),
+    Create(Box<create::LocalIpCommand>),
+    Delete(Box<delete::LocalIpCommand>),
+    List(Box<list::LocalIpsCommand>),
+    PortAssociation(Box<port_association::PortAssociationCommand>),
+    Set(Box<set::LocalIpCommand>),
+    Show(Box<show::LocalIpCommand>),
 }
 
 impl LocalIPCommand {

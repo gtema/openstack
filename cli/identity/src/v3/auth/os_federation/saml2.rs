@@ -36,9 +36,9 @@ pub struct Saml2Command {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum Saml2Commands {
-    Create(create::Saml2Command),
-    Ecp(ecp::EcpCommand),
-    Get(get::Saml2Command),
+    Create(Box<create::Saml2Command>),
+    Ecp(Box<ecp::EcpCommand>),
+    Get(Box<get::Saml2Command>),
 }
 
 impl Saml2Command {

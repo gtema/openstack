@@ -34,7 +34,7 @@ pub struct UsageCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum UsageCommands {
-    Get(get::UsageCommand),
+    Get(Box<get::UsageCommand>),
 }
 
 impl UsageCommand {

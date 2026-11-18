@@ -35,12 +35,12 @@ pub struct ContainerCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ContainerCommands {
-    Create(create::ContainerCommand),
-    Delete(delete::ContainerCommand),
-    List(list::ContainersCommand),
-    Prune(prune::ContainerCommand),
-    Set(set::ContainerCommand),
-    Show(show::ContainerCommand),
+    Create(Box<create::ContainerCommand>),
+    Delete(Box<delete::ContainerCommand>),
+    List(Box<list::ContainersCommand>),
+    Prune(Box<prune::ContainerCommand>),
+    Set(Box<set::ContainerCommand>),
+    Show(Box<show::ContainerCommand>),
 }
 
 impl ContainerCommand {

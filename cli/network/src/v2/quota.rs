@@ -43,12 +43,12 @@ pub struct QuotaCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum QuotaCommands {
-    Defaults(defaults::QuotaCommand),
-    Delete(delete::QuotaCommand),
-    Details(details::QuotaCommand),
-    List(list::QuotasCommand),
-    Set(set::QuotaCommand),
-    Show(show::QuotaCommand),
+    Defaults(Box<defaults::QuotaCommand>),
+    Delete(Box<delete::QuotaCommand>),
+    Details(Box<details::QuotaCommand>),
+    List(Box<list::QuotasCommand>),
+    Set(Box<set::QuotaCommand>),
+    Show(Box<show::QuotaCommand>),
 }
 
 impl QuotaCommand {

@@ -67,9 +67,9 @@ pub struct SimpleTenantUsageCommand {
 #[derive(Subcommand)]
 pub enum SimpleTenantUsageCommands {
     #[command(visible_alias = "list")]
-    List21(list_21::SimpleTenantUsagesCommand),
+    List21(Box<list_21::SimpleTenantUsagesCommand>),
     #[command(visible_alias = "show")]
-    Show21(show_21::SimpleTenantUsageCommand),
+    Show21(Box<show_21::SimpleTenantUsageCommand>),
 }
 
 impl SimpleTenantUsageCommand {

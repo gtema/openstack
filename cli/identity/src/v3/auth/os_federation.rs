@@ -38,9 +38,9 @@ pub struct OsFederationCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum OsFederationCommands {
-    IdentityProvider(identity_provider::IdentityProviderCommand),
+    IdentityProvider(Box<identity_provider::IdentityProviderCommand>),
     //    Saml2(saml2::Saml2Command),
-    Websso(websso::WebssoCommand),
+    Websso(Box<websso::WebssoCommand>),
 }
 
 impl OsFederationCommand {

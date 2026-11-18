@@ -36,7 +36,7 @@ pub struct SystemCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum SystemCommands {
-    List(list::SystemsCommand),
+    List(Box<list::SystemsCommand>),
 }
 
 impl SystemCommand {

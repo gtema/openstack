@@ -36,11 +36,12 @@ pub struct UserCommand {
 #[derive(Subcommand)]
 pub enum UserCommands {
     #[cfg(feature = "passkey")]
-    Passkey(passkey::PasskeyCommand),
+    Passkey(Box<passkey::PasskeyCommand>),
 }
 
 impl UserCommand {
     /// Perform command action
+    #[allow(unreachable_patterns)]
     pub async fn take_action<C: CliArgs>(
         &self,
         parsed_args: &C,

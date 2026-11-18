@@ -37,7 +37,7 @@ pub struct LimitCommand {
 #[derive(Subcommand)]
 pub enum LimitCommands {
     #[command(visible_alias = "list")]
-    List21(list_21::LimitCommand),
+    List21(Box<list_21::LimitCommand>),
 }
 
 impl LimitCommand {

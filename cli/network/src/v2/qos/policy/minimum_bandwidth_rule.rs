@@ -41,7 +41,7 @@ pub struct MinimumBandwidthRuleCommand {
 #[derive(Subcommand)]
 pub enum MinimumBandwidthRuleCommands {
     Create(Box<create::MinimumBandwidthRuleCommand>),
-    Delete(delete::MinimumBandwidthRuleCommand),
+    Delete(Box<delete::MinimumBandwidthRuleCommand>),
     List(Box<list::MinimumBandwidthRulesCommand>),
     Set(Box<set::MinimumBandwidthRuleCommand>),
     Show(Box<show::MinimumBandwidthRuleCommand>),

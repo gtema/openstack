@@ -33,8 +33,8 @@ pub struct ReshaperCommand {
 #[derive(Subcommand)]
 pub enum ReshaperCommands {
     #[command(visible_alias = "create")]
-    Create138(create_138::ReshaperCommand),
-    Create134(create_134::ReshaperCommand),
+    Create138(Box<create_138::ReshaperCommand>),
+    Create134(Box<create_134::ReshaperCommand>),
 }
 
 impl ReshaperCommand {

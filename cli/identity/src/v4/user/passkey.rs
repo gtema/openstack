@@ -34,7 +34,7 @@ pub struct PasskeyCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PasskeyCommands {
-    Register(register::PasskeyCommand),
+    Register(Box<register::PasskeyCommand>),
 }
 
 impl PasskeyCommand {

@@ -34,7 +34,7 @@ pub struct ObjectCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ObjectCommands {
-    Show(get::ObjectCommand),
+    Show(Box<get::ObjectCommand>),
 }
 
 impl ObjectCommand {
