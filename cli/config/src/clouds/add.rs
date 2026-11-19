@@ -341,7 +341,7 @@ fn resolve_secure_path(
 }
 
 /// `$XDG_CONFIG_HOME/openstack`, matching the SDK config file discovery.
-fn default_config_dir() -> PathBuf {
+pub(crate) fn default_config_dir() -> PathBuf {
     dirs::config_dir()
         .unwrap_or_else(|| PathBuf::from("."))
         .join("openstack")
@@ -632,7 +632,7 @@ fn is_document_marker(line: &str) -> bool {
 
 /// Read the current content of a target file; `None` when it does not
 /// exist.
-fn read_existing(path: &Path) -> Result<Option<String>, eyre::Report> {
+pub(crate) fn read_existing(path: &Path) -> Result<Option<String>, eyre::Report> {
     if !path.exists() {
         return Ok(None);
     }
@@ -649,7 +649,7 @@ fn read_existing(path: &Path) -> Result<Option<String>, eyre::Report> {
 /// once the content is fully on disk: a failed write leaves the original
 /// untouched. Dropping it without [`commit`](Self::commit) removes the
 /// temporary file.
-struct StagedFile {
+pub(crate) struct StagedFile {
     temp: tempfile::NamedTempFile,
     target: PathBuf,
 }
@@ -658,7 +658,11 @@ impl StagedFile {
     /// Write `content` next to `path`, creating parent directories. Files
     /// carrying the credential secret end up 0600; any other file keeps
     /// the permissions of the one it replaces.
-    fn new(path: &Path, content: &str, contains_secret: bool) -> Result<Self, eyre::Report> {
+    pub(crate) fn new(
+        path: &Path,
+        content: &str,
+        contains_secret: bool,
+    ) -> Result<Self, eyre::Report> {
         // Rename onto the file a symlink points at, not over the link itself.
         let target = match std::fs::canonicalize(path) {
             Ok(target) => target,
@@ -703,7 +707,7 @@ impl StagedFile {
     }
 
     /// Move the new content into place.
-    fn commit(self) -> Result<(), eyre::Report> {
+    pub(crate) fn commit(self) -> Result<(), eyre::Report> {
         let target = self.target;
         self.temp
             .persist(&target)

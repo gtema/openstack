@@ -272,6 +272,45 @@ impl YamlDocument {
             .is_some_and(|value| value.is_null())
     }
 
+    /// Whether the document has a non-empty top-level mapping to splice into.
+    pub fn has_root_mapping(&self) -> bool {
+        matches!(
+            yaml_serde::from_str::<yaml_serde::Value>(self.0.source()),
+            Ok(yaml_serde::Value::Mapping(ref m)) if !m.is_empty()
+        )
+    }
+
+    /// The current value of the top-level `key`, if present.
+    pub fn top_level_value(&self, key: &str) -> Option<yaml_serde::Value> {
+        self.value_at(&[key.to_string()])
+    }
+
+    /// Set the top-level `key` to `value`: an existing key is replaced in
+    /// place, a missing one is added. Requires a non-empty root mapping
+    /// (see [`has_root_mapping`](Self::has_root_mapping)).
+    pub fn set_top_level<T: Serialize>(
+        &mut self,
+        key: &str,
+        value: &T,
+    ) -> Result<(), YamlEditError> {
+        let value = yaml_serde::to_value(value)?;
+        let patch = if self.0.query_exists(&route![key]) {
+            Patch {
+                route: route![key],
+                operation: Op::Replace(value),
+            }
+        } else {
+            Patch {
+                route: Route::default(),
+                operation: Op::Add {
+                    key: key.to_string(),
+                    value,
+                },
+            }
+        };
+        self.patch(patch)
+    }
+
     /// Remove the mapping entry at `parent.key`.
     pub fn remove_mapping_entry(&mut self, parent: &str, key: &str) -> Result<(), YamlEditError> {
         let patch = Patch {
