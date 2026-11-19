@@ -202,7 +202,7 @@ fn verb(existed: bool) -> &'static str {
 /// Whether the file content already holds an entry for `cloud_name`.
 fn entry_exists(existing: Option<&str>, cloud_name: &str) -> bool {
     existing
-        .filter(|c| has_yaml_content(c))
+        .filter(|c| yaml_edit::has_yaml_content(c))
         .and_then(|c| yaml_edit::YamlDocument::parse(c).ok())
         .is_some_and(|doc| doc.contains_key("clouds", cloud_name))
 }
@@ -341,7 +341,7 @@ fn resolve_secure_path(
 }
 
 /// `$XDG_CONFIG_HOME/openstack`, matching the SDK config file discovery.
-fn default_config_dir() -> PathBuf {
+pub(crate) fn default_config_dir() -> PathBuf {
     dirs::config_dir()
         .unwrap_or_else(|| PathBuf::from("."))
         .join("openstack")
@@ -497,7 +497,7 @@ fn render_target(
     // comments - has nothing to splice into. Build the block ourselves and
     // keep whatever was there as a prefix, so a comment-only file keeps its
     // header instead of tripping the parser.
-    let Some(current) = existing.filter(|c| has_yaml_content(c)) else {
+    let Some(current) = existing.filter(|c| yaml_edit::has_yaml_content(c)) else {
         let mut block = format!("clouds:\n  {cloud_name}:\n");
         for line in yaml_serde::to_string(entry)?.lines() {
             block.push_str("    ");
@@ -507,21 +507,7 @@ fn render_target(
         // An end marker in the preamble would start a second document
         // with the new block, which single-document loaders reject.
         // Keep a single start marker and the original line endings.
-        let preamble = existing.map(|text| {
-            let mut seen_start = false;
-            text.split_inclusive('\n')
-                .filter(|line| {
-                    let line = line.trim();
-                    if line.starts_with("...") {
-                        return false;
-                    }
-                    if is_document_marker(line) {
-                        return !std::mem::replace(&mut seen_start, true);
-                    }
-                    true
-                })
-                .collect::<String>()
-        });
+        let preamble = existing.map(yaml_edit::yaml_preamble);
         return Ok(match preamble {
             Some(preamble) if !preamble.trim().is_empty() => {
                 let eol = if preamble.contains("\r\n") {
@@ -589,7 +575,7 @@ fn render_secure(
         .map(Some);
     }
 
-    let Some(current) = existing.filter(|c| has_yaml_content(c)) else {
+    let Some(current) = existing.filter(|c| yaml_edit::has_yaml_content(c)) else {
         return Ok(None);
     };
     let mut doc =
@@ -609,30 +595,9 @@ fn render_secure(
     Ok(Some(doc.source().to_string()))
 }
 
-/// Whether `text` holds any YAML node, as opposed to being empty or only
-/// blank lines, comments and document markers.
-fn has_yaml_content(text: &str) -> bool {
-    text.lines()
-        .map(str::trim)
-        .any(|line| !line.is_empty() && !line.starts_with('#') && !is_document_marker(line))
-}
-
-/// A `---` or `...` line, optionally followed by a comment.
-fn is_document_marker(line: &str) -> bool {
-    ["---", "..."].iter().any(|marker| {
-        line.strip_prefix(marker).is_some_and(|rest| {
-            rest.is_empty()
-                || rest.starts_with([' ', '\t']) && {
-                    let rest = rest.trim_start();
-                    rest.is_empty() || rest.starts_with('#')
-                }
-        })
-    })
-}
-
 /// Read the current content of a target file; `None` when it does not
 /// exist.
-fn read_existing(path: &Path) -> Result<Option<String>, eyre::Report> {
+pub(crate) fn read_existing(path: &Path) -> Result<Option<String>, eyre::Report> {
     if !path.exists() {
         return Ok(None);
     }
@@ -649,7 +614,7 @@ fn read_existing(path: &Path) -> Result<Option<String>, eyre::Report> {
 /// once the content is fully on disk: a failed write leaves the original
 /// untouched. Dropping it without [`commit`](Self::commit) removes the
 /// temporary file.
-struct StagedFile {
+pub(crate) struct StagedFile {
     temp: tempfile::NamedTempFile,
     target: PathBuf,
 }
@@ -658,7 +623,11 @@ impl StagedFile {
     /// Write `content` next to `path`, creating parent directories. Files
     /// carrying the credential secret end up 0600; any other file keeps
     /// the permissions of the one it replaces.
-    fn new(path: &Path, content: &str, contains_secret: bool) -> Result<Self, eyre::Report> {
+    pub(crate) fn new(
+        path: &Path,
+        content: &str,
+        contains_secret: bool,
+    ) -> Result<Self, eyre::Report> {
         // Rename onto the file a symlink points at, not over the link itself.
         let target = match std::fs::canonicalize(path) {
             Ok(target) => target,
@@ -703,7 +672,7 @@ impl StagedFile {
     }
 
     /// Move the new content into place.
-    fn commit(self) -> Result<(), eyre::Report> {
+    pub(crate) fn commit(self) -> Result<(), eyre::Report> {
         let target = self.target;
         self.temp
             .persist(&target)
@@ -1703,14 +1672,12 @@ clouds:
         )
         .unwrap();
         for text in ["--- # header\n", "...\n", "---\n# c\n...\n"] {
-            assert!(!has_yaml_content(text), "{text:?}");
             let out = render_target(Some(text), "mycloud", &entry, false, CLEARED_KEYS).unwrap();
             let docs = out.lines().filter(|l| l.trim() == "...").count();
             assert_eq!(docs, 0, "{out}");
             let doc: yaml_serde::Value = yaml_serde::from_str(&out).unwrap();
             assert!(doc["clouds"]["mycloud"]["auth"]["application_credential_id"].is_string());
         }
-        assert!(has_yaml_content("--- !!map\na: 1\n"));
     }
 
     #[test]

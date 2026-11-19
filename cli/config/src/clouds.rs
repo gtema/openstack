@@ -19,6 +19,7 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 pub mod add;
+pub mod list;
 
 /// Manage cloud entries in clouds.yaml/secure.yaml
 #[derive(Debug, Parser)]
@@ -32,6 +33,7 @@ pub struct CloudsCommand {
 #[derive(Debug, Subcommand)]
 pub enum CloudsCommands {
     Add(add::AddCommand),
+    List(list::ListCommand),
 }
 
 impl CloudsCommand {
@@ -39,6 +41,7 @@ impl CloudsCommand {
     pub fn take_action<C: CliArgs>(&self, parsed_args: &C) -> Result<(), OpenStackCliError> {
         match &self.command {
             CloudsCommands::Add(cmd) => cmd.take_action(parsed_args),
+            CloudsCommands::List(cmd) => cmd.take_action(parsed_args),
         }
     }
 }
