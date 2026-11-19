@@ -55,6 +55,36 @@ together. When an entry is a directory traditionally `clouds.yaml`/`secure.yaml`
 files are being searched in the directory and merged into the resulting
 configuration.
 
+### Selecting the connection
+
+Besides `clouds.yaml`/`secure.yaml` the connection may be described in the
+[`contexts.yaml`](contexts.yaml.md) file or in the `OS_*` environment variables
+(`--cloud-config-from-env`). When several sources are possible the first
+matching rule wins:
+
+1. `--os-context` / `OS_CONTEXT`: the named context of the `contexts.yaml`
+2. `--cloud-config-from-env`: the environment variables
+3. `--os-cloud` / `OS_CLOUD`: the named entry of the `clouds.yaml`
+4. (`osc` only) nothing of the above and no `--os-cloud-name`,
+   `--os-project-id`, `--os-project-name`, `--os-region-name`,
+   `--os-client-config-file` or `--os-client-secure-file`: the `current-context`
+   of the `contexts.yaml` when the file exists and sets it
+5. otherwise the cloud is chosen from the available clouds and contexts
+   interactively (`osc` in a terminal, `ostui` in the cloud list) or the command
+   fails
+
+The `contexts.yaml` is searched in the default locations unless `--os-context-file`
+(`OS_CONTEXT_FILE`) points to it, same as `--kubeconfig` of `kubectl`. That option
+does not change the rules above.
+
+Values given on the command line win over the environment variables
+(`OS_CLOUD`, `OS_CONTEXT`, ...); two conflicting command line options are an
+error.
+
+`--os-region-name` is applied on top of the selected connection. The selection
+is implemented by `openstack_sdk::config::selector::ConnectionSelector`, so the
+SDK users can get the same behavior.
+
 Most authentication methods support interactive data provisioning. When certain
 required auth attributes are not provided in the configuration file or through
 the supported cli arguments (or environment variables) clients that implement

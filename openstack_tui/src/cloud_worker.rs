@@ -20,7 +20,7 @@ use async_trait::async_trait;
 use eyre::{Result, eyre};
 use openstack_sdk::{
     AsyncOpenStack, MicroVersionStrategy, RenewHandle,
-    auth::auth_helper::{AuthHelper, AuthHelperError},
+    auth::auth_helper::{AuthHelper, AuthHelperError, ExternalCmd, Fallback},
     config::{CloudConfig, ConfigFile},
 };
 use secrecy::SecretString;
@@ -71,6 +71,9 @@ pub(crate) struct Cloud {
     /// TUI operates in single-cloud mode similar to `--cloud-config-from-env`
     /// in the CLI.
     env_cloud_config: Option<openstack_sdk::config::CloudConfig>,
+    /// External command of the `contexts.yaml` user providing the secrets. Takes precedence over
+    /// the interactive helper.
+    context_auth_helper: Option<String>,
     auth_helper: TuiAuthHelper,
     /// Handle to the background token-renewal task for `cloud`. Dropped
     /// (stopping the task) when replaced by a new connection/scope change,
@@ -91,6 +94,7 @@ impl Cloud {
         client_secure_config_file: Option<PathBuf>,
         auth_helper_control_tx: mpsc::Sender<oneshot::Sender<AuthAction>>,
         env_cloud_config: Option<CloudConfig>,
+        context_auth_helper: Option<String>,
     ) -> Result<Self, TuiError> {
         // When running with env-based config the config file is not needed
         // and parsing it may fail for unrelated reasons. Skip the parse in
@@ -113,6 +117,7 @@ impl Cloud {
             cloud_configs: cfg,
             cloud: None,
             env_cloud_config,
+            context_auth_helper,
             auth_helper: TuiAuthHelper::new(auth_helper_control_tx),
             _renew_handle: None,
         })
@@ -127,8 +132,17 @@ impl Cloud {
                 .get_cloud_config(cloud.clone())?
                 .ok_or_else(|| eyre!("Cloud `{}` is not present in configuration files", cloud))?
         };
+        // Secrets are taken from the helper of the context, what it cannot provide (i.e. MFA
+        // passcode) is asked in the TUI.
+        let auth_helper: Box<dyn AuthHelper> = match &self.context_auth_helper {
+            Some(helper) => Box::new(Fallback::new(
+                ExternalCmd::strict(helper.clone()),
+                self.auth_helper.clone(),
+            )),
+            None => Box::new(self.auth_helper.clone()),
+        };
         let session = AsyncOpenStack::builder(&profile)
-            .auth_helper(self.auth_helper.clone())
+            .auth_helper(auth_helper)
             .renew_auth(false)
             .microversion_strategy(MicroVersionStrategy::Ceiling)
             .connect()

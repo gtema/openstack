@@ -43,3 +43,7 @@ path = "src/lib.rs"
 
 [lints]
 workspace = true
+
+[[bin]]
+name = "contexts-schema"
+path = "src/bin/contexts-schema.rs"

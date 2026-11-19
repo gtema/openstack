@@ -17,7 +17,8 @@ use clap::builder::{
     Styles,
     styling::{AnsiColor, Effects},
 };
-use clap::{Args, Parser, ValueEnum, ValueHint};
+use clap::parser::ValueSource;
+use clap::{ArgMatches, Args, Parser, ValueEnum, ValueHint};
 use clap_complete::Shell;
 
 use crate::error::OpenStackCliError;
@@ -55,6 +56,32 @@ pub struct ConnectionOpts {
     #[arg(long, env = "OS_CLOUD", global = true, display_order = 801, conflicts_with_all(["cloud_config_from_env", "os_cloud_name"]))]
     pub os_cloud: Option<String>,
 
+    /// Name of the context from the `contexts.yaml` file.
+    ///
+    /// The file is searched in `~/.config/openstack` and `/etc/openstack`. A context combines a
+    /// server, a user and a scope (and optionally a region). The `clouds.yaml` and `secure.yaml`
+    /// are not involved. Secrets missing in the file are requested with the user `auth_helper` of
+    /// the context unless `--auth-helper-cmd` is specified.
+    ///
+    /// Without `--os-context` and any option selecting or overriding the
+    /// cloud connection (`--os-cloud`, `--cloud-config-from-env`, `--os-cloud-name`,
+    /// `--os-project-id`, `--os-project-name`, `--os-region-name`) the `current-context` of the
+    /// `contexts.yaml` is used when the file exists and sets it.
+    ///
+    /// Those options conflict with `--os-context` when both are given on the command line (the
+    /// region of a context is set by its `region_name`). When the conflicting value comes from an
+    /// environment variable (i.e. `OS_CLOUD` of an openrc file) the command line wins: the context
+    /// is ignored when a conflicting option is given on the command line, and the conflicting
+    /// environment variables are ignored when `--os-context` is.
+    #[arg(
+        long,
+        env = "OS_CONTEXT",
+        global = true,
+        display_order = 801,
+        value_name = "CONTEXT"
+    )]
+    pub os_context: Option<String>,
+
     /// Get the cloud config from environment variables.
     ///
     /// Conflicts with the `--os-cloud` option. No merging of environment variables with the
@@ -81,6 +108,20 @@ pub struct ConnectionOpts {
     /// Region Name to use instead of the one in the connection profile.
     #[arg(long, env = "OS_REGION_NAME", global = true, display_order = 804)]
     pub os_region_name: Option<String>,
+
+    /// Custom path to the `contexts.yaml` file.
+    ///
+    /// Used instead of searching `~/.config/openstack` and `/etc/openstack` (same as `--kubeconfig`
+    /// of `kubectl`). The file must exist. Does not select the connection by itself: the context
+    /// is selected with `--os-context` or by the `current-context` of the file.
+    #[arg(
+        long,
+        env = "OS_CONTEXT_FILE",
+        global = true,
+        value_hint = ValueHint::FilePath,
+        display_order = 801
+    )]
+    pub os_context_file: Option<String>,
 
     /// Custom path to the `clouds.yaml` config file.
     #[arg(
@@ -180,6 +221,113 @@ pub struct GlobalOpts {
     /// Output config.
     #[command(flatten)]
     pub output: OutputOpts,
+}
+
+impl ConnectionOpts {
+    /// Apply the precedence between `--os-context` and the options selecting or overriding the
+    /// cloud connection (see [`context_precedence`]). Exits with the usage error on a conflict
+    /// between two command line options.
+    pub fn apply_context_precedence(&mut self, matches: &ArgMatches, cmd: &mut clap::Command) {
+        let others = [
+            "os_cloud",
+            "cloud_config_from_env",
+            "os_cloud_name",
+            "os_project_id",
+            "os_project_name",
+            "os_region_name",
+        ];
+        match context_precedence(matches, "os_context", &others) {
+            Ok(ignored) => {
+                for id in ignored {
+                    match id.as_str() {
+                        "os_context" => self.os_context = None,
+                        "os_cloud" => self.os_cloud = None,
+                        "cloud_config_from_env" => self.cloud_config_from_env = false,
+                        "os_cloud_name" => self.os_cloud_name = None,
+                        "os_project_id" => self.os_project_id = None,
+                        "os_project_name" => self.os_project_name = None,
+                        "os_region_name" => self.os_region_name = None,
+                        _ => {}
+                    }
+                }
+            }
+            Err(msg) => cmd
+                .error(clap::error::ErrorKind::ArgumentConflict, msg)
+                .exit(),
+        }
+    }
+}
+
+/// Highest precedence source (command line over environment) of the argument in the matches of
+/// the command or any of its subcommands (global arguments may be given at any level).
+fn arg_source(matches: &ArgMatches, id: &str) -> Option<ValueSource> {
+    let own = if matches.try_contains_id(id).unwrap_or(false) {
+        matches
+            .value_source(id)
+            .filter(|s| matches!(s, ValueSource::CommandLine | ValueSource::EnvVariable))
+    } else {
+        None
+    };
+    let sub = matches
+        .subcommand()
+        .and_then(|(_, sub)| arg_source(sub, id));
+    match (own, sub) {
+        (Some(ValueSource::CommandLine), _) | (_, Some(ValueSource::CommandLine)) => {
+            Some(ValueSource::CommandLine)
+        }
+        (own, sub) => own.or(sub),
+    }
+}
+
+/// Decide between the explicit context and the arguments selecting or overriding the cloud.
+///
+/// Values given on the command line win over the ones coming from the environment variables
+/// (an openrc file exporting `OS_CLOUD` must not prevent `--os-context`). Two values given on the
+/// command line conflict. Returns ids of the arguments which must be ignored, or the error text.
+pub fn context_precedence(
+    matches: &ArgMatches,
+    context: &str,
+    others: &[&str],
+) -> Result<Vec<String>, String> {
+    let ids = |source: ValueSource| -> Vec<&str> {
+        others
+            .iter()
+            .copied()
+            .filter(|id| arg_source(matches, id) == Some(source))
+            .collect()
+    };
+    let (cli, env) = (ids(ValueSource::CommandLine), ids(ValueSource::EnvVariable));
+    let ignore = |ids: Vec<&str>| ids.into_iter().map(String::from).collect::<Vec<_>>();
+    match arg_source(matches, context) {
+        Some(ValueSource::CommandLine) => match cli.first() {
+            Some(other) => Err(format!(
+                "the argument '--{}' cannot be used with '--{}'{}",
+                context.replace('_', "-"),
+                other.replace('_', "-"),
+                if *other == "os_region_name" {
+                    " (the region is defined by the `region_name` of the context)"
+                } else {
+                    ""
+                }
+            )),
+            None => Ok(ignore(env)),
+        },
+        // Everything else wins over the context coming from the environment
+        Some(_) if !cli.is_empty() || !env.is_empty() => {
+            eprintln!(
+                "WARNING: ignoring `--{}` ({}) since '--{}' is set",
+                context.replace('_', "-"),
+                "coming from the environment",
+                cli.iter()
+                    .chain(env.iter())
+                    .next()
+                    .map(|id| id.replace('_', "-"))
+                    .unwrap_or_default()
+            );
+            Ok(vec![context.to_string()])
+        }
+        _ => Ok(Vec::new()),
+    }
 }
 
 /// Resolve a per-service API version selector by scanning the real process
@@ -291,5 +439,123 @@ pub trait ConnectionRequirementsProvider {
     /// Return the connection requirements for this parsed command.
     fn connection_requirements(&self) -> ConnectionRequirements {
         ConnectionRequirements::connected()
+    }
+}
+
+#[cfg(test)]
+mod context_precedence_tests {
+    use clap::Command;
+
+    use super::*;
+
+    fn matches(args: &[&str]) -> ArgMatches {
+        #[derive(Parser)]
+        struct Wrapper {
+            #[command(flatten)]
+            conn: ConnectionOpts,
+            #[command(subcommand)]
+            cmd: Sub,
+        }
+        #[derive(clap::Subcommand)]
+        enum Sub {
+            Run,
+        }
+        let cmd: Command = <Wrapper as clap::CommandFactory>::command();
+        cmd.try_get_matches_from(["t"].into_iter().chain(args.iter().copied()))
+            .unwrap()
+    }
+
+    const OTHERS: [&str; 2] = ["os_cloud", "os_region_name"];
+
+    #[test]
+    fn command_line_conflict() {
+        let m = matches(&["--os-context", "c", "--os-cloud", "x", "run"]);
+        assert!(context_precedence(&m, "os_context", &OTHERS).is_err());
+        // global option after the subcommand
+        let m = matches(&["run", "--os-context", "c", "--os-region-name", "r"]);
+        assert!(context_precedence(&m, "os_context", &OTHERS).is_err());
+    }
+
+    /// Command with the arguments reading the (test specific) environment variables.
+    fn env_command() -> Command {
+        use clap::Arg;
+        let arg = |id: &'static str, long: &'static str, env: &'static str| {
+            Arg::new(id).long(long).env(env).global(true)
+        };
+        Command::new("t")
+            .arg(arg(
+                "os_context",
+                "os-context",
+                "CTX_PRECEDENCE_TEST_CONTEXT",
+            ))
+            .arg(arg("os_cloud", "os-cloud", "CTX_PRECEDENCE_TEST_CLOUD"))
+            .arg(arg(
+                "os_region_name",
+                "os-region-name",
+                "CTX_PRECEDENCE_TEST_REGION",
+            ))
+            .subcommand(Command::new("run"))
+    }
+
+    // Environment variables are process wide: a single test (with its own variables) mutates them
+    #[test]
+    fn environment_versus_command_line() {
+        let parse = |args: &[&str]| {
+            env_command()
+                .try_get_matches_from(["t"].into_iter().chain(args.iter().copied()))
+                .unwrap()
+        };
+        let check = |args: &[&str]| context_precedence(&parse(args), "os_context", &OTHERS);
+        // SAFETY: the variables are used by this test only
+        unsafe {
+            std::env::set_var("CTX_PRECEDENCE_TEST_CLOUD", "env-cloud");
+            std::env::set_var("CTX_PRECEDENCE_TEST_REGION", "env-region");
+        }
+        // command line context wins over all env values
+        assert_eq!(
+            check(&["--os-context", "c", "run"]).unwrap(),
+            ["os_cloud", "os_region_name"]
+        );
+        // ... but conflicts with the command line ones
+        assert!(check(&["--os-context", "c", "--os-cloud", "x", "run"]).is_err());
+        // command line cloud wins over env context
+        unsafe {
+            std::env::set_var("CTX_PRECEDENCE_TEST_CONTEXT", "env-ctx");
+        }
+        assert_eq!(check(&["--os-cloud", "x", "run"]).unwrap(), ["os_context"]);
+        // env against env: the context loses
+        assert_eq!(check(&["run"]).unwrap(), ["os_context"]);
+        unsafe {
+            std::env::remove_var("CTX_PRECEDENCE_TEST_CLOUD");
+            std::env::remove_var("CTX_PRECEDENCE_TEST_REGION");
+        }
+        // only the env context
+        assert!(check(&["run"]).unwrap().is_empty());
+        unsafe {
+            std::env::remove_var("CTX_PRECEDENCE_TEST_CONTEXT");
+        }
+    }
+
+    #[test]
+    fn region_conflict_hints_at_the_context() {
+        let m = matches(&["--os-context", "c", "--os-region-name", "r", "run"]);
+        let err = context_precedence(&m, "os_context", &OTHERS).unwrap_err();
+        assert!(err.contains("region_name"), "{err}");
+    }
+
+    #[test]
+    fn no_conflict() {
+        let m = matches(&["--os-context", "c", "run"]);
+        assert!(
+            context_precedence(&m, "os_context", &OTHERS)
+                .unwrap()
+                .is_empty()
+        );
+        let m = matches(&["--os-cloud", "x", "run"]);
+        assert!(
+            context_precedence(&m, "os_context", &OTHERS)
+                .unwrap()
+                .is_empty()
+        );
     }
 }

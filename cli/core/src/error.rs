@@ -87,6 +87,14 @@ pub enum OpenStackCliError {
         source: openstack_sdk_core::config::ConfigError,
     },
 
+    /// `contexts.yaml` error.
+    #[error(transparent)]
+    Contexts {
+        /// The source of the error.
+        #[from]
+        source: openstack_sdk_core::config::contexts::ContextsError,
+    },
+
     /// OpenStack Service Catalog error.
     #[error(transparent)]
     OpenStackCatalog {
@@ -146,6 +154,27 @@ pub enum OpenStackCliError {
     /// Endpoint builder error.
     #[error("OpenStackSDK endpoint builder error: `{0}`")]
     EndpointBuild(String),
+
+    /// `contexts.yaml` is not found.
+    #[error(
+        "`contexts.yaml` file is not found in {}",
+        openstack_sdk_core::config::contexts::contexts_file_search_dirs()
+    )]
+    ContextsFileNotFound,
+
+    /// Nothing selects the connection.
+    #[error(
+        "connection is not selected: use `--os-cloud` (`OS_CLOUD`), `--os-context` (`OS_CONTEXT`) \
+         or `--cloud-config-from-env`, or set `current-context` in the `contexts.yaml`"
+    )]
+    NoConnectionSelected,
+
+    /// No connection is configured.
+    #[error(
+        "no connection is configured: neither `clouds.yaml` with clouds nor `contexts.yaml` with \
+         contexts is found, use `--cloud-config-from-env` to read the environment variables"
+    )]
+    NoConnectionAvailable,
 
     /// Connection error.
     #[error("cloud connection `{0:?}` cannot be found")]
@@ -236,6 +265,28 @@ impl OpenStackCliError {
                 "the resource disappeared while waiting for it to reach the desired state (it may have been deleted concurrently)",
             ),
             _ => None,
+        }
+    }
+}
+
+impl From<openstack_sdk_core::config::selector::SelectionError> for OpenStackCliError {
+    fn from(source: openstack_sdk_core::config::selector::SelectionError) -> Self {
+        use openstack_sdk_core::config::selector::SelectionError;
+        match source {
+            SelectionError::Config(source) => Self::CloudConfig { source },
+            SelectionError::Contexts(source) => Self::Contexts { source },
+            SelectionError::ContextsFileNotFound => Self::ContextsFileNotFound,
+            SelectionError::ConnectionNotFound(name) => Self::ConnectionNotFound(name),
+            SelectionError::NoSelection {
+                clouds, contexts, ..
+            } => {
+                if clouds.is_empty() && contexts.is_empty() {
+                    Self::NoConnectionAvailable
+                } else {
+                    Self::NoConnectionSelected
+                }
+            }
+            err => Self::Other(eyre::eyre!("{err}")),
         }
     }
 }

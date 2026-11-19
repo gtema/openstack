@@ -33,6 +33,7 @@ futures = { workspace = true }
 itertools = { workspace = true }
 jsonschema = { workspace = true }
 open.workspace = true
+openstack-cli-core.workspace = true
 openstack_sdk = { path = "../openstack_sdk", version = "^0.23", default-features = false, features = ["async", "block_storage", "compute", "dns", "identity", "image", "load_balancer", "network"] }
 ratatui = { version = "^0.30", features = ["serde", "macros", "crossterm"] }
 secrecy = "0.10.3"

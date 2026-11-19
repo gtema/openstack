@@ -83,19 +83,34 @@ impl App {
         let client_config = args.os_client_config_file.clone();
         let client_secure_config = args.os_client_secure_file.clone();
 
-        // When --cloud-config-from-env is set, build the cloud config from
-        // environment variables (same behavior as the CLI).
-        let (env_cloud_name, env_cloud_config) = if args.cloud_config_from_env {
-            let cloud_name = args
-                .os_cloud_name
-                .clone()
-                .unwrap_or_else(|| String::from("envvars"));
-            let mut cfg = openstack_sdk::config::CloudConfig::from_env()?;
-            cfg.name = Some(cloud_name.clone());
-            (Some(cloud_name), Some(cfg))
-        } else {
-            (args.os_cloud_name.clone(), None)
+        // Single connection (`contexts.yaml`, environment variables) or the selected cloud are
+        // resolved here, otherwise the user selects the cloud from the `clouds.yaml`.
+        let selector = openstack_sdk::config::selector::ConnectionSelector {
+            context: args.os_context.clone(),
+            cloud: None,
+            from_env: args.cloud_config_from_env,
+            env_cloud_name: args.os_cloud_name.clone(),
+            project_override: false,
+            region_name: None,
+            // The TUI lets the user choose from the clouds: no implicit context
+            skip_implicit_context: true,
+            contexts_file: args.os_context_file.clone(),
+            config_file: client_config.clone(),
+            secure_file: client_secure_config.clone(),
         };
+        let mut context_auth_helper: Option<String> = None;
+        let (env_cloud_name, env_cloud_config) =
+            if args.os_context.is_some() || args.cloud_config_from_env {
+                let resolved = selector.resolve()?;
+                for warning in &resolved.warnings {
+                    tracing::warn!("{warning}");
+                }
+                context_auth_helper = resolved.auth_helper;
+                (Some(resolved.name), Some(resolved.cloud))
+            } else {
+                // Cloud names are looked up by the worker when connecting
+                (args.os_cloud.clone().or(args.os_cloud_name.clone()), None)
+            };
 
         // Is there a way to initialize HashMap with Box<dyn Foo> as keys in one operation?
         let mut components: HashMap<Mode, Box<dyn Component>> = HashMap::new();
@@ -301,6 +316,7 @@ impl App {
             client_secure_config,
             auth_helper_control_channel_tx_clone,
             env_cloud_config,
+            context_auth_helper,
         )?;
         tokio::spawn(async move {
             if let Err(err) = cloud
@@ -325,7 +341,7 @@ impl App {
             action_rx,
             cloud_worker_tx: cloud_worker,
             last_tick_key_events: Vec::new(),
-            cloud_name: args.os_cloud.clone().or(env_cloud_name),
+            cloud_name: env_cloud_name,
             cloud_connected: false,
             active_popup: None,
             popups,
