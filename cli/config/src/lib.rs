@@ -18,6 +18,7 @@
 //!  * [`show`], displaying the effective local CLI configuration
 //!    (`$XDG_CONFIG_HOME/osc/config.yaml`).
 //!  * [`clouds`], editing cloud entries in `clouds.yaml`/`secure.yaml`.
+//!  * [`contexts`], listing, selecting, editing and migrating `contexts.yaml`.
 //!  * [`yaml_edit`], the comment- and anchor-preserving YAML editing
 //!    primitives the `clouds` commands are built on.
 
@@ -26,6 +27,7 @@ use clap::{Parser, Subcommand};
 use openstack_cli_core::{cli::CliArgs, error::OpenStackCliError};
 
 pub mod clouds;
+pub mod contexts;
 pub mod show;
 pub mod yaml_edit;
 
@@ -41,6 +43,7 @@ pub struct ConfigCommand {
 #[derive(Debug, Subcommand)]
 pub enum ConfigCommands {
     Clouds(clouds::CloudsCommand),
+    Contexts(contexts::ContextsCommand),
     Show(show::ShowCommand),
 }
 
@@ -49,6 +52,7 @@ impl ConfigCommand {
     pub async fn take_action<C: CliArgs>(&self, parsed_args: &C) -> Result<(), OpenStackCliError> {
         match &self.command {
             ConfigCommands::Clouds(cmd) => cmd.take_action(parsed_args),
+            ConfigCommands::Contexts(cmd) => cmd.take_action(parsed_args),
             ConfigCommands::Show(cmd) => cmd.take_action(parsed_args).await,
         }
     }

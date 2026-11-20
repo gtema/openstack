@@ -272,6 +272,45 @@ impl YamlDocument {
             .is_some_and(|value| value.is_null())
     }
 
+    /// Whether the document has a non-empty top-level mapping to splice into.
+    pub fn has_root_mapping(&self) -> bool {
+        matches!(
+            yaml_serde::from_str::<yaml_serde::Value>(self.0.source()),
+            Ok(yaml_serde::Value::Mapping(ref m)) if !m.is_empty()
+        )
+    }
+
+    /// The current value of the top-level `key`, if present.
+    pub fn top_level_value(&self, key: &str) -> Option<yaml_serde::Value> {
+        self.value_at(&[key.to_string()])
+    }
+
+    /// Set the top-level `key` to `value`: an existing key is replaced in
+    /// place, a missing one is added. Requires a non-empty root mapping
+    /// (see [`has_root_mapping`](Self::has_root_mapping)).
+    pub fn set_top_level<T: Serialize>(
+        &mut self,
+        key: &str,
+        value: &T,
+    ) -> Result<(), YamlEditError> {
+        let value = yaml_serde::to_value(value)?;
+        let patch = if self.0.query_exists(&route![key]) {
+            Patch {
+                route: route![key],
+                operation: Op::Replace(value),
+            }
+        } else {
+            Patch {
+                route: Route::default(),
+                operation: Op::Add {
+                    key: key.to_string(),
+                    value,
+                },
+            }
+        };
+        self.patch(patch)
+    }
+
     /// Remove the mapping entry at `parent.key`.
     pub fn remove_mapping_entry(&mut self, parent: &str, key: &str) -> Result<(), YamlEditError> {
         let patch = Patch {
@@ -302,10 +341,142 @@ impl YamlDocument {
         })
     }
 
+    /// Append `value` as a new item at the end of the top-level block
+    /// sequence `key`.
+    ///
+    /// The existing items - and any comment inside the section - are left
+    /// byte-for-byte untouched; only the new item is written. Fails when
+    /// the key does not exist or does not hold a *block* sequence (a flow
+    /// sequence such as `key: []` is not one).
+    pub fn append_top_level_item(
+        &mut self,
+        key: &str,
+        value: &yaml_serde::Value,
+    ) -> Result<(), YamlEditError> {
+        let patch = Patch {
+            route: route![key],
+            operation: Op::Append {
+                value: value.clone(),
+            },
+        };
+        self.patch(patch)
+    }
+
+    /// Append `key` with `value` as a new top-level section at the end of
+    /// the document, serialized in block style.
+    ///
+    /// `yamlpatch`'s `Op::Add` renders a sequence value in flow style
+    /// (`key: [{...}]`), so the section is appended by hand instead;
+    /// everything already in the document is left byte-for-byte as it was.
+    /// A trailing `...` document-end marker is kept at the end.
+    pub fn append_top_level_block(
+        &mut self,
+        key: &str,
+        value: &yaml_serde::Value,
+    ) -> Result<(), YamlEditError> {
+        let mut mapping = yaml_serde::Mapping::new();
+        mapping.insert(yaml_serde::Value::String(key.to_string()), value.clone());
+        let block = block_style(&yaml_serde::Value::Mapping(mapping))?;
+
+        let source = self.0.source().to_string();
+        let insert_at = before_trailing_end_marker(&source);
+        let mut updated = source[..insert_at].to_string();
+        // Follow the line endings of the file.
+        let eol = if source.contains("\r\n") {
+            "\r\n"
+        } else {
+            "\n"
+        };
+        if !updated.ends_with('\n') {
+            updated.push_str(eol);
+        }
+        updated.push_str(&block.replace('\n', eol));
+        updated.push_str(&source[insert_at..]);
+        self.0 = Document::new(&updated)?;
+        Ok(())
+    }
+
     /// The document's current YAML text.
     pub fn source(&self) -> &str {
         self.0.source()
     }
+}
+
+/// Whether `text` holds any YAML node, as opposed to being empty or only
+/// blank lines, comments and document markers.
+pub(crate) fn has_yaml_content(text: &str) -> bool {
+    text.lines()
+        .map(str::trim)
+        .any(|line| !line.is_empty() && !line.starts_with('#') && !is_document_marker(line))
+}
+
+/// A `---` or `...` line, optionally followed by a comment.
+pub(crate) fn is_document_marker(line: &str) -> bool {
+    ["---", "..."].iter().any(|marker| {
+        line.strip_prefix(marker).is_some_and(|rest| {
+            rest.is_empty()
+                || rest.starts_with([' ', '\t']) && {
+                    let rest = rest.trim_start();
+                    rest.is_empty() || rest.starts_with('#')
+                }
+        })
+    })
+}
+
+/// The lines of a file that holds no YAML node at all
+/// (see [`has_yaml_content`]), keeping a single `---` start marker and
+/// dropping any `...` end marker, which would start a second document with
+/// the content appended after the preamble.
+pub(crate) fn yaml_preamble(text: &str) -> String {
+    let mut seen_start = false;
+    text.split_inclusive('\n')
+        .filter(|line| {
+            let line = line.trim();
+            if line.starts_with("...") {
+                return false;
+            }
+            if is_document_marker(line) {
+                return !std::mem::replace(&mut seen_start, true);
+            }
+            true
+        })
+        .collect()
+}
+
+/// The byte offset just before the trailing `...` document-end marker, when
+/// `text` ends with one, else the end of `text`.
+fn before_trailing_end_marker(text: &str) -> usize {
+    let trimmed = text.trim_end();
+    let Some(last) = trimmed.lines().last() else {
+        return text.len();
+    };
+    if last.trim_start().starts_with("...") && is_document_marker(last) {
+        trimmed.len() - last.len()
+    } else {
+        text.len()
+    }
+}
+
+/// Serialize `value` in block style, indented the way a hand-maintained
+/// file indents it.
+///
+/// `yaml_serde` anchors its output at column 0 and does not indent a
+/// sequence under its key (`key:` and `- item` on sibling lines); the
+/// rest of a file (and the items `Op::Append` writes) indents nested
+/// content by two spaces. Every line except the top-level keys of the
+/// serialized value is indented accordingly.
+pub(crate) fn block_style<T: serde::Serialize>(value: &T) -> Result<String, YamlEditError> {
+    let mut out = String::new();
+    for line in yaml_serde::to_string(value)?.lines() {
+        // A column-0 line is a top-level key, unless it is a sequence
+        // item; everything else is nested content.
+        if line.starts_with(|c: char| c.is_whitespace()) || line.starts_with("- ") {
+            out.push_str("  ");
+        }
+        out.push_str(line);
+        out.push('\n');
+    }
+    Ok(out)
 }
 
 /// Build a [`Route`] from an owned key path.
@@ -646,6 +817,126 @@ mod tests {
         let out = doc.source();
         assert!(!out.contains("# keep me"), "next comment eaten: {out}");
         assert!(out.contains("# drop me"), "own comment orphaned: {out}");
+        Ok(())
+    }
+
+    #[test]
+    fn append_top_level_item_keeps_existing_items() -> Result<(), YamlEditError> {
+        let existing =
+            "servers:\n  # the first one\n  - name: a\n    server:\n      auth_url: https://a/v3\n";
+        let mut doc = YamlDocument::parse(existing)?;
+        let item: yaml_serde::Value =
+            yaml_serde::from_str("name: b\nserver:\n  auth_url: https://b/v3\n")?;
+        doc.append_top_level_item("servers", &item)?;
+
+        let out = doc.source();
+        assert!(out.contains("# the first one"), "{out}");
+        assert!(out.contains("https://a/v3"), "{out}");
+        assert!(out.contains("https://b/v3"), "{out}");
+        assert!(
+            out.find("name: a").unwrap() < out.find("name: b").unwrap(),
+            "{out}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn append_top_level_item_refuses_flow_sequence() -> Result<(), YamlEditError> {
+        // The `contexts edit` template writes `servers: []`; `Op::Append`
+        // supports block sequences only.
+        let mut doc = YamlDocument::parse("servers: []\n")?;
+        let item: yaml_serde::Value = yaml_serde::from_str("name: b\n")?;
+        assert!(doc.append_top_level_item("servers", &item).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn set_top_level_replaces_a_null_value() -> Result<(), YamlEditError> {
+        // `scopes:` with nothing under it: the key exists, so a `Replace`
+        // must be used (an `Add` would duplicate the key).
+        let mut doc = YamlDocument::parse(
+            "scopes:\nservers:\n  - name: a\n    server:\n      auth_url: https://a/v3\n",
+        )?;
+        let value: yaml_serde::Value =
+            yaml_serde::from_str("- name: b\n  scope:\n    project:\n      name: b\n")?;
+        doc.set_top_level("scopes", &value)?;
+
+        let out = doc.source();
+        assert!(out.contains("scope:"), "{out}");
+        assert!(out.contains("https://a/v3"), "{out}");
+        assert_eq!(out.matches("scopes:").count(), 1, "{out}");
+        Ok(())
+    }
+
+    #[test]
+    fn append_top_level_block_appends_at_the_end() -> Result<(), YamlEditError> {
+        let existing = "servers:\n  - name: a\n    server:\n      auth_url: https://a/v3\n";
+        let mut doc = YamlDocument::parse(existing)?;
+        let value: yaml_serde::Value =
+            yaml_serde::from_str("- name: b\n  scope:\n    project:\n      name: b\n")?;
+        doc.append_top_level_block("scopes", &value)?;
+
+        let out = doc.source();
+        assert!(out.starts_with(existing), "{out}");
+        assert!(out.contains("scopes:\n  - name: b"), "{out}");
+        assert!(!out.contains("scopes: ["), "{out}");
+        Ok(())
+    }
+
+    #[test]
+    fn append_top_level_block_keeps_trailing_end_marker() -> Result<(), YamlEditError> {
+        let existing = "servers:\n  - name: a\n    server:\n      auth_url: https://a/v3\n...";
+        let mut doc = YamlDocument::parse(existing)?;
+        let value: yaml_serde::Value =
+            yaml_serde::from_str("- name: b\n  scope:\n    project:\n      name: b\n")?;
+        doc.append_top_level_block("scopes", &value)?;
+
+        let out = doc.source();
+        assert!(out.trim_end().ends_with("..."), "{out}");
+        assert!(out.contains("scopes:\n  - name: b"), "{out}");
+        Ok(())
+    }
+
+    #[test]
+    fn has_yaml_content_ignores_blank_lines_comments_and_document_markers() {
+        assert!(!has_yaml_content(""));
+        assert!(!has_yaml_content("# just a comment\n"));
+        assert!(!has_yaml_content("--- # header\n"));
+        assert!(!has_yaml_content("...\n"));
+        assert!(has_yaml_content("--- !!map\na: 1\n"));
+        assert!(has_yaml_content(
+            "clouds:\n  mycloud:\n    auth_url: https://keystone:5000\n"
+        ));
+    }
+
+    #[test]
+    fn is_document_marker_accepts_bare_and_commented_markers() {
+        assert!(is_document_marker("---"));
+        assert!(is_document_marker("..."));
+        assert!(is_document_marker("--- # comment"));
+        assert!(is_document_marker("... # comment"));
+        assert!(!is_document_marker("a: 1"));
+    }
+
+    #[test]
+    fn yaml_preamble_drops_end_markers_and_keeps_a_single_start_marker() {
+        assert_eq!(yaml_preamble("# header comment\n"), "# header comment\n");
+        assert_eq!(yaml_preamble("---\n# c\n...\n"), "---\n# c\n");
+    }
+
+    #[test]
+    fn append_top_level_block_follows_crlf_line_endings() -> Result<(), YamlEditError> {
+        let existing = "servers:\r\n  - name: a\r\n    server:\r\n      auth_url: https://a/v3\r\n";
+        let mut doc = YamlDocument::parse(existing)?;
+        let value: yaml_serde::Value =
+            yaml_serde::from_str("- name: b\n  scope:\n    project:\n      name: b\n")?;
+        doc.append_top_level_block("scopes", &value)?;
+
+        let out = doc.source();
+        assert!(
+            !out.replace("\r\n", "").contains('\n'),
+            "mixed EOL: {out:?}"
+        );
         Ok(())
     }
 }
