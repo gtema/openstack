@@ -76,7 +76,7 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Install cargo-nextest
-        uses: taiki-e/install-action@v2.87.28
+        uses: taiki-e/install-action@v2.90.5
         with:
           tool: cargo-nextest
 
@@ -111,7 +111,7 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Install cargo-fuzz
-        uses: taiki-e/install-action@v2.87.28
+        uses: taiki-e/install-action@v2.90.5
         with:
           tool: cargo-fuzz
 
