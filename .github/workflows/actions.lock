@@ -11,7 +11,7 @@ workflows:
         - 'actions/checkout@v7.0.1'
         - 'dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921'
         - 'step-security/harden-runner@v2.23.0'
-        - 'swatinem/rust-cache@v2.9.1'
+        - 'swatinem/rust-cache@v2.9.3'
         - 'taiki-e/install-action@v2.90.7'
     '.github/workflows/committed.yml':
         - 'actions/checkout@v7.0.1'
@@ -35,7 +35,7 @@ workflows:
         - 'dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921'
         - 'gophercloud/devstack-action@v0.20'
         - 'step-security/harden-runner@v2.23.0'
-        - 'swatinem/rust-cache@v2.9.1'
+        - 'swatinem/rust-cache@v2.9.3'
         - 'taiki-e/install-action@v2.90.7'
     '.github/workflows/linters.yml':
         - 'actions/checkout@v7.0.1'
@@ -45,7 +45,7 @@ workflows:
         - 'dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921'
         - 'github/codeql-action@v4.39.1'
         - 'step-security/harden-runner@v2.23.0'
-        - 'swatinem/rust-cache@v2.9.1'
+        - 'swatinem/rust-cache@v2.9.3'
         - 'taiki-e/install-action@v2.90.7'
     '.github/workflows/mdbook.yml':
         - 'actions/checkout@v7.0.1'
@@ -205,9 +205,9 @@ dependencies:
         commit: 'sha1-aebdcf6156ab6691adf63218240e476564a1ed4c'
         owner_id: 88700172
         repo_id: 422287306
-    'swatinem/rust-cache@v2.9.1':
-        ref: 'v2.9.1'
-        commit: 'sha1-c19371144df3bb44fab255c43d04cbc2ab54d1c4'
+    'swatinem/rust-cache@v2.9.3':
+        ref: 'v2.9.3'
+        commit: 'sha1-d1527c8f67ef9af357290475d4af4b0fab8f12e0'
         owner_id: 580492
         repo_id: 298565987
     'taiki-e/install-action@1919c4a95903d2c33e4a221102edca87309fc14b':
