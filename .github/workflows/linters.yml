@@ -80,14 +80,13 @@ jobs:
 
       - name: Cache cargo registry
         uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Install cargo-binstall
+      - name: Install clippy-sarif and sarif-fmt
         uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8 # v2.87.28
         with:
-          tool: cargo-binstall
-
-      - name: Install required cargo
-        run: cargo binstall clippy-sarif sarif-fmt --force
+          tool: clippy-sarif,sarif-fmt
 
       - name: Run rust-clippy
         run:
