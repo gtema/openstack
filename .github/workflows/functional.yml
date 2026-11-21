@@ -47,7 +47,7 @@ jobs:
     steps:
 
       - name: Harden Runner
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        uses: step-security/harden-runner@v2.22.4
         with:
           egress-policy: audit
 
@@ -56,7 +56,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libudev-dev
 
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921 # stable
@@ -64,12 +64,12 @@ jobs:
           toolchain: stable
 
       - name: Cache cargo registry
-        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
+        uses: Swatinem/rust-cache@v2.9.1
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Install cargo-nextest
-        uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8 # v2.87.28
+        uses: taiki-e/install-action@v2.87.28
         with:
           tool: cargo-nextest
 
@@ -78,7 +78,7 @@ jobs:
         run: cargo nextest run --test functional --no-run
 
       - name: Deploy devstack
-        uses: EmilienM/devstack-action@fc61cc16ba19c4224a70b0b4d7e3e4907fac51e7 # v0.20
+        uses: gophercloud/devstack-action@v0.20
         with:
           branch: ${{ matrix.openstack_version }}
           # `c-bak` (cinder-backup) is not in devstack's default service
