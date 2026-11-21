@@ -84,7 +84,7 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Install clippy-sarif and sarif-fmt
-        uses: taiki-e/install-action@v2.87.28
+        uses: taiki-e/install-action@v2.90.7
         with:
           tool: clippy-sarif,sarif-fmt
 
