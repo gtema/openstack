@@ -74,7 +74,7 @@ indexmap = { version = "^2.14" }
 inventory = { version = "0.3" }
 itertools = { version = "^0.15" }
 jiff = { version = "^1.0", default-features = false, features = ["std", "serde"] }
-jsonschema = { version = "0.61", default-features = false }
+jsonschema = { version = "0.62", default-features = false }
 json-patch = { version = "^5.0.0" }
 open = { version = "^5.4" }
 openstack-cli-api = { path="cli/api", version = "0.14.0" }
