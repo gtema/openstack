@@ -65,7 +65,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921 # stable
+        uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
         with:
           targets: ${{ matrix.target }}
           toolchain: ${{ matrix.rust_ver }}
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921 # stable
+        uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
         with:
           toolchain: nightly
 
@@ -136,7 +136,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@6d653acede28d24f02e3cd41383119e8b1b35921 # stable
+        uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
         with:
           toolchain: stable
 
