@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.23.0...openstack_sdk-v0.24.0) - 2026-11-21
+
+### Added
+
+- *(config)* Add contexts.yaml support ([#2135](https://github.com/gtema/openstack/pull/2135))
+
+### Other
+
+- Address clippy warnings ([#2133](https://github.com/gtema/openstack/pull/2133))
+- [**breaking**] Replace chrono with jiff ([#2132](https://github.com/gtema/openstack/pull/2132))
+
 ## [0.23.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.22.8...openstack_sdk-v0.23.0) - 2026-11-12
 
 ### Added
