@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0](https://github.com/gtema/openstack/compare/openstack-sdk-auth-password-v0.23.0...openstack-sdk-auth-password-v0.24.0) - 2026-11-21
+
+### Other
+
+- Address clippy warnings ([#2133](https://github.com/gtema/openstack/pull/2133))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-sdk-auth-password-v0.22.6...openstack-sdk-auth-password-v0.22.7) - 2026-09-07
 
 ### Fixed
