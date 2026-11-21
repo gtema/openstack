@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0](https://github.com/gtema/openstack/compare/openstack-cli-core-v0.14.0...openstack-cli-core-v0.15.0) - 2026-11-21
+
+### Added
+
+- *(config)* Add contexts.yaml support ([#2135](https://github.com/gtema/openstack/pull/2135))
+
+### Other
+
+- Address clippy warnings ([#2133](https://github.com/gtema/openstack/pull/2133))
+
 ## [0.14.0](https://github.com/gtema/openstack/compare/openstack-cli-core-v0.13.8...openstack-cli-core-v0.14.0) - 2026-11-12
 
 ### Added
