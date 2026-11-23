@@ -479,10 +479,6 @@ pub use self::client::Client;
 pub use self::query::Query;
 #[cfg(feature = "async")]
 pub use self::query::QueryAsync;
-#[cfg(feature = "sync")]
-pub use self::query::RawQuery;
-#[cfg(feature = "async")]
-pub use self::query::RawQueryAsync;
 
 pub mod rest_endpoint_prelude;
 

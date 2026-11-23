@@ -33,12 +33,11 @@ use serde_json::json;
 
 use crate::api::{ApiError, BodyError, MicroVersionStrategy, QueryParams, RestClient, query};
 #[cfg(feature = "async")]
-use crate::api::{AsyncClient, QueryAsync, RawQueryAsync};
+use crate::api::{AsyncClient, QueryAsync};
 #[cfg(feature = "sync")]
-use crate::api::{Client, Query, RawQuery};
+use crate::api::{Client, Query};
 use crate::catalog::ServiceEndpoint;
 use crate::types::ApiVersion;
-use crate::types::BoxedAsyncRead;
 use crate::types::ServiceType;
 
 /// A trait for providing the necessary information for a single REST API endpoint.
@@ -485,115 +484,6 @@ where
             Ok(r) => Ok(r),
             Err(e) => Err(ApiError::data_type::<T>(e)),
         }
-    }
-}
-
-#[cfg(feature = "sync")]
-/// Raw Query implementation
-impl<E, C> RawQuery<C> for E
-where
-    E: RestEndpoint,
-    C: Client,
-{
-    #[instrument(name = "query", level = "debug", skip_all)]
-    fn raw_query(&self, client: &C) -> Result<Response<Bytes>, ApiError<C::Error>> {
-        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
-        let (req, data) =
-            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self, client)?;
-
-        let rsp = client.rest(req, data)?;
-
-        Ok(rsp)
-    }
-}
-
-#[cfg(feature = "async")]
-/// Raw Query Async implementation
-#[async_trait]
-impl<E, C> RawQueryAsync<C> for E
-where
-    E: RestEndpoint + Sync,
-    C: AsyncClient + Sync,
-{
-    #[instrument(name = "query", level = "debug", skip_all)]
-    async fn raw_query_async_ll(
-        &self,
-        client: &C,
-        inspect_error: Option<bool>,
-    ) -> Result<Response<Bytes>, ApiError<C::Error>> {
-        let ep = client
-            .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
-            .await?;
-        let (req, data) =
-            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self, client)?;
-
-        let query_uri = req.uri_ref().cloned();
-        let rsp = client.rest_async(req, data).await?;
-
-        if inspect_error.unwrap_or(true) {
-            check_response_error::<C>(&rsp, query_uri)?;
-        }
-        Ok(rsp)
-    }
-
-    async fn raw_query_async(&self, client: &C) -> Result<Response<Bytes>, ApiError<C::Error>> {
-        let ep = client
-            .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
-            .await?;
-        let (req, data) =
-            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self, client)?;
-
-        let query_uri = req.uri_ref().cloned();
-        let rsp = client.rest_async(req, data).await?;
-
-        check_response_error::<C>(&rsp, query_uri)?;
-        Ok(rsp)
-    }
-
-    #[instrument(name = "query", level = "debug", skip_all)]
-    async fn raw_query_read_body_async(
-        &self,
-        client: &C,
-        data: BoxedAsyncRead,
-    ) -> Result<Response<Bytes>, ApiError<C::Error>> {
-        let ep = client
-            .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
-            .await?;
-        let mut url = ep.build_request_url(&self.endpoint())?;
-        self.parameters().add_to_url(&mut url);
-        let mut req = Request::builder()
-            .method(self.method())
-            .uri(query::url_to_http_uri(url)?);
-        set_request_microversion_header::<C, E>(&mut req, &ep, self, client)?;
-        if let Some(request_headers) = self.request_headers()
-            && let Some(headers) = req.headers_mut()
-        {
-            headers.extend(request_headers.clone())
-        }
-
-        let query_uri = req.uri_ref().cloned();
-        let rsp = client.rest_read_body_async(req, data).await?;
-
-        check_response_error::<C>(&rsp, query_uri)?;
-
-        Ok(rsp)
-    }
-
-    /// Perform a download API call (returning AsyncRead or the body)
-    #[instrument(name = "query", level = "debug", skip_all)]
-    async fn download_async(
-        &self,
-        client: &C,
-    ) -> Result<(HeaderMap, BoxedAsyncRead), ApiError<C::Error>> {
-        let ep = client
-            .get_service_endpoint(&self.service_type(), self.api_version().as_ref())
-            .await?;
-        let (req, data) =
-            prepare_request::<C, E>(&ep, ep.build_request_url(&self.endpoint())?, self, client)?;
-
-        let rsp = client.download_async(req, data).await?;
-
-        Ok(rsp)
     }
 }
 
