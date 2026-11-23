@@ -315,9 +315,8 @@ pub fn context_precedence(
         // Everything else wins over the context coming from the environment
         Some(_) if !cli.is_empty() || !env.is_empty() => {
             eprintln!(
-                "WARNING: ignoring `--{}` ({}) since '--{}' is set",
+                "WARNING: ignoring `--{}` (coming from the environment) since '--{}' is set",
                 context.replace('_', "-"),
-                "coming from the environment",
                 cli.iter()
                     .chain(env.iter())
                     .next()
