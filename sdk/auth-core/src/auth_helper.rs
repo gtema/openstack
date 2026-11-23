@@ -422,7 +422,7 @@ mod tests {
         let _ = helper.clone_box();
     }
 
-    #[cfg(unix)]
+    #[cfg(target_os = "linux")]
     #[tokio::test]
     async fn external_cmd_failures_are_errors() {
         // the plain helper returns whatever was printed
