@@ -15,9 +15,9 @@
 
 name: Release
 permissions:
-  "attestations": "write"
-  "contents": "write"
-  "id-token": "write"
+  "attestations": "read"
+  "contents": "read"
+  "id-token": "read"
 
 # This task will run whenever you push a git tag that looks like a version
 # like "1.0.0", "v0.1.0-prerelease.1", "my-app/0.1.0", "releases/v1.0.0", etc.
@@ -111,6 +111,9 @@ jobs:
       matrix: ${{ fromJson(needs.plan.outputs.val).ci.github.artifacts_matrix }}
     runs-on: ${{ matrix.runner }}
     container: ${{ matrix.container && matrix.container.image || null }}
+    permissions:
+      "attestations": "write"
+      "id-token": "write"
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BUILD_MANIFEST_NAME: target/distrib/${{ join(matrix.targets, '-') }}-dist-manifest.json
@@ -239,6 +242,8 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     runs-on: "ubuntu-latest"
+    permissions:
+      "contents": "write"
     outputs:
       val: ${{ steps.host.outputs.manifest }}
     steps:
