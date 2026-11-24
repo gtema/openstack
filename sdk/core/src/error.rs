@@ -179,6 +179,33 @@ pub enum OpenStackError {
         path: String,
     },
 
+    /// No certificate could be parsed from the `cacert` file.
+    ///
+    /// Returned instead of silently proceeding without the custom CA, which
+    /// would otherwise surface much later as a confusing TLS
+    /// `UnknownIssuer` error.
+    #[error(
+        "no certificate found in `cacert` file (expected PEM or DER encoding):\n\tPath: {}",
+        path
+    )]
+    CacertNoCertificate {
+        /// The path to the `cacert` file.
+        path: String,
+    },
+
+    /// The `cacert` file looks like PEM but could not be parsed.
+    #[error(
+        "failed to parse PEM certificate(s) in `cacert` file: {}\n\tPath: {}",
+        reason,
+        path
+    )]
+    CacertInvalidPem {
+        /// The path to the `cacert` file.
+        path: String,
+        /// Parser error description.
+        reason: String,
+    },
+
     /// Invalid URL.
     #[error("invalid url: {}", source)]
     InvalidUri {

@@ -369,6 +369,18 @@ pub struct CloudConfig {
     pub name: Option<String>,
 
     /// Custom CA Certificate.
+    ///
+    /// Path to a CA certificate file used to verify the cloud's TLS
+    /// certificates. The file may contain a PEM bundle (one or more
+    /// certificates) or a single DER-encoded certificate.
+    ///
+    /// Note: TLS verification is performed by `rustls`, which is stricter
+    /// than the OpenSSL used by the Python OpenStack client. A CA that
+    /// OpenSSL accepts may still be rejected here — for example a
+    /// self-signed certificate used as its own trust anchor without
+    /// `CA:TRUE`, a certificate signed with SHA-1, or a missing
+    /// intermediate that the server does not send. Such connections fail
+    /// with an `UnknownIssuer` error rather than a load-time error.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cacert: Option<String>,
     /// Verify SSL Certificates.

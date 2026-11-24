@@ -124,8 +124,10 @@ tracing.workspace = true
 [dev-dependencies]
 bytes.workspace = true
 httpmock.workspace = true
+rcgen.workspace = true
 reqwest = { workspace = true, features = ["rustls", "blocking"] }
 secrecy.workspace = true
+tempfile.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "sync"] }
 tracing-test.workspace = true
 uuid = { workspace = true, features = ["v4"] }

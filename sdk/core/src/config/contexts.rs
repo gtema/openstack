@@ -275,7 +275,9 @@ pub struct Server {
     pub interface: Option<String>,
     /// Vendor Profile (by name from clouds-public.yaml).
     pub profile: Option<String>,
-    /// Custom CA Certificate.
+    /// Custom CA Certificate (PEM bundle or single DER certificate). See
+    /// [`crate::config::CloudConfig::cacert`] for notes on `rustls` being
+    /// stricter than OpenSSL.
     pub cacert: Option<String>,
     /// Verify SSL Certificates.
     pub verify: Option<bool>,
