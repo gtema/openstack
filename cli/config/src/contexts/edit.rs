@@ -29,6 +29,7 @@ use crate::clouds::add::{StagedFile, read_existing};
 /// Content used when the file does not exist yet.
 const TEMPLATE: &str = "\
 # contexts.yaml: combine servers, users and scopes into contexts.
+version: 1
 # current-context: my-context
 servers: []
 users: []

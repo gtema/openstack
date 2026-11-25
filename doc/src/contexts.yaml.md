@@ -5,6 +5,7 @@ the kubernetes `kubeconfig`. Named `servers`, `users` and `scopes` are defined
 independently and a `context` combines them by name:
 
 ```yaml
+version: 1
 current-context: prod-admin
 servers:
   - name: prod
@@ -153,6 +154,7 @@ selected context, same as with `--cloud-config-from-env`.
 
 ## Validation
 
+- `version` is the schema version of the file; missing is treated as `1`, any other value is refused
 - names are unique within a kind
 - a context may only refer to existing servers, users and scopes
 - `current-context` must refer to an existing context
