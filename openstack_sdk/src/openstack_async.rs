@@ -21,7 +21,7 @@ use std::ops::{Deref, DerefMut};
 use std::str::FromStr;
 use std::sync::{Arc, Weak};
 use std::time::{Duration, SystemTime};
-use std::{fs::File, io::Read};
+use std::{fs, path::PathBuf};
 
 use arc_swap::ArcSwap;
 use async_trait::async_trait;
@@ -524,6 +524,84 @@ impl AsyncOpenStackBuilder {
     }
 }
 
+/// Load the CA certificate(s) referenced by the `cacert` configuration option.
+///
+/// A `cacert` file may contain either a PEM bundle (one or more
+/// certificates) or a single DER-encoded certificate, mirroring the behaviour
+/// of OpenSSL-based clients (such as the Python OpenStack client), which
+/// accept both encodings.
+///
+/// When no certificate can be parsed the file is deliberately *not* silently
+/// ignored: doing so would let the connection proceed without the custom CA
+/// and surface much later as a confusing TLS `UnknownIssuer` error. A
+/// [`OpenStackError::CacertNoCertificate`] is returned instead.
+///
+/// Note: even a successfully loaded CA is still verified by `rustls`/webpki,
+/// which is stricter than OpenSSL. A CA that OpenSSL accepts — e.g. a
+/// self-signed certificate used as its own trust anchor without `CA:TRUE`, or
+/// one signed with SHA-1 — may still fail at connection time with
+/// `UnknownIssuer`.
+fn load_cacert(path: &str) -> OpenStackResult<Vec<Certificate>> {
+    let expanded = expand_tilde(path).unwrap_or_else(|| PathBuf::from(path));
+    let buf = fs::read(&expanded).map_err(|e| OpenStackError::IOWithPath {
+        source: e,
+        path: path.to_string(),
+    })?;
+
+    // Prefer a PEM bundle, which may hold several certificates.
+    let pem_err = match Certificate::from_pem_bundle(&buf) {
+        Ok(certs) if !certs.is_empty() => return Ok(certs),
+        Ok(_) => None,
+        Err(e) => Some(e),
+    };
+
+    // Fall back to a single DER-encoded certificate (accepted by
+    // OpenSSL-based clients such as the Python OpenStack client).
+    // `Certificate::from_der` does not validate the encoding, so do a cheap
+    // structural check first: the file must be exactly one DER SEQUENCE.
+    if is_single_der_sequence(&buf)
+        && let Ok(cert) = Certificate::from_der(&buf)
+    {
+        return Ok(vec![cert]);
+    }
+
+    // Keep the real parser error when the file is evidently PEM.
+    if let Some(e) = pem_err
+        && buf.windows(10).any(|w| w == b"-----BEGIN")
+    {
+        return Err(OpenStackError::CacertInvalidPem {
+            path: path.to_string(),
+            reason: e.to_string(),
+        });
+    }
+
+    Err(OpenStackError::CacertNoCertificate {
+        path: path.to_string(),
+    })
+}
+
+/// Check that `buf` is exactly one DER `SEQUENCE` (tag `0x30`) whose declared
+/// length covers the whole buffer, i.e. no trailing bytes and no concatenated
+/// certificates.
+fn is_single_der_sequence(buf: &[u8]) -> bool {
+    let [0x30, first, rest @ ..] = buf else {
+        return false;
+    };
+    let (len, header) = if *first < 0x80 {
+        (usize::from(*first), 2)
+    } else {
+        let n = usize::from(*first & 0x7f);
+        if n == 0 || n > std::mem::size_of::<usize>() || rest.len() < n {
+            return false;
+        }
+        let len = rest[..n]
+            .iter()
+            .fold(0usize, |acc, b| (acc << 8) | usize::from(*b));
+        (len, 2 + n)
+    };
+    len > 0 && header.checked_add(len) == Some(buf.len())
+}
+
 impl AsyncOpenStack {
     /// Lock the session for reading. `location` is kept as a parameter for
     /// call-site self-documentation (parking_lot never poisons, so it no
@@ -575,19 +653,21 @@ impl AsyncOpenStack {
         let mut client_builder = reqwest::Client::builder();
 
         if let Some(cacert) = &config.cacert {
-            let mut buf = Vec::new();
-            File::open(expand_tilde(cacert).unwrap_or(cacert.into()))
-                .map_err(|e| OpenStackError::IOWithPath {
-                    source: e,
-                    path: cacert.into(),
-                })?
-                .read_to_end(&mut buf)
-                .map_err(|e| OpenStackError::IOWithPath {
-                    source: e,
-                    path: cacert.into(),
-                })?;
-            for cert in Certificate::from_pem_bundle(&buf)? {
-                client_builder = client_builder.add_root_certificate(cert);
+            if config.verify == Some(false) {
+                // CA is irrelevant without verification; do not fail on a
+                // stale or broken file.
+                match load_cacert(cacert) {
+                    Ok(certs) => {
+                        for cert in certs {
+                            client_builder = client_builder.add_root_certificate(cert);
+                        }
+                    }
+                    Err(e) => warn!("Ignoring unusable `cacert` since verify is disabled: {e}"),
+                }
+            } else {
+                for cert in load_cacert(cacert)? {
+                    client_builder = client_builder.add_root_certificate(cert);
+                }
             }
         }
         if let Some(false) = &config.verify {
@@ -2934,5 +3014,190 @@ mod tests {
                 .cached_auth_for_scope(&AuthTokenScope::Unscoped, true)
                 .is_none()
         );
+    }
+
+    // ------------------------------------------------------------------
+    // `load_cacert` tests (issue #2162: custom CA certificate handling).
+    // Certificates are generated at runtime with `rcgen`.
+    // ------------------------------------------------------------------
+
+    /// Generate a self-signed CA and a leaf certificate signed by it, at
+    /// runtime (via `rcgen`). Returns `(ca_pem, leaf_pem, ca_der)`.
+    fn gen_ca_and_leaf() -> (String, String, Vec<u8>) {
+        use rcgen::{BasicConstraints, CertificateParams, IsCa, Issuer, KeyPair};
+
+        let mut ca_params =
+            CertificateParams::new(vec!["test-ca.invalid".to_string()]).expect("valid SAN");
+        ca_params.is_ca = IsCa::Ca(BasicConstraints::Unconstrained);
+        let ca_key = KeyPair::generate().expect("key generation");
+        let ca_cert = ca_params.self_signed(&ca_key).expect("self-sign CA");
+
+        let mut leaf_params =
+            CertificateParams::new(vec!["test-leaf.invalid".to_string()]).expect("valid SAN");
+        leaf_params.is_ca = IsCa::NoCa;
+        let leaf_key = KeyPair::generate().expect("key generation");
+        let ca_issuer = Issuer::from_params(&ca_params, &ca_key);
+        let leaf_cert = leaf_params
+            .signed_by(&leaf_key, &ca_issuer)
+            .expect("sign leaf with CA");
+
+        (ca_cert.pem(), leaf_cert.pem(), ca_cert.der().to_vec())
+    }
+
+    #[test]
+    fn load_cacert_accepts_pem_bundle() {
+        let (ca_pem, leaf_pem, _ca_der) = gen_ca_and_leaf();
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("ca-bundle.pem");
+        fs::write(&path, format!("{ca_pem}{leaf_pem}")).expect("write bundle");
+
+        let certs = load_cacert(&path.to_string_lossy()).expect("PEM bundle should load");
+        assert_eq!(
+            certs.len(),
+            2,
+            "both certificates in the bundle should be loaded"
+        );
+    }
+
+    #[test]
+    fn load_cacert_accepts_single_der_certificate() {
+        let (_ca_pem, _leaf_pem, ca_der) = gen_ca_and_leaf();
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("ca.der");
+        fs::write(&path, &ca_der).expect("write DER");
+
+        let certs = load_cacert(&path.to_string_lossy()).expect("DER certificate should load");
+        assert_eq!(
+            certs.len(),
+            1,
+            "the single DER certificate should be loaded"
+        );
+    }
+
+    #[test]
+    fn load_cacert_rejects_empty_file() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("empty.pem");
+        fs::write(&path, b"").expect("write empty file");
+
+        let err = load_cacert(&path.to_string_lossy()).expect_err("empty file must be rejected");
+        assert!(
+            matches!(err, OpenStackError::CacertNoCertificate { .. }),
+            "expected CacertNoCertificate, got {err:?}"
+        );
+    }
+
+    #[test]
+    fn load_cacert_rejects_unparsable_bytes() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("garbage.bin");
+        // Neither a PEM bundle nor a valid DER X.509 certificate.
+        fs::write(&path, b"this is definitely not a certificate").expect("write garbage");
+
+        let err = load_cacert(&path.to_string_lossy()).expect_err("garbage must be rejected");
+        assert!(
+            matches!(err, OpenStackError::CacertNoCertificate { .. }),
+            "expected CacertNoCertificate, got {err:?}"
+        );
+    }
+
+    #[test]
+    fn load_cacert_missing_file_is_io_error() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("does-not-exist.pem");
+
+        let err = load_cacert(&path.to_string_lossy()).expect_err("missing file must error");
+        assert!(
+            matches!(err, OpenStackError::IOWithPath { .. }),
+            "expected IOWithPath, got {err:?}"
+        );
+    }
+
+    #[test]
+    fn load_cacert_rejects_der_with_trailing_bytes() {
+        let (_p, _l, mut ca_der) = gen_ca_and_leaf();
+        ca_der.extend_from_slice(b"junk");
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("trailing.der");
+        fs::write(&path, &ca_der).expect("write DER");
+
+        let err = load_cacert(&path.to_string_lossy()).expect_err("trailing bytes rejected");
+        assert!(
+            matches!(err, OpenStackError::CacertNoCertificate { .. }),
+            "got {err:?}"
+        );
+    }
+
+    #[test]
+    fn load_cacert_rejects_concatenated_der() {
+        let (_p, _l, ca_der) = gen_ca_and_leaf();
+        let mut two = ca_der.clone();
+        two.extend_from_slice(&ca_der);
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("two.der");
+        fs::write(&path, &two).expect("write DER");
+
+        let err = load_cacert(&path.to_string_lossy()).expect_err("concatenated DER rejected");
+        assert!(
+            matches!(err, OpenStackError::CacertNoCertificate { .. }),
+            "got {err:?}"
+        );
+    }
+
+    #[test]
+    fn load_cacert_rejects_pem_without_certificate() {
+        let key = rcgen::KeyPair::generate().expect("key generation");
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("key.pem");
+        fs::write(&path, key.serialize_pem()).expect("write key");
+
+        let err = load_cacert(&path.to_string_lossy()).expect_err("key-only PEM rejected");
+        assert!(
+            matches!(err, OpenStackError::CacertNoCertificate { .. }),
+            "got {err:?}"
+        );
+    }
+
+    #[test]
+    fn load_cacert_reports_corrupt_pem() {
+        let (ca_pem, _l, _d) = gen_ca_and_leaf();
+        let broken = ca_pem.replacen("MII", "M!I", 1);
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("broken.pem");
+        fs::write(&path, broken).expect("write broken PEM");
+
+        let err = load_cacert(&path.to_string_lossy()).expect_err("corrupt PEM rejected");
+        assert!(
+            matches!(err, OpenStackError::CacertInvalidPem { .. }),
+            "got {err:?}"
+        );
+    }
+
+    #[test]
+    fn load_cacert_certs_accepted_by_client_builder() {
+        let (ca_pem, _l, _d) = gen_ca_and_leaf();
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("ca.pem");
+        fs::write(&path, ca_pem).expect("write CA");
+
+        let mut builder = reqwest::Client::builder();
+        for cert in load_cacert(&path.to_string_lossy()).expect("load") {
+            builder = builder.add_root_certificate(cert);
+        }
+        builder.build().expect("client builds with loaded CA");
+    }
+
+    #[test]
+    fn load_cacert_expands_tilde() {
+        let Some(home) = std::env::var_os("HOME") else {
+            return;
+        };
+        let (ca_pem, _l, _d) = gen_ca_and_leaf();
+        let dir = tempfile::tempdir_in(&home).expect("tempdir in HOME");
+        fs::write(dir.path().join("ca.pem"), ca_pem).expect("write CA");
+        let rel = dir.path().strip_prefix(&home).expect("under HOME");
+        let tilde = format!("~/{}/ca.pem", rel.display());
+
+        assert_eq!(load_cacert(&tilde).expect("tilde path loads").len(), 1);
     }
 }
