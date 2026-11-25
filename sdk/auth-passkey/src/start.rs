@@ -157,12 +157,11 @@ impl TryFrom<HmacGetSecretInput> for webauthn_rs_proto::extensions::HmacGetSecre
     type Error = PasskeyError;
     fn try_from(val: HmacGetSecretInput) -> Result<Self, Self::Error> {
         Ok(Self {
-            output1: URL_SAFE.decode(val.output1)?.into(),
+            output1: URL_SAFE.decode(val.output1)?,
             output2: val
                 .output2
                 .map(|s2| URL_SAFE.decode(s2))
-                .transpose()?
-                .map(Into::into),
+                .transpose()?,
         })
     }
 }
@@ -238,7 +237,7 @@ impl TryFrom<AllowCredentials> for webauthn_rs_proto::options::AllowCredentials 
     type Error = PasskeyError;
     fn try_from(val: AllowCredentials) -> Result<Self, Self::Error> {
         Ok(Self {
-            id: URL_SAFE.decode(val.id)?.into(),
+            id: URL_SAFE.decode(val.id)?,
             transports: val
                 .transports
                 .map(|tr| tr.into_iter().map(Into::into).collect::<Vec<_>>()),
@@ -258,7 +257,7 @@ impl TryFrom<PublicKeyCredentialRequestOptions>
                 .into_iter()
                 .map(TryInto::try_into)
                 .collect::<Result<Vec<_>, _>>()?,
-            challenge: URL_SAFE.decode(val.challenge)?.into(),
+            challenge: URL_SAFE.decode(val.challenge)?,
             extensions: val.extensions.map(TryInto::try_into).transpose()?,
             hints: val
                 .hints
