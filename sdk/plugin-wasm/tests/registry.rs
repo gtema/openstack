@@ -22,13 +22,15 @@
 //! and rely on the registry's own process-lifetime, load-once semantics
 //! without racing another test thread.
 
+mod common;
+
 use std::fs;
 use std::path::PathBuf;
 
 use openstack_sdk_plugin_wasm::registry;
 
-fn fixture_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/example_auth.wasm")
+fn fixture_path() -> Result<PathBuf, Box<dyn std::error::Error>> {
+    common::fixture("example_auth.wasm")
 }
 
 #[test]
@@ -47,16 +49,16 @@ fn install_then_list_then_lookup() -> Result<(), Box<dyn std::error::Error>> {
 
     // Installing without an explicit version uses the default and becomes
     // active.
-    let installed = registry::install(&fixture_path(), Some("1.0.0"), false)?;
+    let installed = registry::install(&fixture_path()?, Some("1.0.0"), false)?;
     assert_eq!(installed.name(), "example_auth");
 
     // Installing the same name@version again is rejected without --force.
-    assert!(registry::install(&fixture_path(), Some("1.0.0"), false).is_err());
+    assert!(registry::install(&fixture_path()?, Some("1.0.0"), false).is_err());
     // ...but succeeds with force.
-    registry::install(&fixture_path(), Some("1.0.0"), true)?;
+    registry::install(&fixture_path()?, Some("1.0.0"), true)?;
 
     // A second version installs alongside the first and becomes active.
-    registry::install(&fixture_path(), Some("2.0.0"), false)?;
+    registry::install(&fixture_path()?, Some("2.0.0"), false)?;
 
     let lockfile = registry::installed()?;
     let versions: Vec<&str> = lockfile

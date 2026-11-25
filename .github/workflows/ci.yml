@@ -67,7 +67,10 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          targets: ${{ matrix.target }}
+          # wasm32-unknown-unknown: openstack-sdk-plugin-wasm's tests build
+          # their Extism plugin fixtures on demand from
+          # sdk/plugin-wasm/fixtures/example-*-plugin/.
+          targets: ${{ matrix.target }} wasm32-unknown-unknown
           toolchain: ${{ matrix.rust_ver }}
 
       - name: Cache cargo registry

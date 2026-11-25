@@ -17,10 +17,13 @@
 //! call through the sandboxed `identity_http_request` host function against a
 //! mocked identity endpoint.
 //!
-//! The plugin under test is built from
-//! `sdk/plugin-wasm/fixtures/example-auth-plugin` and checked in as
-//! `tests/fixtures/example_auth.wasm` so these tests don't need the
-//! `wasm32-wasip1` target or a nested `cargo build` at test time.
+//! The plugin under test is built on demand from
+//! `sdk/plugin-wasm/fixtures/example-auth-plugin` into
+//! `tests/fixtures/example_auth.wasm` by `tests/common` (no binary artifact
+//! is checked in); building it needs the `wasm32-unknown-unknown` target
+//! (`rustup target add wasm32-unknown-unknown`).
+
+mod common;
 
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -31,13 +34,13 @@ use secrecy::{ExposeSecret, SecretString};
 use openstack_sdk_auth_core::{Auth, AuthError, OpenStackAuthType};
 use openstack_sdk_plugin_wasm::WasmAuthPlugin;
 
-fn fixture_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/example_auth.wasm")
+fn fixture_path() -> Result<PathBuf, Box<dyn std::error::Error>> {
+    common::fixture("example_auth.wasm")
 }
 
 #[test]
 fn load_validates_abi() -> Result<(), Box<dyn std::error::Error>> {
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     assert_eq!(plugin.name(), "example_auth");
     assert_eq!(plugin.supported_methods(), &["v3exampleauth"]);
     assert_eq!(plugin.api_version(), (3, 0));
@@ -58,7 +61,7 @@ async fn auth_round_trips_through_host_http() -> Result<(), Box<dyn std::error::
             );
     });
 
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse(&server.base_url())?;
     let http_client = reqwest::Client::new();
 
@@ -92,7 +95,7 @@ async fn auth_missing_credentials_is_rejected_without_a_network_call()
         then.status(201);
     });
 
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse(&server.base_url())?;
     let http_client = reqwest::Client::new();
     let values: HashMap<String, SecretString> = HashMap::new();
@@ -115,7 +118,7 @@ async fn auth_plugin_reported_error_is_surfaced() -> Result<(), Box<dyn std::err
         then.status(404).body("not found");
     });
 
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse(&server.base_url())?;
     let http_client = reqwest::Client::new();
     let mut values: HashMap<String, SecretString> = HashMap::new();
@@ -144,7 +147,7 @@ async fn auth_plugin_reported_error_is_surfaced() -> Result<(), Box<dyn std::err
 #[tokio::test(flavor = "multi_thread")]
 async fn auth_missing_credentials_reports_plugin_message() -> Result<(), Box<dyn std::error::Error>>
 {
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("http://127.0.0.1:1")?;
     let http_client = reqwest::Client::new();
     let values: HashMap<String, SecretString> = HashMap::new();

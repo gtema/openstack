@@ -23,6 +23,8 @@
 //! and rely on the registry's own process-lifetime state, mirroring
 //! `tests/registry.rs` and `tests/registry_remote.rs`.
 
+mod common;
+
 use std::path::PathBuf;
 
 use jiff::Timestamp;
@@ -31,8 +33,8 @@ use openstack_sdk_plugin_wasm::error::WasmPluginError;
 use openstack_sdk_plugin_wasm::lockfile::{self, PluginEntry, PluginLockfile, TrustInfo};
 use openstack_sdk_plugin_wasm::{index, registry};
 
-fn fixture_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/example_auth.wasm")
+fn fixture_path() -> Result<PathBuf, Box<dyn std::error::Error>> {
+    common::fixture("example_auth.wasm")
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -49,7 +51,7 @@ async fn update_walks_every_outcome() -> Result<(), Box<dyn std::error::Error>> 
         );
     }
 
-    let fixture = fixture_path();
+    let fixture = fixture_path()?;
     let sha256 = lockfile::sha256_hex(&fixture)?;
     let bytes = std::fs::read(&fixture)?;
 
