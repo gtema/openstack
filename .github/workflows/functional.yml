@@ -3,35 +3,57 @@ name: Functional
 
 permissions:
   contents: read
+  pull-requests: read
 
 on:
   # Run on main too so the rust-cache is seeded on the default branch
   # and can be restored by PR branches.
+  #
+  # No `paths` filter here: this workflow provides a required check, and
+  # a workflow not triggered by path filtering leaves the check pending,
+  # which blocks merging. Instead the `changes` job below detects code
+  # changes and the `functional` job exits early (reporting success)
+  # when nothing relevant changed, so the check is always reported.
   push:
     branches: [ "main" ]
-    paths:
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - '.github/workflows/functional.yml'
   pull_request:
     branches: [ "main" ]
-    paths:
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - '.github/workflows/functional.yml'
-      - 'cli/**'
-      - 'openstack_cli/**'
-      - 'openstack_sdk/**'
-      - 'openstack_types/**'
-      - 'sdk/**'
-      - 'types/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detect code changes
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      # Only needed for push events, where changes are detected with git
+      # instead of the pull request API.
+      - name: Checkout
+        if: github.event_name == 'push'
+        uses: actions/checkout@v7.0.1
+
+      - name: Filter changed paths
+        uses: dorny/paths-filter@v4.0.3
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'Cargo.toml'
+              - 'Cargo.lock'
+              - '.github/workflows/functional.yml'
+              - 'cli/**'
+              - 'openstack_cli/**'
+              - 'openstack_sdk/**'
+              - 'openstack_types/**'
+              - 'sdk/**'
+              - 'types/**'
+
   functional:
+    needs: changes
     strategy:
       fail-fast: false
       matrix:
@@ -44,40 +66,56 @@ jobs:
         #     ubuntu_version: "22.04"
     runs-on: ubuntu-${{ matrix.ubuntu_version }}
     name: Functional tests on OpenStack ${{ matrix.name }}
+    # The job must always report a definitive result, because a skipped
+    # check may not satisfy the required check in branch rules. So on
+    # non-code changes it exits early with success instead of being
+    # skipped: only the first step runs.
     steps:
 
+      - name: No code changes, nothing to test
+        if: needs.changes.outputs.code == 'false'
+        run: echo "No relevant code changes detected, skipping functional tests."
+
       - name: Harden Runner
+        if: needs.changes.outputs.code == 'true'
         uses: step-security/harden-runner@v2.23.0
         with:
           egress-policy: audit
 
       - name: Install dependencies
+        if: needs.changes.outputs.code == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y libudev-dev
 
-      - uses: actions/checkout@v7.0.1
+      - if: needs.changes.outputs.code == 'true'
+        uses: actions/checkout@v7.0.1
 
       - name: Install Rust
+        if: needs.changes.outputs.code == 'true'
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
 
       - name: Cache cargo registry
+        if: needs.changes.outputs.code == 'true'
         uses: Swatinem/rust-cache@v2.9.3
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Install cargo-nextest
+        if: needs.changes.outputs.code == 'true'
         uses: taiki-e/install-action@v2.90.7
         with:
           tool: cargo-nextest
 
       # Compile before devstack so the build is cached and off the critical path
       - name: Build functional tests
+        if: needs.changes.outputs.code == 'true'
         run: cargo nextest run --test functional --no-run
 
       - name: Deploy devstack
+        if: needs.changes.outputs.code == 'true'
         uses: gophercloud/devstack-action@v0.20
         with:
           branch: ${{ matrix.openstack_version }}
@@ -90,12 +128,13 @@ jobs:
           log_dir: /tmp/devstack-logs
 
       - name: Execute functional tests
+        if: needs.changes.outputs.code == 'true'
         env:
           OS_CLOUD: devstack
         run: cargo nextest run --test functional
 
       - name: Dump service logs on failure
-        if: failure()
+        if: needs.changes.outputs.code == 'true' && failure()
         run: |
           for unit in g-api \
                       c-api c-sch c-vol c-bak \
