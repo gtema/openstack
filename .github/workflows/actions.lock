@@ -32,6 +32,7 @@ workflows:
         - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/functional.yml':
         - 'actions/checkout@v7.0.1'
+        - 'dorny/paths-filter@v4.0.3'
         - 'dtolnay/rust-toolchain@master'
         - 'gophercloud/devstack-action@v0.20'
         - 'step-security/harden-runner@v2.23.0'
@@ -160,6 +161,11 @@ dependencies:
         commit: 'sha1-f87e5991a6d7451dcb8d9637bfbc97413f497069'
         owner_id: 5429470
         repo_id: 288485773
+    'dorny/paths-filter@v4.0.3':
+        ref: 'v4.0.3'
+        commit: 'sha1-ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d'
+        owner_id: 1588572
+        repo_id: 265601040
     'dtolnay/rust-toolchain@master':
         ref: 'master'
         commit: 'sha1-df2a88e9fe4098bad09cb42c3dec7187f15861fc'
