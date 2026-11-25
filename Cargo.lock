@@ -7260,9 +7260,9 @@ dependencies = [
 
 [[package]]
 name = "subfeature"
-version = "1.32.0"
+version = "1.33.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b629cab8906895d8bd52d01b38c272f0a70ca69a8dbd0ef204742122301bc088"
+checksum = "814d68b91393720fbd278cf00d5942972ccce4a0e6b8f54824b11a3518c1f67f"
 dependencies = [
  "memchr",
  "regex",
@@ -7393,7 +7393,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.4.3",
+ "getrandom 0.3.4",
  "once_cell",
  "rustix 1.1.6",
  "windows-sys 0.61.2",
@@ -7934,9 +7934,9 @@ dependencies = [
 
 [[package]]
 name = "tree-sitter-iter"
-version = "1.32.0"
+version = "1.33.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b12173ded2536b8fd9cfd5c0982314de59f569e37a2926ebc6a569b4c827bc77"
+checksum = "0b991e8d7322ce6919b18b61730646910dbdb8497152dc3127a71fc09218a1ad"
 dependencies = [
  "tree-sitter",
 ]
@@ -9414,9 +9414,9 @@ dependencies = [
 
 [[package]]
 name = "yamlpatch"
-version = "1.32.0"
+version = "1.33.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2f3495675a453c46ed5f149d23c55636fa92893ec482fb4979191f56bf1544b"
+checksum = "3e500240370366791296f1bc722d03ec935f9db098f3d0c8b9b235e6df8a1df9"
 dependencies = [
  "indexmap 2.14.2",
  "line-index",
@@ -9429,9 +9429,9 @@ dependencies = [
 
 [[package]]
 name = "yamlpath"
-version = "1.32.0"
+version = "1.33.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba8c521d118703eddaca5fa0252a44e279f3a14df3e23fc61e53d40923d46e6e"
+checksum = "62ce3b0b612d1d72bbc8a6c125cf593125d4d1da202a277fd5c42e80396a1205"
 dependencies = [
  "line-index",
  "self_cell",
