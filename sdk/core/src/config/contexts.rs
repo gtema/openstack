@@ -157,6 +157,13 @@ pub enum ContextsError {
         reason: &'static str,
     },
 
+    /// Schema version of the file is not supported.
+    #[error("unsupported contexts file `version: {found}` (supported: {CONTEXTS_SCHEMA_VERSION})")]
+    UnsupportedVersion {
+        /// Version found in the file.
+        found: u32,
+    },
+
     /// Explicitly requested file does not exist.
     #[error("contexts file {} is not found", path.display())]
     FileNotFound {
@@ -190,11 +197,16 @@ pub enum ContextsError {
     Config(#[from] ConfigError),
 }
 
+/// Current (and only supported) schema version of the `contexts.yaml`.
+pub const CONTEXTS_SCHEMA_VERSION: u32 = 1;
+
 /// `contexts.yaml` file.
 #[derive(Clone, Debug, Default, Deserialize)]
 #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(deny_unknown_fields)]
 pub struct ContextsFile {
+    /// Version of the file schema. Missing value is treated as [`CONTEXTS_SCHEMA_VERSION`] (`1`).
+    pub version: Option<u32>,
     /// Name of the context used when none is requested explicitly.
     #[serde(rename = "current-context")]
     #[cfg_attr(feature = "json-schema", schemars(rename = "current-context"))]
@@ -632,6 +644,11 @@ impl ContextsFile {
     }
 
     fn validate(&self) -> Result<(), ContextsError> {
+        if let Some(found) = self.version
+            && found != CONTEXTS_SCHEMA_VERSION
+        {
+            return Err(ContextsError::UnsupportedVersion { found });
+        }
         check_unique("server", self.servers.iter().map(|x| x.name.as_str()))?;
         check_unique("user", self.users.iter().map(|x| x.name.as_str()))?;
         check_unique("scope", self.scopes.iter().map(|x| x.name.as_str()))?;
@@ -866,6 +883,7 @@ mod tests {
     use super::*;
 
     const SAMPLE: &str = r#"
+version: 1
 current-context: prod-admin
 servers:
   - name: prod
@@ -905,6 +923,25 @@ contexts:
 
     fn err(data: &str) -> ContextsError {
         ContextsFile::from_yaml(data).unwrap_err()
+    }
+
+    #[test]
+    fn version_defaults_to_current() {
+        let file = ContextsFile::from_yaml(&SAMPLE.replace("version: 1\n", "")).unwrap();
+        assert_eq!(None, file.version);
+        assert_eq!(
+            Some(CONTEXTS_SCHEMA_VERSION),
+            ContextsFile::from_yaml(SAMPLE).unwrap().version
+        );
+    }
+
+    #[test]
+    fn rejects_unsupported_version() {
+        let err = ContextsFile::from_yaml(&SAMPLE.replace("version: 1", "version: 2")).unwrap_err();
+        assert!(
+            matches!(err, ContextsError::UnsupportedVersion { found: 2 }),
+            "{err}"
+        );
     }
 
     #[test]
