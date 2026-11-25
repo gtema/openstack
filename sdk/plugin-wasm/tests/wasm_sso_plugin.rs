@@ -13,9 +13,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Integration tests for the `sso` ABI flavor, exercising a real Extism
-//! (WASM) SSO plugin built from
-//! `sdk/plugin-wasm/fixtures/example-sso-plugin` and checked in as
-//! `tests/fixtures/example_sso.wasm`.
+//! (WASM) SSO plugin built on demand from
+//! `sdk/plugin-wasm/fixtures/example-sso-plugin` into
+//! `tests/fixtures/example_sso.wasm` by `tests/common` (no binary artifact
+//! is checked in; building it needs the `wasm32-unknown-unknown` target).
 //!
 //! What's automatable in a headless sandbox vs. not:
 //!
@@ -35,6 +36,8 @@
 //!   (`openstack_sdk_websso_host::CallbackServer`) is exercised end-to-end
 //!   here too, forged state included.
 
+mod common;
+
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::time::Duration;
@@ -47,8 +50,8 @@ use openstack_sdk_auth_core::OpenStackAuthType;
 use openstack_sdk_plugin_wasm::WasmAuthPlugin;
 use openstack_sdk_websso_host::CallbackServer;
 
-fn fixture_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/example_sso.wasm")
+fn fixture_path() -> Result<PathBuf, Box<dyn std::error::Error>> {
+    common::fixture("example_sso.wasm")
 }
 
 // `sso_parse_callback` now unconditionally imports `identity_http_request`
@@ -72,7 +75,7 @@ extism::host_fn!(stub_idp_http_request(_request: String) -> String {
 });
 
 fn raw_plugin() -> Result<Plugin, Box<dyn std::error::Error>> {
-    let manifest = Manifest::new([Wasm::file(fixture_path())]).disallow_all_hosts();
+    let manifest = Manifest::new([Wasm::file(fixture_path()?)]).disallow_all_hosts();
     let functions = vec![
         Function::new(
             "identity_http_request",
@@ -94,7 +97,7 @@ fn raw_plugin() -> Result<Plugin, Box<dyn std::error::Error>> {
 
 #[test]
 fn load_validates_sso_abi() -> Result<(), Box<dyn std::error::Error>> {
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     assert_eq!(plugin.name(), "example_sso");
     assert_eq!(plugin.supported_methods(), &["v3examplesso"]);
     assert_eq!(plugin.api_version(), (3, 0));
@@ -103,7 +106,7 @@ fn load_validates_sso_abi() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test(flavor = "multi_thread")]
 async fn bad_scheme_is_rejected_before_any_prompt() -> Result<(), Box<dyn std::error::Error>> {
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("https://keystone.example.test/v3")?;
     let http_client = reqwest::Client::new();
 
@@ -132,7 +135,7 @@ async fn bad_scheme_is_rejected_before_any_prompt() -> Result<(), Box<dyn std::e
 #[tokio::test(flavor = "multi_thread")]
 async fn undeclared_redirect_host_is_rejected_before_any_prompt()
 -> Result<(), Box<dyn std::error::Error>> {
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("https://keystone.example.test/v3")?;
     let http_client = reqwest::Client::new();
 
@@ -235,7 +238,7 @@ async fn sso_parse_callback_exchanges_code_via_identity_endpoint()
             .body(r#"{"token": "exchanged-token-xyz"}"#);
     });
 
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse(&server.base_url())?;
 
     let callback_json = serde_json::json!({"params": {"code": "raw-idp-code"}}).to_string();
@@ -256,7 +259,7 @@ async fn sso_parse_callback_exchanges_code_via_identity_endpoint()
 #[tokio::test(flavor = "multi_thread")]
 async fn ssrf_denylisted_redirect_is_rejected_before_any_prompt()
 -> Result<(), Box<dyn std::error::Error>> {
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("https://keystone.example.test/v3")?;
     let http_client = reqwest::Client::new();
 
@@ -287,7 +290,7 @@ async fn ssrf_denylisted_redirect_is_rejected_before_any_prompt()
 #[tokio::test(flavor = "multi_thread")]
 async fn idp_http_request_during_sso_build_request_errors() -> Result<(), Box<dyn std::error::Error>>
 {
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("https://keystone.example.test/v3")?;
 
     let request_json = serde_json::json!({
@@ -345,7 +348,7 @@ async fn sso_parse_callback_exchanges_code_via_idp_endpoint()
             .body(r#"{"token": "idp-exchanged-token"}"#);
     });
 
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("https://keystone.example.test/v3")?;
     let idp_origin = url::Url::parse(&server.base_url())?;
 
@@ -397,7 +400,7 @@ async fn sso_pkce_round_trips_from_build_request_to_callback()
 -> Result<(), Box<dyn std::error::Error>> {
     use base64::Engine as _;
 
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("https://keystone.example.test/v3")?;
 
     let server = CallbackServer::bind(None).await?;
@@ -486,7 +489,7 @@ async fn sso_pkce_round_trips_from_build_request_to_callback()
 #[tokio::test(flavor = "multi_thread")]
 async fn sso_nonce_mismatch_is_reported_as_a_guest_error() -> Result<(), Box<dyn std::error::Error>>
 {
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("https://keystone.example.test/v3")?;
 
     let server = CallbackServer::bind(None).await?;
@@ -570,7 +573,7 @@ async fn idp_http_request_does_not_follow_redirects() -> Result<(), Box<dyn std:
             .header("Location", "/token-followed-elsewhere");
     });
 
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("https://keystone.example.test/v3")?;
     let idp_origin = url::Url::parse(&server.base_url())?;
 
@@ -613,7 +616,7 @@ async fn idp_http_request_does_not_follow_redirects() -> Result<(), Box<dyn std:
 #[tokio::test(flavor = "multi_thread")]
 async fn idp_http_request_rejects_denylisted_bound_origin_on_every_call()
 -> Result<(), Box<dyn std::error::Error>> {
-    let plugin = WasmAuthPlugin::load(&fixture_path())?;
+    let plugin = WasmAuthPlugin::load(&fixture_path()?)?;
     let identity_url = url::Url::parse("https://keystone.example.test/v3")?;
     let idp_origin = url::Url::parse("https://169.254.169.254/")?;
 

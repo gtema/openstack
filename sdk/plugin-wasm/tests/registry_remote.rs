@@ -32,14 +32,16 @@
 //! process-wide `OSC_PLUGIN_DIR`/`OSC_PLUGIN_LOCKFILE` environment variables,
 //! mirroring `tests/registry.rs`.
 
+mod common;
+
 use std::path::PathBuf;
 
 use openstack_sdk_plugin_wasm::index;
 use openstack_sdk_plugin_wasm::lockfile;
 use openstack_sdk_plugin_wasm::registry;
 
-fn fixture_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/example_auth.wasm")
+fn fixture_path() -> Result<PathBuf, Box<dyn std::error::Error>> {
+    common::fixture("example_auth.wasm")
 }
 
 #[tokio::test(flavor = "multi_thread")]
@@ -57,7 +59,7 @@ async fn untrusted_install_fails_closed_and_allow_unsigned_is_the_only_way_past_
         );
     }
 
-    let fixture = fixture_path();
+    let fixture = fixture_path()?;
     let sha256 = lockfile::sha256_hex(&fixture)?;
     let bytes = std::fs::read(&fixture)?;
 
