@@ -45,6 +45,10 @@ use openstack_sdk_core::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// type query parameter for /v2.0/log/loggable-resources API
+    #[builder(default, setter(into))]
+    _type: Option<Cow<'a, str>>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -150,6 +154,7 @@ impl RestEndpoint for Request<'_> {
     fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
         params.push_opt("limit", self.limit);
+        params.push_opt("type", self._type.as_ref());
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
         if let Some(val) = &self.sort_dir {

@@ -89,9 +89,21 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     binary: Option<String>,
 
+    /// configurations query parameter for /v2.0/agents API
+    #[arg(help_heading = "Query parameters", long)]
+    configurations: Option<String>,
+
+    /// created_at query parameter for /v2.0/agents API
+    #[arg(help_heading = "Query parameters", long)]
+    created_at: Option<String>,
+
     /// description query parameter for /v2.0/agents API
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
+
+    /// heartbeat_timestamp query parameter for /v2.0/agents API
+    #[arg(help_heading = "Query parameters", long)]
+    heartbeat_timestamp: Option<String>,
 
     /// host query parameter for /v2.0/agents API
     #[arg(help_heading = "Query parameters", long)]
@@ -132,6 +144,10 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
+    /// started_at query parameter for /v2.0/agents API
+    #[arg(help_heading = "Query parameters", long)]
+    started_at: Option<String>,
+
     /// topic query parameter for /v2.0/agents API
     #[arg(help_heading = "Query parameters", long)]
     topic: Option<String>,
@@ -171,14 +187,26 @@ impl AgentsCommand {
         if let Some(val) = &self.query.binary {
             ep_builder.binary(val);
         }
+        if let Some(val) = &self.query.configurations {
+            ep_builder.configurations(val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
+        }
         if let Some(val) = &self.query.description {
             ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.heartbeat_timestamp {
+            ep_builder.heartbeat_timestamp(val);
         }
         if let Some(val) = &self.query.host {
             ep_builder.host(val);
         }
         if let Some(val) = &self.query.id {
             ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.started_at {
+            ep_builder.started_at(val);
         }
         if let Some(val) = &self.query.topic {
             ep_builder.topic(val);

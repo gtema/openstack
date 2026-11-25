@@ -69,6 +69,10 @@ pub struct RuleTypesCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// type query parameter for /v2.0/qos/rule-types API
+    #[arg(help_heading = "Query parameters", long)]
+    _type: Option<String>,
+
     /// all_rules query parameter for /v2.0/qos/rule-types API
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     all_rules: Option<bool>,
@@ -143,6 +147,9 @@ impl RuleTypesCommand {
         }
         if let Some(val) = &self.query.all_supported {
             ep_builder.all_supported(*val);
+        }
+        if let Some(val) = &self.query._type {
+            ep_builder._type(val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val.iter());

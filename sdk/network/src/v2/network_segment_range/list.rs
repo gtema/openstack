@@ -27,6 +27,14 @@ use openstack_sdk_core::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// default query parameter for /v2.0/network-segment-ranges API
+    #[builder(default)]
+    _default: Option<bool>,
+
+    /// available query parameter for /v2.0/network-segment-ranges API
+    #[builder(default, setter(into))]
+    available: Option<Cow<'a, str>>,
+
     /// description query parameter for /v2.0/network-segment-ranges API
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
@@ -47,6 +55,14 @@ pub struct Request<'a> {
     /// response as the marker parameter value in a subsequent limited request.
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
+
+    /// maximum query parameter for /v2.0/network-segment-ranges API
+    #[builder(default)]
+    maximum: Option<i32>,
+
+    /// minimum query parameter for /v2.0/network-segment-ranges API
+    #[builder(default)]
+    minimum: Option<i32>,
 
     /// name query parameter for /v2.0/network-segment-ranges API
     #[builder(default, setter(into))]
@@ -80,6 +96,10 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
+    /// shared query parameter for /v2.0/network-segment-ranges API
+    #[builder(default)]
+    shared: Option<bool>,
+
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     #[builder(default, private, setter(name = "_sort_dir"))]
@@ -97,6 +117,10 @@ pub struct Request<'a> {
     /// tags-any query parameter for /v2.0/network-segment-ranges API
     #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
+
+    /// used query parameter for /v2.0/network-segment-ranges API
+    #[builder(default, setter(into))]
+    used: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -229,8 +253,12 @@ impl RestEndpoint for Request<'_> {
         let mut params = QueryParams::default();
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("available", self.available.as_ref());
+        params.push_opt("default", self._default);
         params.push_opt("description", self.description.as_ref());
         params.push_opt("id", self.id.as_ref());
+        params.push_opt("maximum", self.maximum);
+        params.push_opt("minimum", self.minimum);
         params.push_opt("name", self.name.as_ref());
         params.push_opt("network_type", self.network_type.as_ref());
         params.push_opt("not-tags", self.not_tags.as_ref());
@@ -238,8 +266,10 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("physical_network", self.physical_network.as_ref());
         params.push_opt("project_id", self.project_id.as_ref());
         params.push_opt("revision_number", self.revision_number.as_ref());
+        params.push_opt("shared", self.shared);
         params.push_opt("tags", self.tags.as_ref());
         params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("used", self.used.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));

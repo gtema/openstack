@@ -70,6 +70,10 @@ pub struct ServiceProvidersCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// default query parameter for /v2.0/service-providers API
+    #[arg(help_heading = "Query parameters", long)]
+    _default: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -87,9 +91,17 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
+    /// name query parameter for /v2.0/service-providers API
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
     /// Reverse the page direction
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
+
+    /// service_type query parameter for /v2.0/service-providers API
+    #[arg(help_heading = "Query parameters", long)]
+    service_type: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -130,6 +142,15 @@ impl ServiceProvidersCommand {
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query._default {
+            ep_builder._default(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.service_type {
+            ep_builder.service_type(val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val.iter());

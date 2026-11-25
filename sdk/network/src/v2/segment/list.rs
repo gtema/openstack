@@ -90,6 +90,10 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
+    /// segmentation_id query parameter for /v2.0/segments API
+    #[builder(default)]
+    segmentation_id: Option<i32>,
+
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     #[builder(default, private, setter(name = "_sort_dir"))]
@@ -187,6 +191,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("network_type", self.network_type.as_ref());
         params.push_opt("physical_network", self.physical_network.as_ref());
         params.push_opt("revision_number", self.revision_number.as_ref());
+        params.push_opt("segmentation_id", self.segmentation_id);
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));
         }

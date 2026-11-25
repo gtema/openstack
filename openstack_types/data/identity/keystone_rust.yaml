@@ -3433,6 +3433,26 @@ paths:
                 $ref: '#/components/schemas/RoleResponse'
         '404':
           description: Role not found
+  /v3/s3tokens:
+    post:
+      tags:
+      - s3tokens
+      summary: Validate the signed S3 request and describe the credential owner.
+      description: Validate an S3 request signature (no token is issued)
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/S3TokenAuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Token object (no X-Subject-Token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
   /v3/services:
     get:
       tags:
@@ -7355,6 +7375,80 @@ paths:
           description: Grant not found
       security:
       - x-auth: []
+  /v4/projects/{project_id}/parents:
+    get:
+      tags:
+      - projects
+      summary: List project parents
+      description: |-
+        Lists the parents of the project, the closest first.
+        Only the projects the caller is allowed to see are
+        returned. The `as_ids` query parameter returns a nested object of the
+        project IDs instead of the list.
+      operationId: parents
+      parameters:
+      - name: as_ids
+        in: query
+        description: |-
+          Return the relatives as a nested object of the project IDs instead of
+          the flat list. Considered set when present with an empty value or any
+          value other than `false` or `0`.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Project parents
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectParentsResponse'
+        '404':
+          description: Project not found
+  /v4/projects/{project_id}/subtree:
+    get:
+      tags:
+      - projects
+      summary: List project subtree
+      description: |-
+        Lists all descendants of the project, breadth first.
+        Only the projects the caller is allowed to see are
+        returned. The `as_ids` query parameter returns a nested object of the
+        project IDs instead of the list.
+      operationId: subtree
+      parameters:
+      - name: as_ids
+        in: query
+        description: |-
+          Return the relatives as a nested object of the project IDs instead of
+          the flat list. Considered set when present with an empty value or any
+          value other than `false` or `0`.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Project subtree
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectSubtreeResponse'
+        '404':
+          description: Project not found
   /v4/projects/{project_id}/users/{user_id}/roles:
     get:
       tags:
@@ -10069,6 +10163,11 @@ components:
           description: |-
             Credential ID. For `ec2` this is `SHA-256(blob['access'])`
             hex-encoded; otherwise a random UUID.
+        links:
+          oneOf:
+          - $ref: '#/components/schemas/ResourceLinks'
+            description: Links of the resource.
+          - type: 'null'
         project_id:
           type:
           - string
@@ -10937,6 +11036,11 @@ components:
         id:
           type: string
           description: Group ID.
+        links:
+          oneOf:
+          - $ref: '#/components/schemas/ResourceLinks'
+            description: Links of the resource.
+          - type: 'null'
         name:
           type: string
           description: Group name.
@@ -11845,6 +11949,11 @@ components:
         id:
           type: string
           description: The limit ID.
+        links:
+          oneOf:
+          - $ref: '#/components/schemas/ResourceLinks'
+            description: Links of the resource.
+          - type: 'null'
         project_id:
           type:
           - string
@@ -13254,6 +13363,11 @@ components:
         id:
           type: string
           description: Policy ID.
+        links:
+          oneOf:
+          - $ref: '#/components/schemas/ResourceLinks'
+            description: Links of the resource.
+          - type: 'null'
         type:
           type: string
           description: The MIME media type of the serialized policy blob.
@@ -13522,6 +13636,15 @@ components:
             When `true`, the project cannot be updated or deleted until an
             administrator explicitly sets this back to `false`. Also used for
             domains, which persist through the same underlying project.
+    ProjectParentsResponse:
+      type: object
+      description: Parents of the project (from the closest to the root).
+      required:
+      - parents
+      properties:
+        parents:
+          $ref: '#/components/schemas/ProjectHierarchy'
+          description: Parents of the project visible to the caller.
     ProjectResponse:
       type: object
       description: Complete response with the project data.
@@ -13572,6 +13695,15 @@ components:
           items:
             $ref: '#/components/schemas/ProjectShort'
           description: Collection of project objects.
+    ProjectSubtreeResponse:
+      type: object
+      description: Descendants of the project.
+      required:
+      - subtree
+      properties:
+        subtree:
+          $ref: '#/components/schemas/ProjectHierarchy'
+          description: Descendants of the project visible to the caller.
     ProjectTags:
       type: object
       description: Project tags.
@@ -13833,6 +13965,11 @@ components:
         id:
           type: string
           description: Region ID.
+        links:
+          oneOf:
+          - $ref: '#/components/schemas/ResourceLinks'
+            description: Links of the resource.
+          - type: 'null'
         parent_region_id:
           type:
           - string
@@ -13941,6 +14078,11 @@ components:
         id:
           type: string
           description: The registered limit ID.
+        links:
+          oneOf:
+          - $ref: '#/components/schemas/ResourceLinks'
+            description: Links of the resource.
+          - type: 'null'
         region_id:
           type:
           - string
@@ -14232,6 +14374,11 @@ components:
         id:
           type: string
           description: Role ID.
+        links:
+          oneOf:
+          - $ref: '#/components/schemas/ResourceLinks'
+            description: Links of the resource.
+          - type: 'null'
         name:
           type: string
           description: Role name.
@@ -14557,6 +14704,38 @@ components:
             enum:
             - before
       description: Rule position for insert operations.
+    S3SignatureCredentials:
+      type: object
+      description: |-
+        The `credentials` object of an S3 token validation request: the S3
+        string-to-sign plus the client signature over it.
+      properties:
+        access:
+          type:
+          - string
+          - 'null'
+          description: The EC2 access key identifying the credential record.
+        signature:
+          type:
+          - string
+          - 'null'
+          description: The client-computed signature to verify.
+        token:
+          type:
+          - string
+          - 'null'
+          description: URL-safe base64 of the S3 string-to-sign.
+    S3TokenAuthRequest:
+      type: object
+      description: |-
+        `POST /v3/s3tokens` request body. Python Keystone accepts the object under
+        `credentials`, `credential` or `ec2Credentials`.
+      required:
+      - credentials
+      properties:
+        credentials:
+          $ref: '#/components/schemas/S3SignatureCredentials'
+          description: The signed request description.
     ScimRealm:
       type: object
       description: A registered SCIM realm.
@@ -14737,6 +14916,11 @@ components:
         id:
           type: string
           description: Service ID.
+        links:
+          oneOf:
+          - $ref: '#/components/schemas/ResourceLinks'
+            description: Links of the resource.
+          - type: 'null'
         name:
           type:
           - string
@@ -15413,6 +15597,11 @@ components:
         impersonation:
           type: boolean
           description: Allow the trustee to impersonate the trustor.
+        links:
+          oneOf:
+          - $ref: '#/components/schemas/ResourceLinks'
+            description: Links of the resource.
+          - type: 'null'
         project_id:
           type:
           - string

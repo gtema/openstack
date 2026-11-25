@@ -117,6 +117,10 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     source_ip_prefix: Option<Cow<'a, str>>,
 
+    /// tenant_id query parameter for /v2.0/metering/metering-label-rules API
+    #[builder(default, setter(into))]
+    tenant_id: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
@@ -203,6 +207,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("metering_label_id", self.metering_label_id.as_ref());
         params.push_opt("remote_ip_prefix", self.remote_ip_prefix.as_ref());
         params.push_opt("source_ip_prefix", self.source_ip_prefix.as_ref());
+        params.push_opt("tenant_id", self.tenant_id.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));

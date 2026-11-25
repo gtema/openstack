@@ -55,6 +55,14 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
+    /// id query parameter for /v2.0/ndp-proxies API
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
+    /// ip_address query parameter for /v2.0/ndp-proxies API
+    #[arg(help_heading = "Query parameters", long)]
+    ip_address: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -80,9 +88,21 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
 
+    /// port_id query parameter for /v2.0/ndp-proxies API
+    #[arg(help_heading = "Query parameters", long)]
+    port_id: Option<String>,
+
+    /// project_id query parameter for /v2.0/ndp-proxies API
+    #[arg(help_heading = "Query parameters", long)]
+    project_id: Option<String>,
+
     /// revision_number query parameter for /v2.0/ndp-proxies API
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
+
+    /// router_id query parameter for /v2.0/ndp-proxies API
+    #[arg(help_heading = "Query parameters", long)]
+    router_id: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -123,11 +143,26 @@ impl NdpProxiesCommand {
         if let Some(val) = &self.query.description {
             ep_builder.description(val);
         }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.ip_address {
+            ep_builder.ip_address(val);
+        }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
+        if let Some(val) = &self.query.port_id {
+            ep_builder.port_id(val);
+        }
+        if let Some(val) = &self.query.project_id {
+            ep_builder.project_id(val);
+        }
         if let Some(val) = &self.query.revision_number {
             ep_builder.revision_number(val);
+        }
+        if let Some(val) = &self.query.router_id {
+            ep_builder.router_id(val);
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);

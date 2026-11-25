@@ -76,6 +76,10 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
+    /// metainfo query parameter for /v2.0/service_profiles API
+    #[builder(default, setter(into))]
+    metainfo: Option<Cow<'a, str>>,
+
     /// Reverse the page direction
     #[builder(default)]
     page_reverse: Option<bool>,
@@ -174,6 +178,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("driver", self.driver.as_ref());
         params.push_opt("enabled", self.enabled);
         params.push_opt("id", self.id.as_ref());
+        params.push_opt("metainfo", self.metainfo.as_ref());
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));
         }

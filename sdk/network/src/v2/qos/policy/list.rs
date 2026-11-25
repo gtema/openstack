@@ -94,6 +94,10 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
+    /// rules query parameter for /v2.0/qos/policies API
+    #[builder(default, setter(into))]
+    rules: Option<Cow<'a, str>>,
+
     /// shared query parameter for /v2.0/qos/policies API
     #[builder(default)]
     shared: Option<bool>,
@@ -259,6 +263,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("not-tags", self.not_tags.as_ref());
         params.push_opt("not-tags-any", self.not_tags_any.as_ref());
         params.push_opt("revision_number", self.revision_number.as_ref());
+        params.push_opt("rules", self.rules.as_ref());
         params.push_opt("shared", self.shared);
         params.push_opt("tags", self.tags.as_ref());
         params.push_opt("tags-any", self.tags_any.as_ref());

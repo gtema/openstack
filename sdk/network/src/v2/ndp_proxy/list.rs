@@ -30,6 +30,14 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
+    /// id query parameter for /v2.0/ndp-proxies API
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
+    /// ip_address query parameter for /v2.0/ndp-proxies API
+    #[builder(default, setter(into))]
+    ip_address: Option<Cow<'a, str>>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -51,9 +59,21 @@ pub struct Request<'a> {
     #[builder(default)]
     page_reverse: Option<bool>,
 
+    /// port_id query parameter for /v2.0/ndp-proxies API
+    #[builder(default, setter(into))]
+    port_id: Option<Cow<'a, str>>,
+
+    /// project_id query parameter for /v2.0/ndp-proxies API
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
+
     /// revision_number query parameter for /v2.0/ndp-proxies API
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
+
+    /// router_id query parameter for /v2.0/ndp-proxies API
+    #[builder(default, setter(into))]
+    router_id: Option<Cow<'a, str>>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -145,8 +165,13 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("description", self.description.as_ref());
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("ip_address", self.ip_address.as_ref());
         params.push_opt("name", self.name.as_ref());
+        params.push_opt("port_id", self.port_id.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
         params.push_opt("revision_number", self.revision_number.as_ref());
+        params.push_opt("router_id", self.router_id.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));

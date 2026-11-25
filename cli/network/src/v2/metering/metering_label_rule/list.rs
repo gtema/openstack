@@ -144,6 +144,10 @@ struct QueryParameters {
     /// the source IP prefix.
     #[arg(help_heading = "Query parameters", long)]
     source_ip_prefix: Option<String>,
+
+    /// tenant_id query parameter for /v2.0/metering/metering-label-rules API
+    #[arg(help_heading = "Query parameters", long)]
+    tenant_id: Option<String>,
 }
 
 /// Path parameters
@@ -195,6 +199,9 @@ impl MeteringLabelRulesCommand {
         }
         if let Some(val) = &self.query.source_ip_prefix {
             ep_builder.source_ip_prefix(val);
+        }
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);
