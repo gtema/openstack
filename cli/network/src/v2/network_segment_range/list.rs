@@ -51,6 +51,14 @@ pub struct NetworkSegmentRangesCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// default query parameter for /v2.0/network-segment-ranges API
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    _default: Option<bool>,
+
+    /// available query parameter for /v2.0/network-segment-ranges API
+    #[arg(help_heading = "Query parameters", long)]
+    available: Option<String>,
+
     /// description query parameter for /v2.0/network-segment-ranges API
     #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
@@ -75,6 +83,14 @@ struct QueryParameters {
     /// response as the marker parameter value in a subsequent limited request.
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
+
+    /// maximum query parameter for /v2.0/network-segment-ranges API
+    #[arg(help_heading = "Query parameters", long)]
+    maximum: Option<i32>,
+
+    /// minimum query parameter for /v2.0/network-segment-ranges API
+    #[arg(help_heading = "Query parameters", long)]
+    minimum: Option<i32>,
 
     /// name query parameter for /v2.0/network-segment-ranges API
     #[arg(help_heading = "Query parameters", long)]
@@ -108,6 +124,10 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
+    /// shared query parameter for /v2.0/network-segment-ranges API
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    shared: Option<bool>,
+
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
@@ -125,6 +145,10 @@ struct QueryParameters {
     /// tags-any query parameter for /v2.0/network-segment-ranges API
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags_any: Option<Vec<String>>,
+
+    /// used query parameter for /v2.0/network-segment-ranges API
+    #[arg(help_heading = "Query parameters", long)]
+    used: Option<String>,
 }
 
 /// Path parameters
@@ -156,11 +180,23 @@ impl NetworkSegmentRangesCommand {
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);
         }
+        if let Some(val) = &self.query.available {
+            ep_builder.available(val);
+        }
+        if let Some(val) = &self.query._default {
+            ep_builder._default(*val);
+        }
         if let Some(val) = &self.query.description {
             ep_builder.description(val);
         }
         if let Some(val) = &self.query.id {
             ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.maximum {
+            ep_builder.maximum(*val);
+        }
+        if let Some(val) = &self.query.minimum {
+            ep_builder.minimum(*val);
         }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
@@ -183,11 +219,17 @@ impl NetworkSegmentRangesCommand {
         if let Some(val) = &self.query.revision_number {
             ep_builder.revision_number(val);
         }
+        if let Some(val) = &self.query.shared {
+            ep_builder.shared(*val);
+        }
         if let Some(val) = &self.query.tags {
             ep_builder.tags(val.iter());
         }
         if let Some(val) = &self.query.tags_any {
             ep_builder.tags_any(val.iter());
+        }
+        if let Some(val) = &self.query.used {
+            ep_builder.used(val);
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);

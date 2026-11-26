@@ -87,9 +87,22 @@ pub struct Request<'a> {
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
 
+    /// subnet_ip_availability query parameter for
+    /// /v2.0/network-ip-availabilities API
+    #[builder(default, setter(into))]
+    subnet_ip_availability: Option<Cow<'a, str>>,
+
     /// tenant_id query parameter for /v2.0/network-ip-availabilities API
     #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
+
+    /// total_ips query parameter for /v2.0/network-ip-availabilities API
+    #[builder(default, setter(into))]
+    total_ips: Option<Cow<'a, str>>,
+
+    /// used_ips query parameter for /v2.0/network-ip-availabilities API
+    #[builder(default, setter(into))]
+    used_ips: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -173,7 +186,13 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("ip_version", self.ip_version.as_ref());
         params.push_opt("network_id", self.network_id.as_ref());
         params.push_opt("network_name", self.network_name.as_ref());
+        params.push_opt(
+            "subnet_ip_availability",
+            self.subnet_ip_availability.as_ref(),
+        );
         params.push_opt("tenant_id", self.tenant_id.as_ref());
+        params.push_opt("total_ips", self.total_ips.as_ref());
+        params.push_opt("used_ips", self.used_ips.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));

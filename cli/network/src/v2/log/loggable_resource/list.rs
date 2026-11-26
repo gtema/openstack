@@ -69,6 +69,10 @@ pub struct LoggableResourcesCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// type query parameter for /v2.0/log/loggable-resources API
+    #[arg(help_heading = "Query parameters", long)]
+    _type: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -126,6 +130,9 @@ impl LoggableResourcesCommand {
         // Set query parameters
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query._type {
+            ep_builder._type(val);
         }
         if let Some(val) = &self.query.marker {
             ep_builder.marker(val);

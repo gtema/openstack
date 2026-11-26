@@ -121,6 +121,10 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
+    /// rules query parameter for /v2.0/qos/policies API
+    #[arg(help_heading = "Query parameters", long)]
+    rules: Option<String>,
+
     /// shared query parameter for /v2.0/qos/policies API
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     shared: Option<bool>,
@@ -196,6 +200,9 @@ impl PoliciesCommand {
         }
         if let Some(val) = &self.query.revision_number {
             ep_builder.revision_number(val);
+        }
+        if let Some(val) = &self.query.rules {
+            ep_builder.rules(val);
         }
         if let Some(val) = &self.query.shared {
             ep_builder.shared(*val);

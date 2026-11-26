@@ -105,6 +105,10 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
+    /// metainfo query parameter for /v2.0/service_profiles API
+    #[arg(help_heading = "Query parameters", long)]
+    metainfo: Option<String>,
+
     /// Reverse the page direction
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
@@ -160,6 +164,9 @@ impl ServiceProfilesCommand {
         }
         if let Some(val) = &self.query.id {
             ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.metainfo {
+            ep_builder.metainfo(val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val.iter());

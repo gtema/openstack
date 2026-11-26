@@ -118,6 +118,10 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
+    /// segmentation_id query parameter for /v2.0/segments API
+    #[arg(help_heading = "Query parameters", long)]
+    segmentation_id: Option<i32>,
+
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
@@ -177,6 +181,9 @@ impl SegmentsCommand {
         }
         if let Some(val) = &self.query.revision_number {
             ep_builder.revision_number(val);
+        }
+        if let Some(val) = &self.query.segmentation_id {
+            ep_builder.segmentation_id(*val);
         }
         if let Some(val) = &self.query.sort_dir {
             ep_builder.sort_dir(val.iter());

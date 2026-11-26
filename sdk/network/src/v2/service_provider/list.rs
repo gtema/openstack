@@ -45,6 +45,10 @@ use openstack_sdk_core::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// default query parameter for /v2.0/service-providers API
+    #[builder(default, setter(into))]
+    _default: Option<Cow<'a, str>>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -58,9 +62,17 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
+    /// name query parameter for /v2.0/service-providers API
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
     /// Reverse the page direction
     #[builder(default)]
     page_reverse: Option<bool>,
+
+    /// service_type query parameter for /v2.0/service-providers API
+    #[builder(default, setter(into))]
+    service_type: Option<Cow<'a, str>>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -152,6 +164,9 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);
+        params.push_opt("default", self._default.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("service_type", self.service_type.as_ref());
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));
         }

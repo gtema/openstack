@@ -4171,6 +4171,8 @@ components:
         maxLength: 255
         minLength: 1
         type: string
+      x-openstack:
+        min-ver: '2.36'
     snapshots_edit_id:
       description: id parameter for /snapshots/{id}/edit API
       in: path
@@ -4219,6 +4221,8 @@ components:
         maxLength: 4096
         minLength: 1
         type: string
+      x-openstack:
+        min-ver: '2.73'
     snapshots_metadata_key:
       description: key parameter for /snapshots/{resource_id}/metadata/{key} API
       in: path
@@ -4248,6 +4252,8 @@ components:
         maxLength: 255
         minLength: 1
         type: string
+      x-openstack:
+        min-ver: '2.36'
     snapshots_offset:
       in: query
       name: offset
@@ -4343,6 +4349,8 @@ components:
         type:
           - boolean
           - string
+      x-openstack:
+        min-ver: '2.79'
     types_action_id:
       description: id parameter for /types/{id}/action API
       in: path

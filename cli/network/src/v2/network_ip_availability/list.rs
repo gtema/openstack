@@ -115,9 +115,22 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
 
+    /// subnet_ip_availability query parameter for
+    /// /v2.0/network-ip-availabilities API
+    #[arg(help_heading = "Query parameters", long)]
+    subnet_ip_availability: Option<String>,
+
     /// tenant_id query parameter for /v2.0/network-ip-availabilities API
     #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
+
+    /// total_ips query parameter for /v2.0/network-ip-availabilities API
+    #[arg(help_heading = "Query parameters", long)]
+    total_ips: Option<String>,
+
+    /// used_ips query parameter for /v2.0/network-ip-availabilities API
+    #[arg(help_heading = "Query parameters", long)]
+    used_ips: Option<String>,
 }
 
 /// Path parameters
@@ -158,8 +171,17 @@ impl NetworkIpAvailabilitiesCommand {
         if let Some(val) = &self.query.network_name {
             ep_builder.network_name(val);
         }
+        if let Some(val) = &self.query.subnet_ip_availability {
+            ep_builder.subnet_ip_availability(val);
+        }
         if let Some(val) = &self.query.tenant_id {
             ep_builder.tenant_id(val);
+        }
+        if let Some(val) = &self.query.total_ips {
+            ep_builder.total_ips(val);
+        }
+        if let Some(val) = &self.query.used_ips {
+            ep_builder.used_ips(val);
         }
         if let Some(val) = &self.query.page_reverse {
             ep_builder.page_reverse(*val);

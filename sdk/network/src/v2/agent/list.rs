@@ -65,9 +65,21 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     binary: Option<Cow<'a, str>>,
 
+    /// configurations query parameter for /v2.0/agents API
+    #[builder(default, setter(into))]
+    configurations: Option<Cow<'a, str>>,
+
+    /// created_at query parameter for /v2.0/agents API
+    #[builder(default, setter(into))]
+    created_at: Option<Cow<'a, str>>,
+
     /// description query parameter for /v2.0/agents API
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
+
+    /// heartbeat_timestamp query parameter for /v2.0/agents API
+    #[builder(default, setter(into))]
+    heartbeat_timestamp: Option<Cow<'a, str>>,
 
     /// host query parameter for /v2.0/agents API
     #[builder(default, setter(into))]
@@ -103,6 +115,10 @@ pub struct Request<'a> {
     /// silently ignored by the server.
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
+
+    /// started_at query parameter for /v2.0/agents API
+    #[builder(default, setter(into))]
+    started_at: Option<Cow<'a, str>>,
 
     /// topic query parameter for /v2.0/agents API
     #[builder(default, setter(into))]
@@ -190,9 +206,13 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("alive", self.alive.as_ref());
         params.push_opt("availability_zone", self.availability_zone.as_ref());
         params.push_opt("binary", self.binary.as_ref());
+        params.push_opt("configurations", self.configurations.as_ref());
+        params.push_opt("created_at", self.created_at.as_ref());
         params.push_opt("description", self.description.as_ref());
+        params.push_opt("heartbeat_timestamp", self.heartbeat_timestamp.as_ref());
         params.push_opt("host", self.host.as_ref());
         params.push_opt("id", self.id.as_ref());
+        params.push_opt("started_at", self.started_at.as_ref());
         params.push_opt("topic", self.topic.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());

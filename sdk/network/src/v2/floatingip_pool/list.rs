@@ -26,6 +26,10 @@ use openstack_sdk_core::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// cidr query parameter for /v2.0/floatingip-pools API
+    #[builder(default, setter(into))]
+    cidr: Option<Cow<'a, str>>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -39,9 +43,17 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
+    /// network_id query parameter for /v2.0/floatingip-pools API
+    #[builder(default, setter(into))]
+    network_id: Option<Cow<'a, str>>,
+
     /// Reverse the page direction
     #[builder(default)]
     page_reverse: Option<bool>,
+
+    /// project_id query parameter for /v2.0/floatingip-pools API
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -52,6 +64,14 @@ pub struct Request<'a> {
     /// silently ignored by the server.
     #[builder(default, private, setter(name = "_sort_key"))]
     sort_key: Option<Vec<Cow<'a, str>>>,
+
+    /// subnet_id query parameter for /v2.0/floatingip-pools API
+    #[builder(default, setter(into))]
+    subnet_id: Option<Cow<'a, str>>,
+
+    /// subnet_name query parameter for /v2.0/floatingip-pools API
+    #[builder(default, setter(into))]
+    subnet_name: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -130,6 +150,11 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams<'_> {
         let mut params = QueryParams::default();
+        params.push_opt("cidr", self.cidr.as_ref());
+        params.push_opt("network_id", self.network_id.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("subnet_id", self.subnet_id.as_ref());
+        params.push_opt("subnet_name", self.subnet_name.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);

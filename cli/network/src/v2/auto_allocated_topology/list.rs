@@ -51,6 +51,10 @@ pub struct AutoAllocatedTopologiesCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// id query parameter for /v2.0/auto-allocated-topology API
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -81,6 +85,10 @@ struct QueryParameters {
     /// silently ignored by the server.
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
+
+    /// tenant_id query parameter for /v2.0/auto-allocated-topology API
+    #[arg(help_heading = "Query parameters", long)]
+    tenant_id: Option<String>,
 }
 
 /// Path parameters
@@ -106,6 +114,12 @@ impl AutoAllocatedTopologiesCommand {
         let mut ep_builder = list::Request::builder();
 
         // Set query parameters
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.tenant_id {
+            ep_builder.tenant_id(val);
+        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }

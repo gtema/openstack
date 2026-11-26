@@ -207,7 +207,9 @@ struct Subnet {
     #[arg(help_heading = "Body parameters", long, action = clap::ArgAction::SetTrue, conflicts_with = "segment_id")]
     no_segment_id: bool,
 
-    /// The service types associated with the subnet.
+    /// The service types associated with the subnet. Each value is a port
+    /// `device_owner` starting with `network:`, `neutron:` or `compute:`. See
+    /// the subnet service types extension.
     ///
     /// Parameter is an array, may be provided multiple times.
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]

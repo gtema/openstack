@@ -45,6 +45,10 @@ use openstack_sdk_core::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// type query parameter for /v2.0/qos/rule-types API
+    #[builder(default, setter(into))]
+    _type: Option<Cow<'a, str>>,
+
     /// all_rules query parameter for /v2.0/qos/rule-types API
     #[builder(default)]
     all_rules: Option<bool>,
@@ -162,6 +166,7 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("page_reverse", self.page_reverse);
         params.push_opt("all_rules", self.all_rules);
         params.push_opt("all_supported", self.all_supported);
+        params.push_opt("type", self._type.as_ref());
         if let Some(val) = &self.sort_dir {
             params.extend(val.iter().map(|value| ("sort_dir", value)));
         }

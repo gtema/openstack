@@ -51,6 +51,10 @@ pub struct FloatingipPoolsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// cidr query parameter for /v2.0/floatingip-pools API
+    #[arg(help_heading = "Query parameters", long)]
+    cidr: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -68,9 +72,17 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
+    /// network_id query parameter for /v2.0/floatingip-pools API
+    #[arg(help_heading = "Query parameters", long)]
+    network_id: Option<String>,
+
     /// Reverse the page direction
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     page_reverse: Option<bool>,
+
+    /// project_id query parameter for /v2.0/floatingip-pools API
+    #[arg(help_heading = "Query parameters", long)]
+    project_id: Option<String>,
 
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
@@ -81,6 +93,14 @@ struct QueryParameters {
     /// silently ignored by the server.
     #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     sort_key: Option<Vec<String>>,
+
+    /// subnet_id query parameter for /v2.0/floatingip-pools API
+    #[arg(help_heading = "Query parameters", long)]
+    subnet_id: Option<String>,
+
+    /// subnet_name query parameter for /v2.0/floatingip-pools API
+    #[arg(help_heading = "Query parameters", long)]
+    subnet_name: Option<String>,
 }
 
 /// Path parameters
@@ -103,6 +123,21 @@ impl FloatingipPoolsCommand {
         let mut ep_builder = list::Request::builder();
 
         // Set query parameters
+        if let Some(val) = &self.query.cidr {
+            ep_builder.cidr(val);
+        }
+        if let Some(val) = &self.query.network_id {
+            ep_builder.network_id(val);
+        }
+        if let Some(val) = &self.query.project_id {
+            ep_builder.project_id(val);
+        }
+        if let Some(val) = &self.query.subnet_id {
+            ep_builder.subnet_id(val);
+        }
+        if let Some(val) = &self.query.subnet_name {
+            ep_builder.subnet_name(val);
+        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }

@@ -127,7 +127,8 @@ pub struct SubnetResponse {
     #[structable(optional)]
     pub segment_id: Option<String>,
 
-    /// The service types associated with the subnet.
+    /// The service types associated with the subnet. An empty list means the
+    /// subnet accepts any port.
     #[serde(default)]
     #[structable(optional, serialize)]
     pub service_types: Option<Vec<String>>,

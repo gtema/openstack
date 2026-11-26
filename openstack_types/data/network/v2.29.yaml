@@ -357,9 +357,13 @@ paths:
         - $ref: '#/components/parameters/agents_alive'
         - $ref: '#/components/parameters/agents_availability_zone'
         - $ref: '#/components/parameters/agents_binary'
+        - $ref: '#/components/parameters/agents_configurations'
+        - $ref: '#/components/parameters/agents_created_at'
         - $ref: '#/components/parameters/agents_description'
+        - $ref: '#/components/parameters/agents_heartbeat_timestamp'
         - $ref: '#/components/parameters/agents_host'
         - $ref: '#/components/parameters/agents_id'
+        - $ref: '#/components/parameters/agents_started_at'
         - $ref: '#/components/parameters/agents_topic'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
@@ -666,6 +670,8 @@ paths:
     get:
       operationId: auto-allocated-topology:get
       parameters:
+        - $ref: '#/components/parameters/auto_allocated_topologies_id'
+        - $ref: '#/components/parameters/auto_allocated_topologies_tenant_id'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
         - $ref: '#/components/parameters/page_reverse'
@@ -1328,6 +1334,11 @@ paths:
     get:
       operationId: floatingip-pools:get
       parameters:
+        - $ref: '#/components/parameters/floatingip_pools_cidr'
+        - $ref: '#/components/parameters/floatingip_pools_network_id'
+        - $ref: '#/components/parameters/floatingip_pools_project_id'
+        - $ref: '#/components/parameters/floatingip_pools_subnet_id'
+        - $ref: '#/components/parameters/floatingip_pools_subnet_name'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
         - $ref: '#/components/parameters/page_reverse'
@@ -2020,6 +2031,7 @@ paths:
       operationId: log/loggable-resources:get
       parameters:
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/loggable_resources_type'
         - $ref: '#/components/parameters/marker'
         - $ref: '#/components/parameters/page_reverse'
         - $ref: '#/components/parameters/sort_dir'
@@ -2271,6 +2283,7 @@ paths:
         - $ref: '#/components/parameters/metering_label_rules_metering_label_id'
         - $ref: '#/components/parameters/metering_label_rules_remote_ip_prefix'
         - $ref: '#/components/parameters/metering_label_rules_source_ip_prefix'
+        - $ref: '#/components/parameters/metering_label_rules_tenant_id'
         - $ref: '#/components/parameters/page_reverse'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
@@ -2496,8 +2509,13 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
         - $ref: '#/components/parameters/ndp_proxies_description'
+        - $ref: '#/components/parameters/ndp_proxies_id'
+        - $ref: '#/components/parameters/ndp_proxies_ip_address'
         - $ref: '#/components/parameters/ndp_proxies_name'
+        - $ref: '#/components/parameters/ndp_proxies_port_id'
+        - $ref: '#/components/parameters/ndp_proxies_project_id'
         - $ref: '#/components/parameters/ndp_proxies_revision_number'
+        - $ref: '#/components/parameters/ndp_proxies_router_id'
         - $ref: '#/components/parameters/page_reverse'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
@@ -2596,7 +2614,10 @@ paths:
         - $ref: '#/components/parameters/network_ip_availabilities_ip_version'
         - $ref: '#/components/parameters/network_ip_availabilities_network_id'
         - $ref: '#/components/parameters/network_ip_availabilities_network_name'
+        - $ref: '#/components/parameters/network_ip_availabilities_subnet_ip_availability'
         - $ref: '#/components/parameters/network_ip_availabilities_tenant_id'
+        - $ref: '#/components/parameters/network_ip_availabilities_total_ips'
+        - $ref: '#/components/parameters/network_ip_availabilities_used_ips'
         - $ref: '#/components/parameters/page_reverse'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
@@ -2683,8 +2704,12 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
+        - $ref: '#/components/parameters/network_segment_ranges_available'
+        - $ref: '#/components/parameters/network_segment_ranges_default'
         - $ref: '#/components/parameters/network_segment_ranges_description'
         - $ref: '#/components/parameters/network_segment_ranges_id'
+        - $ref: '#/components/parameters/network_segment_ranges_maximum'
+        - $ref: '#/components/parameters/network_segment_ranges_minimum'
         - $ref: '#/components/parameters/network_segment_ranges_name'
         - $ref: '#/components/parameters/network_segment_ranges_network_type'
         - $ref: '#/components/parameters/network_segment_ranges_not-tags'
@@ -2692,8 +2717,10 @@ paths:
         - $ref: '#/components/parameters/network_segment_ranges_physical_network'
         - $ref: '#/components/parameters/network_segment_ranges_project_id'
         - $ref: '#/components/parameters/network_segment_ranges_revision_number'
+        - $ref: '#/components/parameters/network_segment_ranges_shared'
         - $ref: '#/components/parameters/network_segment_ranges_tags'
         - $ref: '#/components/parameters/network_segment_ranges_tags-any'
+        - $ref: '#/components/parameters/network_segment_ranges_used'
         - $ref: '#/components/parameters/page_reverse'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
@@ -4020,6 +4047,7 @@ paths:
         - $ref: '#/components/parameters/policies_not-tags'
         - $ref: '#/components/parameters/policies_not-tags-any'
         - $ref: '#/components/parameters/policies_revision_number'
+        - $ref: '#/components/parameters/policies_rules'
         - $ref: '#/components/parameters/policies_shared'
         - $ref: '#/components/parameters/policies_tags'
         - $ref: '#/components/parameters/policies_tags-any'
@@ -4624,6 +4652,7 @@ paths:
         - $ref: '#/components/parameters/page_reverse'
         - $ref: '#/components/parameters/rule_types_all_rules'
         - $ref: '#/components/parameters/rule_types_all_supported'
+        - $ref: '#/components/parameters/rule_types_type'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
       responses:
@@ -6323,6 +6352,7 @@ paths:
         - $ref: '#/components/parameters/segments_network_type'
         - $ref: '#/components/parameters/segments_physical_network'
         - $ref: '#/components/parameters/segments_revision_number'
+        - $ref: '#/components/parameters/segments_segmentation_id'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
       responses:
@@ -6448,6 +6478,9 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/marker'
         - $ref: '#/components/parameters/page_reverse'
+        - $ref: '#/components/parameters/service_providers_default'
+        - $ref: '#/components/parameters/service_providers_name'
+        - $ref: '#/components/parameters/service_providers_service_type'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
       responses:
@@ -6547,6 +6580,7 @@ paths:
         - $ref: '#/components/parameters/service_profiles_driver'
         - $ref: '#/components/parameters/service_profiles_enabled'
         - $ref: '#/components/parameters/service_profiles_id'
+        - $ref: '#/components/parameters/service_profiles_metainfo'
         - $ref: '#/components/parameters/sort_dir'
         - $ref: '#/components/parameters/sort_key'
       responses:
@@ -8138,6 +8172,18 @@ components:
       name: binary
       schema:
         type: string
+    agents_configurations:
+      description: configurations query parameter for /v2.0/agents API
+      in: query
+      name: configurations
+      schema:
+        type: string
+    agents_created_at:
+      description: created_at query parameter for /v2.0/agents API
+      in: query
+      name: created_at
+      schema:
+        type: string
     agents_description:
       description: description query parameter for /v2.0/agents API
       in: query
@@ -8161,6 +8207,12 @@ components:
       in: path
       name: id
       required: true
+      schema:
+        type: string
+    agents_heartbeat_timestamp:
+      description: heartbeat_timestamp query parameter for /v2.0/agents API
+      in: query
+      name: heartbeat_timestamp
       schema:
         type: string
     agents_host:
@@ -8189,6 +8241,12 @@ components:
       in: path
       name: id
       required: true
+      schema:
+        type: string
+    agents_started_at:
+      description: started_at query parameter for /v2.0/agents API
+      in: query
+      name: started_at
       schema:
         type: string
     agents_topic:
@@ -8372,6 +8430,21 @@ components:
       name: id
       required: true
       schema:
+        type: string
+    auto_allocated_topologies_id:
+      description: id query parameter for /v2.0/auto-allocated-topology API
+      in: query
+      name: id
+      schema:
+        format: uuid
+        type: string
+    auto_allocated_topologies_tenant_id:
+      description: tenant_id query parameter for /v2.0/auto-allocated-topology 
+        API
+      in: query
+      name: tenant_id
+      schema:
+        format: uuid
         type: string
     availability_zones_name:
       description: name query parameter for /v2.0/availability_zones API
@@ -8809,12 +8882,48 @@ components:
       name: service_type
       schema:
         type: string
+    floatingip_pools_cidr:
+      description: cidr query parameter for /v2.0/floatingip-pools API
+      in: query
+      name: cidr
+      schema:
+        type:
+          - 'null'
+          - string
     floatingip_pools_floatingip_pool_id:
       description: id parameter for /v2.0/floatingip-pools/{id} API
       in: path
       name: id
       required: true
       schema:
+        type: string
+    floatingip_pools_network_id:
+      description: network_id query parameter for /v2.0/floatingip-pools API
+      in: query
+      name: network_id
+      schema:
+        format: uuid
+        type: string
+    floatingip_pools_project_id:
+      description: project_id query parameter for /v2.0/floatingip-pools API
+      in: query
+      name: project_id
+      schema:
+        maxLength: 255
+        type: string
+    floatingip_pools_subnet_id:
+      description: subnet_id query parameter for /v2.0/floatingip-pools API
+      in: query
+      name: subnet_id
+      schema:
+        format: uuid
+        type: string
+    floatingip_pools_subnet_name:
+      description: subnet_name query parameter for /v2.0/floatingip-pools API
+      in: query
+      name: subnet_name
+      schema:
+        maxLength: 255
         type: string
     floatingips_description:
       description: description query parameter for /v2.0/floatingips API
@@ -9444,6 +9553,12 @@ components:
       required: true
       schema:
         type: string
+    loggable_resources_type:
+      description: type query parameter for /v2.0/log/loggable-resources API
+      in: query
+      name: type
+      schema:
+        type: string
     logs_description:
       description: description query parameter for /v2.0/log/logs API
       in: query
@@ -9610,6 +9725,14 @@ components:
       name: source_ip_prefix
       schema:
         type: string
+    metering_label_rules_tenant_id:
+      description: tenant_id query parameter for 
+        /v2.0/metering/metering-label-rules API
+      in: query
+      name: tenant_id
+      schema:
+        maxLength: 255
+        type: string
     metering_labels_description:
       description: description query parameter for 
         /v2.0/metering/metering-labels API
@@ -9751,6 +9874,21 @@ components:
       schema:
         maxLength: 255
         type: string
+    ndp_proxies_id:
+      description: id query parameter for /v2.0/ndp-proxies API
+      in: query
+      name: id
+      schema:
+        format: uuid
+        type: string
+    ndp_proxies_ip_address:
+      description: ip_address query parameter for /v2.0/ndp-proxies API
+      in: query
+      name: ip_address
+      schema:
+        type:
+          - 'null'
+          - string
     ndp_proxies_name:
       description: name query parameter for /v2.0/ndp-proxies API
       in: query
@@ -9764,11 +9902,32 @@ components:
       required: true
       schema:
         type: string
+    ndp_proxies_port_id:
+      description: port_id query parameter for /v2.0/ndp-proxies API
+      in: query
+      name: port_id
+      schema:
+        format: uuid
+        type: string
+    ndp_proxies_project_id:
+      description: project_id query parameter for /v2.0/ndp-proxies API
+      in: query
+      name: project_id
+      schema:
+        maxLength: 255
+        type: string
     ndp_proxies_revision_number:
       description: revision_number query parameter for /v2.0/ndp-proxies API
       in: query
       name: revision_number
       schema:
+        type: string
+    ndp_proxies_router_id:
+      description: router_id query parameter for /v2.0/ndp-proxies API
+      in: query
+      name: router_id
+      schema:
+        format: uuid
         type: string
     network_ip_availabilities_ip_version:
       description: ip_version query parameter for 
@@ -9798,6 +9957,13 @@ components:
       name: network_name
       schema:
         type: string
+    network_ip_availabilities_subnet_ip_availability:
+      description: subnet_ip_availability query parameter for 
+        /v2.0/network-ip-availabilities API
+      in: query
+      name: subnet_ip_availability
+      schema:
+        type: string
     network_ip_availabilities_tenant_id:
       description: tenant_id query parameter for /v2.0/network-ip-availabilities
         API
@@ -9805,6 +9971,35 @@ components:
       name: tenant_id
       schema:
         type: string
+    network_ip_availabilities_total_ips:
+      description: total_ips query parameter for /v2.0/network-ip-availabilities
+        API
+      in: query
+      name: total_ips
+      schema:
+        type: string
+    network_ip_availabilities_used_ips:
+      description: used_ips query parameter for /v2.0/network-ip-availabilities 
+        API
+      in: query
+      name: used_ips
+      schema:
+        type: string
+    network_segment_ranges_available:
+      description: available query parameter for /v2.0/network-segment-ranges 
+        API
+      in: query
+      name: available
+      schema:
+        type: string
+    network_segment_ranges_default:
+      description: default query parameter for /v2.0/network-segment-ranges API
+      in: query
+      name: default
+      schema:
+        type:
+          - boolean
+          - string
     network_segment_ranges_description:
       description: description query parameter for /v2.0/network-segment-ranges 
         API
@@ -9820,6 +10015,26 @@ components:
       schema:
         format: uuid
         type: string
+    network_segment_ranges_maximum:
+      description: maximum query parameter for /v2.0/network-segment-ranges API
+      in: query
+      name: maximum
+      schema:
+        maximum: 4294967295
+        minimum: 1
+        type:
+          - integer
+          - string
+    network_segment_ranges_minimum:
+      description: minimum query parameter for /v2.0/network-segment-ranges API
+      in: query
+      name: minimum
+      schema:
+        maximum: 4294967295
+        minimum: 1
+        type:
+          - integer
+          - string
     network_segment_ranges_name:
       description: name query parameter for /v2.0/network-segment-ranges API
       in: query
@@ -9889,6 +10104,14 @@ components:
       name: revision_number
       schema:
         type: string
+    network_segment_ranges_shared:
+      description: shared query parameter for /v2.0/network-segment-ranges API
+      in: query
+      name: shared
+      schema:
+        type:
+          - boolean
+          - string
     network_segment_ranges_tags:
       description: tags query parameter for /v2.0/network-segment-ranges API
       explode: false
@@ -9923,6 +10146,12 @@ components:
       in: path
       name: network_segment_range_id
       required: true
+      schema:
+        type: string
+    network_segment_ranges_used:
+      description: used query parameter for /v2.0/network-segment-ranges API
+      in: query
+      name: used
       schema:
         type: string
     networks_admin_state_up:
@@ -10260,6 +10489,12 @@ components:
       description: revision_number query parameter for /v2.0/qos/policies API
       in: query
       name: revision_number
+      schema:
+        type: string
+    policies_rules:
+      description: rules query parameter for /v2.0/qos/policies API
+      in: query
+      name: rules
       schema:
         type: string
     policies_shared:
@@ -10824,6 +11059,12 @@ components:
       required: true
       schema:
         type: string
+    rule_types_type:
+      description: type query parameter for /v2.0/qos/rule-types API
+      in: query
+      name: type
+      schema:
+        type: string
     security-groups_tags_id:
       description: id parameter for 
         /v2.0/security-groups/{security_group_id}/tags/{id} API
@@ -11152,6 +11393,14 @@ components:
       required: true
       schema:
         type: string
+    segments_segmentation_id:
+      description: segmentation_id query parameter for /v2.0/segments API
+      in: query
+      name: segmentation_id
+      schema:
+        type:
+          - integer
+          - string
     service_profiles_description:
       description: description query parameter for /v2.0/service_profiles API
       in: query
@@ -11184,6 +11433,12 @@ components:
       schema:
         format: uuid
         type: string
+    service_profiles_metainfo:
+      description: metainfo query parameter for /v2.0/service_profiles API
+      in: query
+      name: metainfo
+      schema:
+        type: string
     service_profiles_service_profile_flavor_id:
       description: flavor_id parameter for 
         /v2.0/flavors/{flavor_id}/service_profiles/{id} API
@@ -11200,11 +11455,29 @@ components:
       required: true
       schema:
         type: string
+    service_providers_default:
+      description: default query parameter for /v2.0/service-providers API
+      in: query
+      name: default
+      schema:
+        type: string
+    service_providers_name:
+      description: name query parameter for /v2.0/service-providers API
+      in: query
+      name: name
+      schema:
+        type: string
     service_providers_service_provider_id:
       description: id parameter for /v2.0/service-providers/{id} API
       in: path
       name: id
       required: true
+      schema:
+        type: string
+    service_providers_service_type:
+      description: service_type query parameter for /v2.0/service-providers API
+      in: query
+      name: service_type
       schema:
         type: string
     sort_dir:
@@ -26758,7 +27031,8 @@ components:
                 - string
             service_types:
               description: |-
-                The service types associated with the subnet.
+                The service types associated with the subnet. An empty list means the
+                subnet accepts any port.
               items:
                 type: string
               type: array
@@ -26866,7 +27140,9 @@ components:
                 - string
             service_types:
               description: |-
-                The service types associated with the subnet.
+                The service types associated with the subnet. Each value is a port
+                `device_owner` starting with `network:`, `neutron:` or
+                `compute:`. See the subnet service types extension.
               items:
                 type: string
               type: array
@@ -27010,7 +27286,8 @@ components:
                 - string
             service_types:
               description: |-
-                The service types associated with the subnet.
+                The service types associated with the subnet. An empty list means the
+                subnet accepts any port.
               items:
                 type: string
               type: array
@@ -27893,7 +28170,9 @@ components:
                 - string
             service_types:
               description: |-
-                The service types associated with the subnet.
+                The service types associated with the subnet. Each value is a port
+                `device_owner` starting with `network:`, `neutron:` or
+                `compute:`. See the subnet service types extension.
               items:
                 type: string
               type: array
@@ -28060,7 +28339,8 @@ components:
                 - string
             service_types:
               description: |-
-                The service types associated with the subnet.
+                The service types associated with the subnet. An empty list means the
+                subnet accepts any port.
               items:
                 type: string
               type: array
@@ -28226,7 +28506,8 @@ components:
                   - string
               service_types:
                 description: |-
-                  The service types associated with the subnet.
+                  The service types associated with the subnet. An empty list means the
+                  subnet accepts any port.
                 items:
                   type: string
                 type: array
