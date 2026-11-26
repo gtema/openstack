@@ -5510,10 +5510,6 @@ paths:
               $ref: '#/components/schemas/ServersOs_Volume_AttachmentUpdateRequest'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServersOs_Volume_AttachmentUpdateResponse'
           description: Ok
         '400':
           description: Error
@@ -99074,65 +99070,6 @@ components:
         - $ref: '#/components/schemas/ServersOs_Volume_AttachmentUpdate_285'
       x-openstack:
         discriminator: microversion
-    ServersOs_Volume_AttachmentUpdateResponse:
-      properties:
-        volumeAttachment:
-          properties:
-            attachment_id:
-              description: The UUID of the associated volume attachment in 
-                Cinder.
-              format: uuid
-              type: string
-              x-openstack:
-                min-ver: '2.89'
-            bdm_uuid:
-              description: The UUID of the block device mapping record in Nova 
-                for the attachment.
-              format: uuid
-              type: string
-              x-openstack:
-                min-ver: '2.89'
-            delete_on_termination:
-              description: A flag indicating if the attached volume will be 
-                deleted when the server is deleted.
-              type: boolean
-              x-openstack:
-                min-ver: '2.79'
-            device:
-              description: Name of the device in the attachment object, such as,
-                /dev/vdb.
-              type: string
-            id:
-              description: The volume ID of the attachment
-              format: uuid
-              type: string
-              x-openstack:
-                max-ver: '2.88'
-            serverId:
-              description: The UUID of the server.
-              format: uuid
-              type: string
-            tag:
-              description: The device tag applied to the volume block device or 
-                null.
-              type:
-                - 'null'
-                - string
-              x-openstack:
-                min-ver: '2.70'
-            volumeId:
-              description: The UUID of the attached volume.
-              format: uuid
-              type: string
-          required:
-            - device
-            - id
-            - serverId
-            - volumeId
-          type: object
-      required:
-        - volumeAttachment
-      type: object
     ServersOs_Volume_AttachmentUpdate_20:
       additionalProperties: false
       properties:
