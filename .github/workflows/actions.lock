@@ -44,7 +44,7 @@ workflows:
         - 'actions/upload-artifact@v7.0.2'
         - 'crate-ci/typos@v1.52.0'
         - 'dtolnay/rust-toolchain@master'
-        - 'github/codeql-action@v4.39.1'
+        - 'github/codeql-action@v4.39.5'
         - 'step-security/harden-runner@v2.23.0'
         - 'swatinem/rust-cache@v2.9.3'
         - 'taiki-e/install-action@v2.90.7'
@@ -70,7 +70,7 @@ workflows:
     '.github/workflows/scorecard.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/upload-artifact@v7.0.2'
-        - 'github/codeql-action@v4.39.1'
+        - 'github/codeql-action@v4.39.5'
         - 'ossf/scorecard-action@v2.6.0'
         - 'step-security/harden-runner@v2.23.0'
 dependencies:
@@ -176,9 +176,9 @@ dependencies:
         commit: 'sha1-70f81531115945ba6eb6b941ec9d39d063438eb9'
         owner_id: 44887257
         repo_id: 228054692
-    'github/codeql-action@v4.39.1':
-        ref: 'v4.39.1'
-        commit: 'sha1-9b3254085494b55a0f7c4c2b3d2d52cc712ce370'
+    'github/codeql-action@v4.39.5':
+        ref: 'v4.39.5'
+        commit: 'sha1-915412ff23e8b7659517e607487dbeae018f2934'
         owner_id: 9919
         repo_id: 259445878
     'gophercloud/devstack-action@v0.20':
