@@ -28,10 +28,12 @@ use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod backup;
+pub mod quota_set;
 pub mod snapshot;
 pub mod volume;
 
 pub use backup::*;
+pub use quota_set::*;
 pub use snapshot::*;
 pub use volume::*;
 
@@ -39,6 +41,8 @@ pub use volume::*;
 pub enum BlockStorageApiRequest {
     /// Backup
     Backup(Box<BlockStorageBackupApiRequest>),
+    /// QuotaSet
+    QuotaSet(Box<BlockStorageQuotaSetApiRequest>),
     /// Snapshot
     Snapshot(Box<BlockStorageSnapshotApiRequest>),
     /// Volume
@@ -54,6 +58,12 @@ impl From<BlockStorageApiRequest> for ApiRequest {
 impl From<BlockStorageBackupApiRequest> for BlockStorageApiRequest {
     fn from(item: BlockStorageBackupApiRequest) -> Self {
         BlockStorageApiRequest::Backup(Box::new(item))
+    }
+}
+
+impl From<BlockStorageQuotaSetApiRequest> for BlockStorageApiRequest {
+    fn from(item: BlockStorageQuotaSetApiRequest) -> Self {
+        BlockStorageApiRequest::QuotaSet(Box::new(item))
     }
 }
 
@@ -74,6 +84,8 @@ impl ConfirmableRequest for BlockStorageApiRequest {
         match &self {
             BlockStorageApiRequest::Backup(req) => req.get_confirm_message(),
 
+            BlockStorageApiRequest::QuotaSet(req) => req.get_confirm_message(),
+
             BlockStorageApiRequest::Snapshot(req) => req.get_confirm_message(),
 
             BlockStorageApiRequest::Volume(req) => req.get_confirm_message(),
@@ -89,6 +101,9 @@ impl ExecuteApiRequest for BlockStorageApiRequest {
     ) -> Result<(), CloudWorkerError> {
         match self {
             BlockStorageApiRequest::Backup(req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            BlockStorageApiRequest::QuotaSet(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
             BlockStorageApiRequest::Snapshot(req) => {

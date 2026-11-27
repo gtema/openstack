@@ -5,7 +5,31 @@
 #       action: <ACTION TO PERFORM>
 #       description: <DESCRIPTION USED IN TUI>
 mode_keybindings:
-  Home: {}
+  Home:
+    "<up>":
+      action: HomeScrollUp
+      description: Scroll up
+    "<down>":
+      action: HomeScrollDown
+      description: Scroll down
+    "j":
+      action: HomeScrollDown
+      description: Scroll down
+    "k":
+      action: HomeScrollUp
+      description: Scroll up
+    "<PageUp>":
+      action: HomePageUp
+      description: Page up
+    "<PageDown>":
+      action: HomePageDown
+      description: Page down
+    "<Home>":
+      action: HomeScrollTop
+      description: Scroll to top
+    "<End>":
+      action: HomeScrollEnd
+      description: Scroll to bottom
   # Block Storage views
   "Resource(block_storage.backup)":
     "y":

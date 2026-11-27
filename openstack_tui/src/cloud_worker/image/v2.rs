@@ -28,13 +28,17 @@ use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
 pub mod image;
+pub mod usage;
 
 pub use image::*;
+pub use usage::*;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ImageApiRequest {
     /// Image
     Image(Box<ImageImageApiRequest>),
+    /// Usage
+    Usage(Box<ImageUsageApiRequest>),
 }
 
 impl From<ImageApiRequest> for ApiRequest {
@@ -49,10 +53,18 @@ impl From<ImageImageApiRequest> for ImageApiRequest {
     }
 }
 
+impl From<ImageUsageApiRequest> for ImageApiRequest {
+    fn from(item: ImageUsageApiRequest) -> Self {
+        ImageApiRequest::Usage(Box::new(item))
+    }
+}
+
 impl ConfirmableRequest for ImageApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
         match &self {
             ImageApiRequest::Image(req) => req.get_confirm_message(),
+
+            ImageApiRequest::Usage(req) => req.get_confirm_message(),
         }
     }
 }
@@ -65,6 +77,9 @@ impl ExecuteApiRequest for ImageApiRequest {
     ) -> Result<(), CloudWorkerError> {
         match self {
             ImageApiRequest::Image(req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            ImageApiRequest::Usage(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

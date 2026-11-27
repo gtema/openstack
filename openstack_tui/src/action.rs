@@ -101,6 +101,14 @@ pub enum Action {
     /// Start searching (narrowing) the rows of the current view
     Search,
 
+    /// Home (usage view) scrolling
+    HomeScrollUp,
+    HomeScrollDown,
+    HomePageUp,
+    HomePageDown,
+    HomeScrollTop,
+    HomeScrollEnd,
+
     /// AuthHelper
     AuthDataRequired {
         prompt: String,
