@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0](https://github.com/gtema/openstack/compare/openstack-sdk-plugin-wasm-v0.1.1...openstack-sdk-plugin-wasm-v0.2.0) - 2026-11-27
+
+### Fixed
+
+- *(plugin-wasm)* Decode raw Fulcio extensions ([#2129](https://github.com/gtema/openstack/pull/2129))
+
+### Other
+
+- *(wasm)* Generate test fixtures on demand ([#2174](https://github.com/gtema/openstack/pull/2174))
+- Address clippy warnings ([#2133](https://github.com/gtema/openstack/pull/2133))
+- [**breaking**] Replace chrono with jiff ([#2132](https://github.com/gtema/openstack/pull/2132))
+
 ## [0.1.1](https://github.com/gtema/openstack/compare/openstack-sdk-plugin-wasm-v0.1.0...openstack-sdk-plugin-wasm-v0.1.1) - 2026-11-12
 
 ### Fixed

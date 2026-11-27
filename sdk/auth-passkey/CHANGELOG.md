@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0](https://github.com/gtema/openstack/compare/openstack-sdk-auth-passkey-v0.23.0...openstack-sdk-auth-passkey-v0.24.0) - 2026-11-27
+
+### Other
+
+- *(wasm)* Generate test fixtures on demand ([#2174](https://github.com/gtema/openstack/pull/2174))
+- *(clippy)* Address clippy warnings in auth-passkey ([#2173](https://github.com/gtema/openstack/pull/2173))
+- Address clippy warnings ([#2133](https://github.com/gtema/openstack/pull/2133))
+
 ## [0.23.0](https://github.com/gtema/openstack/compare/openstack-sdk-auth-passkey-v0.22.7...openstack-sdk-auth-passkey-v0.23.0) - 2026-11-12
 
 ### Added

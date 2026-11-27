@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0](https://github.com/gtema/openstack/compare/openstack-types-core-v0.23.0...openstack-types-core-v0.24.0) - 2026-11-27
+
+### Added
+
+- Add ResourceRef for _ref fields ([#2179](https://github.com/gtema/openstack/pull/2179))
+
+### Other
+
+- Address clippy warnings ([#2133](https://github.com/gtema/openstack/pull/2133))
+- [**breaking**] Replace chrono with jiff ([#2132](https://github.com/gtema/openstack/pull/2132))
+
 ## [0.22.7](https://github.com/gtema/openstack/compare/openstack-types-core-v0.1.0...openstack-types-core-v0.22.7) - 2026-06-01
 
 ### Other
