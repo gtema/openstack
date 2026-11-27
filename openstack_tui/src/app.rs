@@ -766,11 +766,17 @@ impl App {
                     self.active_popup = None;
                     self.render(tui)?;
                 }
-                Action::Error { .. } => {
-                    //if self.mode != Mode::Home {
-                    self.active_popup = Some(Popup::Error);
+                Action::Error { ref action, .. } => {
+                    // A failed usage probe (home quota/usage read) is not an
+                    // error: the corresponding quota is simply omitted from the
+                    // view, so do not pop up.
+                    let is_soft = action.as_deref().is_some_and(|a| {
+                        matches!(a, Action::PerformApiRequest(r) if r.is_usage_probe())
+                    });
+                    if !is_soft {
+                        self.active_popup = Some(Popup::Error);
+                    }
                     self.render(tui)?;
-                    //}
                 }
                 _ => {}
             }

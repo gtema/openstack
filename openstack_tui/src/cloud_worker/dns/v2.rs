@@ -27,14 +27,18 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ConfirmableRequest, ExecuteApiRequest};
 
+pub mod quota;
 pub mod recordset;
 pub mod zone;
 
+pub use quota::*;
 pub use recordset::*;
 pub use zone::*;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum DnsApiRequest {
+    /// Quota
+    Quota(Box<DnsQuotaApiRequest>),
     /// Recordset
     Recordset(Box<DnsRecordsetApiRequest>),
     /// Zone
@@ -44,6 +48,12 @@ pub enum DnsApiRequest {
 impl From<DnsApiRequest> for ApiRequest {
     fn from(item: DnsApiRequest) -> Self {
         ApiRequest::Dns(item)
+    }
+}
+
+impl From<DnsQuotaApiRequest> for DnsApiRequest {
+    fn from(item: DnsQuotaApiRequest) -> Self {
+        DnsApiRequest::Quota(Box::new(item))
     }
 }
 
@@ -62,6 +72,8 @@ impl From<DnsZoneApiRequest> for DnsApiRequest {
 impl ConfirmableRequest for DnsApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
         match &self {
+            DnsApiRequest::Quota(req) => req.get_confirm_message(),
+
             DnsApiRequest::Recordset(req) => req.get_confirm_message(),
 
             DnsApiRequest::Zone(req) => req.get_confirm_message(),
@@ -76,6 +88,9 @@ impl ExecuteApiRequest for DnsApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
+            DnsApiRequest::Quota(req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
             DnsApiRequest::Recordset(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
