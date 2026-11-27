@@ -9,6 +9,7 @@ rust-version.workspace = true
 repository.workspace = true
 
 [dependencies]
+openstack-types-core.workspace = true
 serde = { workspace = true }
 serde_json = { workspace = true }
 structable = { workspace = true }
