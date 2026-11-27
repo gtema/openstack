@@ -1,0 +1,23 @@
+[package]
+name = "openstack-cli-key-manager"
+description = "OpenStack CLI Key-manager commands"
+version = "0.1.0"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[dependencies]
+clap = { workspace = true }
+openstack-cli-core.workspace = true
+openstack_sdk = { workspace = true, features = ["async", "key_manager", "identity"] }
+openstack_sdk_core.workspace = true
+openstack_types.workspace = true
+eyre = { workspace = true }
+http = { workspace = true }
+serde_json = {workspace = true}
+tracing = { workspace = true}
+
+[lints]
+workspace = true

@@ -32,6 +32,7 @@ default-members = [
   "sdk/dns",
   "sdk/identity",
   "sdk/image",
+  "sdk/key-manager",
   "sdk/load-balancer",
   "sdk/network",
   "sdk/object-store",
@@ -88,6 +89,7 @@ openstack-cli-core = { path="cli/core", version = "0.14.0" }
 openstack-cli-dns = { path="cli/dns/", version = "0.14.0" }
 openstack-cli-identity = { path="cli/identity/", version = "0.14.0" }
 openstack-cli-image = { path="cli/image/", version = "0.14.0" }
+openstack-cli-key-manager = { path="cli/key-manager/", version = "0.1.0" }
 openstack-cli-load-balancer = { path="cli/load-balancer/", version = "0.14.0" }
 openstack-cli-network = { path="cli/network/", version = "0.14.0" }
 openstack-cli-object-store = { path="cli/object-store/", version = "0.14.0" }

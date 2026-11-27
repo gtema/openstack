@@ -29,6 +29,8 @@ pub mod dns;
 pub mod identity;
 #[cfg(feature = "image")]
 pub mod image;
+#[cfg(feature = "key_manager")]
+pub mod key_manager;
 #[cfg(feature = "load_balancer")]
 pub mod load_balancer;
 #[cfg(feature = "network")]
