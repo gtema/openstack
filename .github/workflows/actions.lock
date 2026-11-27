@@ -15,7 +15,7 @@ workflows:
         - 'taiki-e/install-action@v2.90.7'
     '.github/workflows/committed.yml':
         - 'actions/checkout@v7.0.1'
-        - 'crate-ci/committed@v1.1.11'
+        - 'crate-ci/committed@v1.1.12'
         - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/container-build.yml':
         - 'actions/checkout@v7.0.1'
@@ -131,9 +131,9 @@ dependencies:
         commit: 'sha1-851112458b5f28a29e5bc14a690c3f283d9dcc6f'
         owner_id: 110581826
         repo_id: 321270638
-    'crate-ci/committed@v1.1.11':
-        ref: 'v1.1.11'
-        commit: 'sha1-faeed42f2e10c244533a01525f13c4d8b6ce383f'
+    'crate-ci/committed@v1.1.12':
+        ref: 'v1.1.12'
+        commit: 'sha1-02af07ed1d11ad69a96ab75f08c9831a4e2c00da'
         owner_id: 36412122
         repo_id: 199063936
     'crate-ci/typos@v1.52.2':
