@@ -4907,6 +4907,7 @@ dependencies = [
 name = "openstack-types-load-balancer"
 version = "0.23.0"
 dependencies = [
+ "openstack-types-core",
  "serde",
  "serde_json",
  "structable",
