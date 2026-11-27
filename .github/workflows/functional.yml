@@ -105,7 +105,7 @@ jobs:
 
       - name: Install cargo-nextest
         if: needs.changes.outputs.code == 'true'
-        uses: taiki-e/install-action@v2.90.7
+        uses: taiki-e/install-action@v2.90.8
         with:
           tool: cargo-nextest
 
