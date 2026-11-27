@@ -272,6 +272,63 @@ pub enum NameOrId {
     Name(String),
 }
 
+/// A HATEOAS-style reference to a resource.
+///
+/// Represented as a URL whose last path segment is the resource
+/// identifier, e.g. `http://1.2.3.4:9311/v1/secrets/<uuid>`.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
+pub struct ResourceRef(String);
+
+impl ResourceRef {
+    /// Create a new resource reference from a URL or a bare identifier.
+    pub fn new(value: impl Into<String>) -> Self {
+        Self(value.into())
+    }
+
+    /// Return the resource identifier (last non-empty path segment of the
+    /// reference URL). Any query string or fragment is ignored.
+    pub fn id(&self) -> &str {
+        let path = match self.0.find(['?', '#']) {
+            Some(idx) => &self.0[..idx],
+            None => &self.0,
+        };
+        path.rsplit('/').find(|s| !s.is_empty()).unwrap_or(path)
+    }
+}
+
+impl AsRef<str> for ResourceRef {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
+impl From<String> for ResourceRef {
+    fn from(value: String) -> Self {
+        Self(value)
+    }
+}
+
+impl From<&str> for ResourceRef {
+    fn from(value: &str) -> Self {
+        Self(value.to_string())
+    }
+}
+
+impl FromStr for ResourceRef {
+    type Err = std::convert::Infallible;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        Ok(Self(value.to_string()))
+    }
+}
+
+impl fmt::Display for ResourceRef {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use serde::de::IntoDeserializer;
@@ -578,5 +635,43 @@ mod tests {
     #[test]
     fn test_boolstring_display() {
         assert_eq!(BoolString(true).to_string(), "true");
+    }
+
+    #[test]
+    fn test_resource_ref_roundtrip() {
+        let value = json!("http://1.2.3.4:9311/v1/secrets/7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f");
+        let secret_ref: ResourceRef = serde_json::from_value(value.clone()).unwrap();
+        assert_eq!(serde_json::to_value(&secret_ref).unwrap(), value);
+    }
+
+    #[test]
+    fn test_resource_ref_id() {
+        let secret_ref =
+            ResourceRef::new("http://1.2.3.4:9311/v1/secrets/7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f");
+        assert_eq!(secret_ref.id(), "7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f");
+        let bare = ResourceRef::new("7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f");
+        assert_eq!(bare.id(), "7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f");
+        let trailing_slash = ResourceRef::new(
+            "http://1.2.3.4:9311/v1/secrets/7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f/",
+        );
+        assert_eq!(trailing_slash.id(), "7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f");
+    }
+
+    #[test]
+    fn test_resource_ref_id_ignores_query_and_fragment() {
+        let with_query = ResourceRef::new(
+            "http://1.2.3.4:9311/v1/secrets/7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f?foo=bar",
+        );
+        assert_eq!(with_query.id(), "7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f");
+        let with_fragment = ResourceRef::new(
+            "http://1.2.3.4:9311/v1/secrets/7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f#frag",
+        );
+        assert_eq!(with_fragment.id(), "7d8d9e0e-1a2b-3c4d-5e6f-7a8b9c0d1e2f");
+    }
+
+    #[test]
+    fn test_resource_ref_display() {
+        let secret_ref = ResourceRef::new("http://1.2.3.4:9311/v1/secrets/abc");
+        assert_eq!(secret_ref.to_string(), "http://1.2.3.4:9311/v1/secrets/abc");
     }
 }
