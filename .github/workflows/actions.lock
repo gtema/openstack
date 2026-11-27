@@ -5,7 +5,7 @@ version: 'v0.0.3'
 workflows:
     '.github/workflows/audit.yml':
         - 'actions/checkout@v7.0.1'
-        - 'embarkstudios/cargo-deny-action@v2.1.2'
+        - 'embarkstudios/cargo-deny-action@v2.1.4'
         - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/ci.yml':
         - 'actions/checkout@v7.0.1'
@@ -171,9 +171,9 @@ dependencies:
         commit: 'sha1-df2a88e9fe4098bad09cb42c3dec7187f15861fc'
         owner_id: 1940490
         repo_id: 260749683
-    'embarkstudios/cargo-deny-action@v2.1.2':
-        ref: 'v2.1.2'
-        commit: 'sha1-70f81531115945ba6eb6b941ec9d39d063438eb9'
+    'embarkstudios/cargo-deny-action@v2.1.4':
+        ref: 'v2.1.4'
+        commit: 'sha1-81891abc19297b21343b15ef67dc61e4aea74fda'
         owner_id: 44887257
         repo_id: 228054692
     'github/codeql-action@v4.39.5':
