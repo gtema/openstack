@@ -1,0 +1,2484 @@
+openapi: 3.1.0
+info:
+  description: |-
+    key-manager API provided by Barbican service
+  title: OpenStack key-manager API
+  version: '1.3'
+paths:
+  /v1:
+    get:
+      operationId: :get
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - v1
+  /v1/containers:
+    get:
+      operationId: containers:get
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainersListResponse'
+          description: Ok
+      tags:
+        - containers
+    post:
+      operationId: containers:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContainersCreateRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainersCreateResponse'
+          description: Ok
+      tags:
+        - containers
+  /v1/containers/{container_id}:
+    delete:
+      operationId: containers/container_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - containers
+    get:
+      operationId: containers/container_id:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerShowResponse'
+          description: Ok
+      tags:
+        - containers
+    parameters:
+      - $ref: '#/components/parameters/containers_container_id'
+  /v1/containers/{container_id}/acl:
+    delete:
+      operationId: containers/container_id/acl:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - containers
+    get:
+      operationId: containers/container_id/acl:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainersAclGetResponse'
+          description: Ok
+      tags:
+        - containers
+    parameters:
+      - $ref: '#/components/parameters/containers_acl_container_id'
+    patch:
+      operationId: containers/container_id/acl:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContainersAclUpdateRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainersAclUpdateResponse'
+          description: Ok
+      tags:
+        - containers
+    put:
+      operationId: containers/container_id/acl:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContainersAclCreateRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainersAclCreateResponse'
+          description: Ok
+      tags:
+        - containers
+  /v1/containers/{container_id}/consumers:
+    delete:
+      operationId: containers/container_id/consumers:delete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  description: The name of the consumer set by the user.
+                  type: string
+                url:
+                  description: The URL for the user or service using the
+                    container.
+                  type: string
+              required:
+                - name
+                - url
+              type: object
+      responses:
+        '204':
+          description: ok
+      tags:
+        - containers
+    get:
+      operationId: containers/container_id/consumers:get
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainersConsumersGetResponse'
+          description: Ok
+      tags:
+        - containers
+    parameters:
+      - $ref: '#/components/parameters/containers_consumers_container_id'
+    post:
+      operationId: containers/container_id/consumers:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContainersConsumersPostRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainersConsumersPostResponse'
+          description: Ok
+      tags:
+        - containers
+  /v1/containers/{container_id}/secrets:
+    delete:
+      operationId: containers/container_id/secrets:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - containers
+    parameters:
+      - $ref: '#/components/parameters/containers_secrets_container_id'
+    post:
+      operationId: containers/container_id/secrets:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContainersSecretsCreateRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainersSecretsCreateResponse'
+          description: Ok
+      tags:
+        - containers
+  /v1/orders:
+    get:
+      operationId: orders:get
+      parameters:
+        - $ref: '#/components/parameters/orders_limit'
+        - $ref: '#/components/parameters/orders_offset'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrdersListResponse'
+          description: Ok
+      tags:
+        - orders
+    post:
+      operationId: orders:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrdersCreateRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrdersCreateResponse'
+          description: Ok
+      tags:
+        - orders
+  /v1/orders/{order_id}:
+    delete:
+      operationId: orders/order_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - orders
+    get:
+      operationId: orders/order_id:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderShowResponse'
+          description: Ok
+      tags:
+        - orders
+    parameters:
+      - $ref: '#/components/parameters/orders_order_id'
+  /v1/project-quotas:
+    get:
+      operationId: project-quotas:get
+      parameters:
+        - $ref: '#/components/parameters/quotas_limit'
+        - $ref: '#/components/parameters/quotas_offset'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project_QuotasListResponse'
+          description: Ok
+      tags:
+        - project-quotas
+  /v1/project-quotas/{project-quota_id}:
+    get:
+      operationId: project-quotas/project-quota_id:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project_QuotaShowResponse'
+          description: Ok
+      tags:
+        - project-quotas
+    parameters:
+      - $ref: '#/components/parameters/project_quotas_project-quota_id'
+  /v1/project-quotas/{project_id}:
+    delete:
+      operationId: project-quotas/project_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - project-quotas
+    parameters:
+      - $ref: '#/components/parameters/project_quotas_project_id'
+    put:
+      operationId: project-quotas/project_id:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project_QuotaUpdateRequest'
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - project-quotas
+  /v1/quotas:
+    get:
+      operationId: quotas:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotasListResponse'
+          description: Ok
+      tags:
+        - quotas
+  /v1/secret-stores:
+    get:
+      operationId: secret-stores:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secret_StoresListResponse'
+          description: Ok
+      tags:
+        - secret-stores
+  /v1/secret-stores/global-default:
+    get:
+      operationId: secret-stores/global-default:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secret_StoresGlobal_DefaultResponse'
+          description: Ok
+      tags:
+        - secret-stores
+  /v1/secret-stores/preferred:
+    get:
+      operationId: secret-stores/preferred:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secret_StoresPreferredResponse'
+          description: Ok
+      tags:
+        - secret-stores
+  /v1/secret-stores/{secret-store_id}:
+    get:
+      operationId: secret-stores/secret-store_id:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secret_StoreShowResponse'
+          description: Ok
+      tags:
+        - secret-stores
+    parameters:
+      - $ref: '#/components/parameters/secret_stores_secret-store_id'
+  /v1/secret-stores/{secret_store_id}/preferred:
+    delete:
+      operationId: secret-stores/secret_store_id/preferred:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - secret-stores
+    parameters:
+      - $ref: '#/components/parameters/secret_stores_preferred_secret_store_id'
+    post:
+      operationId: secret-stores/secret_store_id/preferred:post
+      responses:
+        '204':
+          description: ok
+      tags:
+        - secret-stores
+  /v1/secrets:
+    get:
+      operationId: secrets:get
+      parameters:
+        - $ref: '#/components/parameters/acl_only'
+        - $ref: '#/components/parameters/alg'
+        - $ref: '#/components/parameters/bits'
+        - $ref: '#/components/parameters/created'
+        - $ref: '#/components/parameters/expiration'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/mode'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/secret_type'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/updated'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsListResponse'
+          description: Ok
+      tags:
+        - secrets
+    post:
+      operationId: secrets:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretsCreateRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsCreateResponse'
+          description: Ok
+      tags:
+        - secrets
+  /v1/secrets/{secret_id}:
+    delete:
+      operationId: secrets/secret_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - secrets
+    get:
+      operationId: secrets/secret_id:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretGetResponse'
+          description: Ok
+      tags:
+        - secrets
+    parameters:
+      - $ref: '#/components/parameters/secrets_secret_id'
+    put:
+      operationId: secrets/secret_id:put
+      parameters:
+        - in: header
+          name: content-encoding
+          schema:
+            type: string
+        - in: header
+          name: content-type
+          schema:
+            type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              format: binary
+              type: string
+      responses:
+        '204':
+          description: ok
+      tags:
+        - secrets
+  /v1/secrets/{secret_id}/acl:
+    delete:
+      operationId: secrets/secret_id/acl:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - secrets
+    get:
+      operationId: secrets/secret_id/acl:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsAclGetResponse'
+          description: Ok
+      tags:
+        - secrets
+    parameters:
+      - $ref: '#/components/parameters/secrets_acl_secret_id'
+    patch:
+      operationId: secrets/secret_id/acl:patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretsAclUpdateRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsAclUpdateResponse'
+          description: Ok
+      tags:
+        - secrets
+    put:
+      operationId: secrets/secret_id/acl:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretsAclCreateRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsAclCreateResponse'
+          description: Ok
+      tags:
+        - secrets
+  /v1/secrets/{secret_id}/consumers:
+    delete:
+      operationId: secrets/secret_id/consumers:delete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                resource_id:
+                  description: Unique identifier for the resource using this
+                    secret.
+                  type: string
+                resource_type:
+                  description: Name of the resource type using the secret e.g.
+                    'images' or 'lbaas/loadbalancers'
+                  type: string
+                service:
+                  description: Consume service type
+                  type: string
+              required:
+                - resource_id
+                - resource_type
+                - service
+              type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  algorithm:
+                    description: Metadata provided by a user or system for
+                      informational purposes.
+                    type:
+                      - 'null'
+                      - string
+                  bit_length:
+                    description: 'Metadata provided by a user or system for informational
+                      purposes. '
+                    type:
+                      - integer
+                      - 'null'
+                  consumers:
+                    items:
+                      properties:
+                        resource_id:
+                          description: Unique identifier for the resource using
+                            this secret.
+                          type: string
+                        resource_type:
+                          description: Name of the resource type using the
+                            secret e.g. 'images' or 'lbaas/loadbalancers'
+                          type: string
+                        service:
+                          description: Consume service type
+                          type: string
+                      required:
+                        - resource_id
+                        - resource_type
+                        - service
+                      type: object
+                    type: array
+                  content-types:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  created:
+                    format: date-time
+                    type: string
+                  expiration:
+                    format: date-time
+                    type:
+                      - 'null'
+                      - string
+                  mode:
+                    description: Metadata provided by a user or system for
+                      informational purposes.
+                    type:
+                      - 'null'
+                      - string
+                  name:
+                    description: The name of the secret set by the user.
+                    type:
+                      - 'null'
+                      - string
+                  secret_ref:
+                    description: Reference of the new secret
+                    type: string
+                  secret_type:
+                    description: Used to indicate the type of secret being
+                      stored.
+                    enum:
+                      - certificate
+                      - opaque
+                      - passphrase
+                      - private
+                      - public
+                      - symmetric
+                    type:
+                      - 'null'
+                      - string
+                  status:
+                    description: Secret status
+                    type: string
+                  updated:
+                    format: date-time
+                    type:
+                      - 'null'
+                      - string
+                type: object
+          description: ok
+      tags:
+        - secrets
+    get:
+      operationId: secrets/secret_id/consumers:get
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsConsumersListResponse'
+          description: Ok
+      tags:
+        - secrets
+    parameters:
+      - $ref: '#/components/parameters/secrets_consumers_secret_id'
+    post:
+      operationId: secrets/secret_id/consumers:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretsConsumersCreateRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsConsumersCreateResponse'
+          description: Ok
+      tags:
+        - secrets
+  /v1/secrets/{secret_id}/metadata:
+    get:
+      operationId: secrets/secret_id/metadata:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsMetadataListResponse'
+          description: Ok
+      tags:
+        - secrets
+    parameters:
+      - $ref: '#/components/parameters/secrets_metadata_secret_id'
+    post:
+      operationId: secrets/secret_id/metadata:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretsMetadataReplaceRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsMetadataReplaceResponse'
+          description: Ok
+      tags:
+        - secrets
+    put:
+      operationId: secrets/secret_id/metadata:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretsMetadataCreateRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsMetadataCreateResponse'
+          description: Ok
+      tags:
+        - secrets
+  /v1/secrets/{secret_id}/metadata/{key}:
+    delete:
+      operationId: secrets/secret_id/metadata/key:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - secrets
+    get:
+      operationId: secrets/secret_id/metadata/key:get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsMetadataShowResponse'
+          description: Ok
+      tags:
+        - secrets
+    parameters:
+      - $ref: '#/components/parameters/secrets_metadata_key'
+      - $ref: '#/components/parameters/secrets_metadata_secret_id'
+    put:
+      operationId: secrets/secret_id/metadata/key:put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretsMetadataUpdateRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecretsMetadataUpdateResponse'
+          description: Ok
+      tags:
+        - secrets
+  /v1/secrets/{secret_id}/payload:
+    get:
+      operationId: secrets/secret_id/payload:get
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                format: binary
+                type: string
+          description: ok
+      tags:
+        - secrets
+    parameters:
+      - $ref: '#/components/parameters/secrets_payload_secret_id'
+  /v1/transport_keys:
+    get:
+      operationId: transport_keys:get
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - transport_keys
+    post:
+      operationId: transport_keys:post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transport_KeysCreateRequest'
+      responses:
+        '201':
+          description: Ok
+      tags:
+        - transport_keys
+  /v1/transport_keys/{transport_key_id}:
+    delete:
+      operationId: transport_keys/transport_key_id:delete
+      responses:
+        '204':
+          description: Ok
+      tags:
+        - transport_keys
+    get:
+      operationId: transport_keys/transport_key_id:get
+      responses:
+        '200':
+          description: Ok
+      tags:
+        - transport_keys
+    parameters:
+      - $ref: '#/components/parameters/transport_keys_transport_key_id'
+components:
+  parameters:
+    acl_only:
+      description: Selects all secrets with an ACL that contains the user.
+        Project scope is ignored.
+      in: query
+      name: acl_only
+      schema:
+        type: boolean
+    alg:
+      description: Selects all secrets with algorithm similar to this value.
+      in: query
+      name: alg
+      schema:
+        type: string
+    bits:
+      description: Selects all secrets with bit_length equal to this value.
+      in: query
+      name: bits
+      schema:
+        type: integer
+    containers_acl_container_id:
+      description: container_id parameter for /v1/containers/{container_id}/acl
+        API
+      in: path
+      name: container_id
+      required: true
+      schema:
+        type: string
+    containers_consumers_container_id:
+      description: container_id parameter for
+        /v1/containers/{container_id}/consumers API
+      in: path
+      name: container_id
+      required: true
+      schema:
+        type: string
+    containers_container_id:
+      description: container_id parameter for /v1/containers/{container_id} API
+      in: path
+      name: container_id
+      required: true
+      schema:
+        type: string
+    containers_secrets_container_id:
+      description: container_id parameter for
+        /v1/containers/{container_id}/secrets API
+      in: path
+      name: container_id
+      required: true
+      schema:
+        type: string
+    created:
+      description: Date filter to select all secrets with created matching the
+        specified criteria.
+      in: query
+      name: created
+      schema:
+        type: string
+    expiration:
+      description: Date filter to select all secrets with expiration matching
+        the specified criteria.
+      in: query
+      name: expiration
+      schema:
+        type: string
+    limit:
+      description: The maximum number of records to return (up to 100). The
+        default limit is 10.
+      in: query
+      name: limit
+      schema:
+        type: integer
+    mode:
+      description: Selects all secrets with mode similar to this value.
+      in: query
+      name: mode
+      schema:
+        type: string
+    name:
+      description: Selects all secrets with name similar to this value.
+      in: query
+      name: name
+      schema:
+        type: string
+    offset:
+      description: The starting index within the total list of the secrets that
+        you would like to retrieve.
+      in: query
+      name: offset
+      schema:
+        type: integer
+    orders_limit:
+      description: The maximum number of records to return (up to 100). The
+        default limit is 10.
+      in: query
+      name: limit
+      schema:
+        type: integer
+    orders_offset:
+      description: The starting index within the total list of the orders that
+        you would like to retrieve.
+      in: query
+      name: offset
+      schema:
+        type: integer
+    orders_order_id:
+      description: order_id parameter for /v1/orders/{order_id} API
+      in: path
+      name: order_id
+      required: true
+      schema:
+        type: string
+    project_quotas_project-quota_id:
+      description: project-quota_id parameter for
+        /v1/project-quotas/{project-quota_id} API
+      in: path
+      name: project-quota_id
+      required: true
+      schema:
+        type: string
+    project_quotas_project_id:
+      description: project_id parameter for /v1/project-quotas/{project_id} API
+      in: path
+      name: project_id
+      required: true
+      schema:
+        type: string
+      x-openstack:
+        resource_link: identity/v3/project.id
+    quotas_limit:
+      description: The maximum number of records to return (up to 100). The
+        default limit is 10.
+      in: query
+      name: limit
+      schema:
+        type: integer
+    quotas_offset:
+      description: The starting index within the total list of the orders that
+        you would like to retrieve.
+      in: query
+      name: offset
+      schema:
+        type: integer
+    secret_stores_preferred_secret_store_id:
+      description: secret_store_id parameter for
+        /v1/secret-stores/{secret_store_id}/preferred API
+      in: path
+      name: secret_store_id
+      required: true
+      schema:
+        type: string
+    secret_stores_secret-store_id:
+      description: secret-store_id parameter for
+        /v1/secret-stores/{secret-store_id} API
+      in: path
+      name: secret-store_id
+      required: true
+      schema:
+        type: string
+    secret_type:
+      description: Selects all secrets with secret_type equal to this value.
+      in: query
+      name: secret_type
+      schema:
+        enum:
+          - certificate
+          - opaque
+          - passphrase
+          - private
+          - public
+          - symmetric
+        type: string
+    secrets_acl_secret_id:
+      description: secret_id parameter for /v1/secrets/{secret_id}/acl API
+      in: path
+      name: secret_id
+      required: true
+      schema:
+        type: string
+    secrets_consumers_secret_id:
+      description: secret_id parameter for /v1/secrets/{secret_id}/consumers API
+      in: path
+      name: secret_id
+      required: true
+      schema:
+        type: string
+    secrets_metadata_key:
+      description: key parameter for /v1/secrets/{secret_id}/metadata/{key} API
+      in: path
+      name: key
+      required: true
+      schema:
+        type: string
+    secrets_metadata_secret_id:
+      description: secret_id parameter for
+        /v1/secrets/{secret_id}/metadata/{key} API
+      in: path
+      name: secret_id
+      required: true
+      schema:
+        type: string
+    secrets_payload_secret_id:
+      description: secret_id parameter for /v1/secrets/{secret_id}/payload API
+      in: path
+      name: secret_id
+      required: true
+      schema:
+        type: string
+    secrets_secret_id:
+      description: secret_id parameter for /v1/secrets/{secret_id} API
+      in: path
+      name: secret_id
+      required: true
+      schema:
+        type: string
+    sort:
+      description: Determines the sorted order of the returned list.
+      in: query
+      name: sort
+      schema:
+        type: string
+    transport_keys_transport_key_id:
+      description: transport_key_id parameter for
+        /v1/transport_keys/{transport_key_id} API
+      in: path
+      name: transport_key_id
+      required: true
+      schema:
+        type: string
+    updated:
+      description: Date filter to select all secrets with updated matching the
+        specified criteria.
+      in: query
+      name: updated
+      schema:
+        type: string
+  schemas:
+    ContainerShowResponse:
+      additionalProperties: false
+      properties:
+        consumers:
+          items:
+            properties:
+              name:
+                description: The name of the consumer set by the user.
+                type: string
+              url:
+                description: The URL for the user or service using the
+                  container.
+                type: string
+            required:
+              - name
+              - url
+            type: object
+          type: array
+        container_ref:
+          description: URL for referencing a specific container
+          type: string
+        created:
+          description: Date and time container was created
+          format: date-time
+          type: string
+        name:
+          description: Container name
+          type: string
+        secret_refs:
+          description: URL for referencing a specific secret store
+          items:
+            properties:
+              name:
+                description: The name of the secret set by the user.
+                type:
+                  - 'null'
+                  - string
+              secret_ref:
+                description: Reference of the secret
+                type: string
+            type: object
+          type: array
+        status:
+          description: Container status
+          type: string
+        type:
+          description: Container type
+          enum:
+            - certificate
+            - generic
+            - rsa
+          type: string
+        updated:
+          description: Date and time container was last updated
+          format: date-time
+          type:
+            - 'null'
+            - string
+      required:
+        - container_ref
+        - name
+      type: object
+    ContainersAclCreateRequest:
+      additionalProperties: false
+      properties:
+        read:
+          additionalProperties: false
+          properties:
+            project_access:
+              description: Flag to mark a container private so that the user who
+                created the secret and users specified in above list can only
+                access the container. Pass false to mark the container private.
+              type: boolean
+            users:
+              description: List of user ids. This needs to be a user id as
+                returned by Keystone.
+              items:
+                type: string
+              type: array
+          type: object
+      required:
+        - read
+      type: object
+    ContainersAclCreateResponse:
+      additionalProperties: false
+      properties:
+        acl_ref:
+          type: string
+      required:
+        - acl_ref
+      type: object
+    ContainersAclGetResponse:
+      additionalProperties: false
+      properties:
+        read:
+          additionalProperties: false
+          properties:
+            project_access:
+              description: Flag to mark a container private so that the user who
+                created the secret and users specified in above list can only
+                access the container. Pass false to mark the container private.
+              type: boolean
+            users:
+              description: List of user ids. This needs to be a user id as
+                returned by Keystone.
+              items:
+                type: string
+              type: array
+          type: object
+      required:
+        - read
+      type: object
+    ContainersAclUpdateRequest:
+      additionalProperties: false
+      properties:
+        read:
+          additionalProperties: false
+          properties:
+            project_access:
+              description: Flag to mark a container private so that the user who
+                created the secret and users specified in above list can only
+                access the container. Pass false to mark the container private.
+              type: boolean
+            users:
+              description: List of user ids. This needs to be a user id as
+                returned by Keystone.
+              items:
+                type: string
+              type: array
+          type: object
+      required:
+        - read
+      type: object
+    ContainersAclUpdateResponse:
+      additionalProperties: false
+      properties:
+        acl_ref:
+          type: string
+      required:
+        - acl_ref
+      type: object
+    ContainersConsumersGetResponse:
+      additionalProperties: false
+      properties:
+        consumers:
+          items:
+            properties:
+              name:
+                description: The name of the consumer set by the user.
+                type: string
+              url:
+                description: The URL for the user or service using the
+                  container.
+                type: string
+            required:
+              - name
+              - url
+            type: object
+          type: array
+        next:
+          description: A HATEOAS URL to retrieve the next set of secrets based
+            on the offset and limit parameters. This attribute is only available
+            when the total number of secrets is greater than offset and limit
+            parameter combined.
+          type: string
+        previous:
+          description: A HATEOAS URL to retrieve the previous set of secrets
+            based on the offset and limit parameters. This attribute is only
+            available when the request offset is greater than 0.
+          type: string
+        total:
+          description: The total number of secrets available to the user.
+          type: integer
+      required:
+        - consumers
+        - total
+      type: object
+    ContainersConsumersPostRequest:
+      properties:
+        name:
+          description: The name of the consumer set by the user.
+          type: string
+        url:
+          description: The URL for the user or service using the container.
+          type: string
+      required:
+        - name
+        - url
+      type: object
+    ContainersConsumersPostResponse:
+      additionalProperties: false
+      properties:
+        consumers:
+          items:
+            properties:
+              name:
+                description: The name of the consumer set by the user.
+                type: string
+              url:
+                description: The URL for the user or service using the
+                  container.
+                type: string
+            required:
+              - name
+              - url
+            type: object
+          type: array
+        container_ref:
+          description: URL for referencing a specific container
+          type: string
+        created:
+          description: Date and time container was created
+          format: date-time
+          type: string
+        name:
+          description: Container name
+          type: string
+        secret_refs:
+          description: URL for referencing a specific secret store
+          items:
+            properties:
+              name:
+                description: The name of the secret set by the user.
+                type:
+                  - 'null'
+                  - string
+              secret_ref:
+                description: Reference of the secret
+                type: string
+            type: object
+          type: array
+        status:
+          description: Container status
+          type: string
+        type:
+          description: Container type
+          enum:
+            - certificate
+            - generic
+            - rsa
+          type: string
+        updated:
+          description: Date and time container was last updated
+          format: date-time
+          type:
+            - 'null'
+            - string
+      required:
+        - container_ref
+        - name
+      type: object
+    ContainersCreateRequest:
+      additionalProperties: false
+      properties:
+        name:
+          description: Container name
+          type: string
+        secret_refs:
+          description: URL for referencing a specific secrets
+          items:
+            additionalProperties: false
+            properties:
+              name:
+                description: The name of the secret set by the user.
+                type:
+                  - 'null'
+                  - string
+              secret_ref:
+                description: Reference of the secret
+                type: string
+            required:
+              - secret_ref
+            type: object
+          type: array
+        type:
+          description: Container type
+          enum:
+            - certificate
+            - generic
+            - rsa
+          type: string
+      required:
+        - secret_refs
+        - type
+      type: object
+    ContainersCreateResponse:
+      additionalProperties: false
+      properties:
+        container_ref:
+          description: URL for referencing a specific container
+          type: string
+      required:
+        - container_ref
+      type: object
+    ContainersListResponse:
+      additionalProperties: false
+      properties:
+        containers:
+          description: A list of secret store references
+          items:
+            additionalProperties: false
+            properties:
+              consumers:
+                items:
+                  properties:
+                    name:
+                      description: The name of the consumer set by the user.
+                      type: string
+                    url:
+                      description: The URL for the user or service using the
+                        container.
+                      type: string
+                  required:
+                    - name
+                    - url
+                  type: object
+                type: array
+              container_ref:
+                description: URL for referencing a specific container
+                type: string
+              created:
+                description: Date and time container was created
+                format: date-time
+                type: string
+              name:
+                description: Container name
+                type: string
+              secret_refs:
+                description: URL for referencing a specific secret store
+                items:
+                  properties:
+                    name:
+                      description: The name of the secret set by the user.
+                      type:
+                        - 'null'
+                        - string
+                    secret_ref:
+                      description: Reference of the secret
+                      type: string
+                  type: object
+                type: array
+              status:
+                description: Container status
+                type: string
+              type:
+                description: Container type
+                enum:
+                  - certificate
+                  - generic
+                  - rsa
+                type: string
+              updated:
+                description: Date and time container was last updated
+                format: date-time
+                type:
+                  - 'null'
+                  - string
+            required:
+              - container_ref
+              - name
+            type: object
+          type: array
+        next:
+          description: A HATEOAS URL to retrieve the next set of containers
+            based on the offset and limit parameters. This attribute is only
+            available when the total number of containers is greater than offset
+            and limit parameter combined.
+          type: string
+        previous:
+          description: A HATEOAS URL to retrieve the previous set of containers
+            based on the offset and limit parameters. This attribute is only
+            available when the request offset is greater than 0.
+          type: string
+        total:
+          description: The total number of containers available to the user.
+          type: integer
+      required:
+        - containers
+      type: object
+    ContainersSecretsCreateRequest:
+      additionalProperties: false
+      properties:
+        name:
+          description: Container name
+          type: string
+        secret_ref:
+          description: Reference of the secret
+          type: string
+      required:
+        - secret_ref
+      type: object
+    ContainersSecretsCreateResponse:
+      additionalProperties: false
+      properties:
+        container_ref:
+          description: URL for referencing a specific container
+          type: string
+      required:
+        - container_ref
+      type: object
+    OrderShowResponse:
+      additionalProperties: false
+      properties:
+        created:
+          description: Date and time container was created
+          format: date-time
+          type: string
+        creator_id:
+          description: Keystone Id of the user who created the order
+          type: string
+        meta:
+          additionalProperties: true
+          type: object
+        order_ref:
+          description: Order href associated with the order
+          type: string
+        secret_ref:
+          description: Secret href associated with the order
+          type: string
+        status:
+          description: Current status of the order
+          type: string
+        sub_status:
+          description: Metadata associated with the order
+          type: string
+        sub_status_message:
+          description: Metadata associated with the order
+          type: string
+        type:
+          description: Order type
+          type: string
+        updated:
+          description: Date and time order was last updated
+          format: date-time
+          type:
+            - 'null'
+            - string
+      required:
+        - order_ref
+        - secret_ref
+      type: object
+    OrdersCreateRequest:
+      additionalProperties: false
+      properties:
+        meta:
+          additionalProperties: true
+          description: Dictionary containing the secret metadata used to
+            generate the order.
+          type: object
+        type:
+          description: Order type
+          type: string
+      required:
+        - type
+      type: object
+    OrdersCreateResponse:
+      additionalProperties: false
+      properties:
+        order_ref:
+          description: Order reference
+          type: string
+      required:
+        - order_ref
+      type: object
+    OrdersListResponse:
+      additionalProperties: false
+      properties:
+        next:
+          description: A HATEOAS URL to retrieve the next set of orders based on
+            the offset and limit parameters. This attribute is only available
+            when the total number of orders is greater than offset and limit
+            parameter combined.
+          type: string
+        orders:
+          description: A list of order references
+          items:
+            additionalProperties: false
+            properties:
+              created:
+                description: Date and time container was created
+                format: date-time
+                type: string
+              creator_id:
+                description: Keystone Id of the user who created the order
+                type: string
+              meta:
+                additionalProperties: true
+                type: object
+              order_ref:
+                description: Order href associated with the order
+                type: string
+              secret_ref:
+                description: Secret href associated with the order
+                type: string
+              status:
+                description: Current status of the order
+                type: string
+              sub_status:
+                description: Metadata associated with the order
+                type: string
+              sub_status_message:
+                description: Metadata associated with the order
+                type: string
+              type:
+                description: Order type
+                type: string
+              updated:
+                description: Date and time order was last updated
+                format: date-time
+                type:
+                  - 'null'
+                  - string
+            required:
+              - order_ref
+              - secret_ref
+            type: object
+          type: array
+        previous:
+          description: A HATEOAS URL to retrieve the previous set of orders
+            based on the offset and limit parameters. This attribute is only
+            available when the request offset is greater than 0.
+          type: string
+        total:
+          description: The total number of orders available to the user.
+          type: integer
+      required:
+        - orders
+      type: object
+    Project_QuotaShowResponse:
+      additionalProperties: false
+      properties:
+        project_quotas:
+          additionalProperties: false
+          description: Contains a dictionary with project quota information
+          properties:
+            cas:
+              description: Contains the effective quota value of the current
+                project for the CAs resource.
+              type:
+                - integer
+                - 'null'
+            consumers:
+              description: Contains the effective quota value of the current
+                project for the consumers resource.
+              type:
+                - integer
+                - 'null'
+            containers:
+              description: Contains the effective quota value of the current
+                project for the containers resource.
+              type:
+                - integer
+                - 'null'
+            orders:
+              description: Contains the effective quota value of the current
+                project for the orders resource.
+              type:
+                - integer
+                - 'null'
+            secrets:
+              description: Contains the effective quota value of the current
+                project for the secret resource.
+              type:
+                - integer
+                - 'null'
+          required:
+            - cas
+            - consumers
+            - containers
+            - orders
+            - secrets
+          type: object
+      required:
+        - project_quotas
+      type: object
+    Project_QuotaUpdateRequest:
+      additionalProperties: false
+      properties:
+        project_quotas:
+          additionalProperties: false
+          description: Contains a dictionary with project quota information
+          properties:
+            cas:
+              description: Contains the effective quota value of the current
+                project for the CAs resource.
+              type:
+                - integer
+                - 'null'
+            consumers:
+              description: Contains the effective quota value of the current
+                project for the consumers resource.
+              type:
+                - integer
+                - 'null'
+            containers:
+              description: Contains the effective quota value of the current
+                project for the containers resource.
+              type:
+                - integer
+                - 'null'
+            orders:
+              description: Contains the effective quota value of the current
+                project for the orders resource.
+              type:
+                - integer
+                - 'null'
+            secrets:
+              description: Contains the effective quota value of the current
+                project for the secret resource.
+              type:
+                - integer
+                - 'null'
+          required:
+            - cas
+            - consumers
+            - containers
+            - orders
+            - secrets
+          type: object
+      required:
+        - project_quotas
+      type: object
+    Project_QuotasListResponse:
+      additionalProperties: false
+      properties:
+        next:
+          description: A HATEOAS URL to retrieve the next set of project quotas
+            based on the offset and limit parameters. This attribute is only
+            available when the total number of orders is greater than offset and
+            limit parameter combined.
+          type: string
+        previous:
+          description: A HATEOAS URL to retrieve the previous set of orders
+            based on the offset and limit parameters. This attribute is only
+            available when the request offset is greater than 0.
+          type: string
+        project_quotas:
+          items:
+            additionalProperties: false
+            properties:
+              project_id:
+                description: The UUID of a project with configured quota
+                  information.
+                type: string
+              project_quotas:
+                additionalProperties: false
+                description: Contains a dictionary with project quota
+                  information
+                properties:
+                  cas:
+                    description: Contains the effective quota value of the
+                      current project for the CAs resource.
+                    type:
+                      - integer
+                      - 'null'
+                  consumers:
+                    description: Contains the effective quota value of the
+                      current project for the consumers resource.
+                    type:
+                      - integer
+                      - 'null'
+                  containers:
+                    description: Contains the effective quota value of the
+                      current project for the containers resource.
+                    type:
+                      - integer
+                      - 'null'
+                  orders:
+                    description: Contains the effective quota value of the
+                      current project for the orders resource.
+                    type:
+                      - integer
+                      - 'null'
+                  secrets:
+                    description: Contains the effective quota value of the
+                      current project for the secret resource.
+                    type:
+                      - integer
+                      - 'null'
+                required:
+                  - cas
+                  - consumers
+                  - containers
+                  - orders
+                  - secrets
+                type: object
+            required:
+              - project_id
+              - project_quotas
+            type: object
+          type: array
+        total:
+          description: The total number of orders available to the user.
+          type: integer
+      required:
+        - project_quotas
+      type: object
+    QuotasListResponse:
+      additionalProperties: false
+      properties:
+        cas:
+          description: Contains the effective quota value of the current project
+            for the CAs resource.
+          type:
+            - integer
+            - 'null'
+        consumers:
+          description: Contains the effective quota value of the current project
+            for the consumers resource.
+          type:
+            - integer
+            - 'null'
+        containers:
+          description: Contains the effective quota value of the current project
+            for the containers resource.
+          type:
+            - integer
+            - 'null'
+        orders:
+          description: Contains the effective quota value of the current project
+            for the orders resource.
+          type:
+            - integer
+            - 'null'
+        secrets:
+          description: Contains the effective quota value of the current project
+            for the secret resource.
+          type:
+            - integer
+            - 'null'
+      required:
+        - cas
+        - consumers
+        - containers
+        - orders
+        - secrets
+      type: object
+    SecretCreateRequest:
+      description: Request of the secrets/secret_id:put operation
+      type: object
+      x-openstack:
+        action-name: create
+    SecretGetResponse:
+      additionalProperties: false
+      properties:
+        algorithm:
+          description: Metadata provided by a user or system for informational
+            purposes.
+          type:
+            - 'null'
+            - string
+        bit_length:
+          description: 'Metadata provided by a user or system for informational purposes. '
+          type:
+            - integer
+            - 'null'
+        consumers:
+          items:
+            properties:
+              resource_id:
+                description: Unique identifier for the resource using this
+                  secret.
+                type: string
+              resource_type:
+                description: Name of the resource type using the secret e.g.
+                  'images' or 'lbaas/loadbalancers'
+                type: string
+              service:
+                description: Consume service type
+                type: string
+            required:
+              - resource_id
+              - resource_type
+              - service
+            type: object
+          type: array
+        content-types:
+          additionalProperties:
+            type: string
+          type: object
+        created:
+          format: date-time
+          type: string
+        expiration:
+          format: date-time
+          type:
+            - 'null'
+            - string
+        mode:
+          description: Metadata provided by a user or system for informational
+            purposes.
+          type:
+            - 'null'
+            - string
+        name:
+          description: The name of the secret set by the user.
+          type:
+            - 'null'
+            - string
+        secret_ref:
+          description: Reference of the new secret
+          type: string
+        secret_type:
+          description: Used to indicate the type of secret being stored.
+          enum:
+            - certificate
+            - opaque
+            - passphrase
+            - private
+            - public
+            - symmetric
+          type:
+            - 'null'
+            - string
+        status:
+          description: Secret status
+          type: string
+        updated:
+          format: date-time
+          type:
+            - 'null'
+            - string
+      type: object
+    Secret_StoreShowResponse:
+      additionalProperties: false
+      properties:
+        created:
+          description: Date and time secret store was created
+          format: date-time
+          type: string
+        crypto_plugin:
+          type:
+            - 'null'
+            - string
+        global_default:
+          description: flag indicating if this secret store is global default or
+            not
+          type: boolean
+        name:
+          description: store and crypto plugin name delimited by ‘+’ (plus) sign
+          type: string
+        secret_store_ref:
+          description: URL for referencing a specific secret store
+          type: string
+        updated:
+          description: Date and time secret store was last updated
+          format: date-time
+          type:
+            - 'null'
+            - string
+      required:
+        - name
+        - secret_store_ref
+      type: object
+    Secret_StoresGlobal_DefaultResponse:
+      additionalProperties: false
+      properties:
+        created:
+          description: Date and time secret store was created
+          format: date-time
+          type: string
+        crypto_plugin:
+          type:
+            - 'null'
+            - string
+        global_default:
+          description: flag indicating if this secret store is global default or
+            not
+          type: boolean
+        name:
+          description: store and crypto plugin name delimited by ‘+’ (plus) sign
+          type: string
+        secret_store_ref:
+          description: URL for referencing a specific secret store
+          type: string
+        updated:
+          description: Date and time secret store was last updated
+          format: date-time
+          type:
+            - 'null'
+            - string
+      required:
+        - name
+        - secret_store_ref
+      type: object
+    Secret_StoresListResponse:
+      additionalProperties: false
+      properties:
+        secret_stores:
+          description: A list of secret store references
+          items:
+            additionalProperties: false
+            properties:
+              created:
+                description: Date and time secret store was created
+                format: date-time
+                type: string
+              crypto_plugin:
+                type:
+                  - 'null'
+                  - string
+              global_default:
+                description: flag indicating if this secret store is global
+                  default or not
+                type: boolean
+              name:
+                description: store and crypto plugin name delimited by ‘+’
+                  (plus) sign
+                type: string
+              secret_store_ref:
+                description: URL for referencing a specific secret store
+                type: string
+              updated:
+                description: Date and time secret store was last updated
+                format: date-time
+                type:
+                  - 'null'
+                  - string
+            required:
+              - name
+              - secret_store_ref
+            type: object
+          type: array
+      required:
+        - secret_stores
+      type: object
+    Secret_StoresPreferredResponse:
+      additionalProperties: false
+      properties:
+        created:
+          description: Date and time secret store was created
+          format: date-time
+          type: string
+        crypto_plugin:
+          type:
+            - 'null'
+            - string
+        global_default:
+          description: flag indicating if this secret store is global default or
+            not
+          type: boolean
+        name:
+          description: store and crypto plugin name delimited by ‘+’ (plus) sign
+          type: string
+        secret_store_ref:
+          description: URL for referencing a specific secret store
+          type: string
+        updated:
+          description: Date and time secret store was last updated
+          format: date-time
+          type:
+            - 'null'
+            - string
+      required:
+        - name
+        - secret_store_ref
+      type: object
+    SecretsAclCreateRequest:
+      additionalProperties: false
+      properties:
+        read:
+          additionalProperties: false
+          properties:
+            project_access:
+              description: Flag to mark a secret private so that the user who
+                created the secret and users specified in above list can only
+                access the secret. Pass false to mark the secret private.
+              type: boolean
+            users:
+              description: List of user ids. This needs to be a user id as
+                returned by Keystone.
+              items:
+                type: string
+              type: array
+          type: object
+      required:
+        - read
+      type: object
+    SecretsAclCreateResponse:
+      additionalProperties: false
+      properties:
+        acl_ref:
+          type: string
+      required:
+        - acl_ref
+      type: object
+    SecretsAclGetResponse:
+      additionalProperties: false
+      properties:
+        read:
+          additionalProperties: false
+          properties:
+            project_access:
+              description: Flag to mark a secret private so that the user who
+                created the secret and users specified in above list can only
+                access the secret. Pass false to mark the secret private.
+              type: boolean
+            users:
+              description: List of user ids. This needs to be a user id as
+                returned by Keystone.
+              items:
+                type: string
+              type: array
+          type: object
+      required:
+        - read
+      type: object
+    SecretsAclUpdateRequest:
+      additionalProperties: false
+      properties:
+        read:
+          additionalProperties: false
+          properties:
+            project_access:
+              description: Flag to mark a secret private so that the user who
+                created the secret and users specified in above list can only
+                access the secret. Pass false to mark the secret private.
+              type: boolean
+            users:
+              description: List of user ids. This needs to be a user id as
+                returned by Keystone.
+              items:
+                type: string
+              type: array
+          type: object
+      required:
+        - read
+      type: object
+    SecretsAclUpdateResponse:
+      additionalProperties: false
+      properties:
+        acl_ref:
+          type: string
+      required:
+        - acl_ref
+      type: object
+    SecretsConsumersCreateRequest:
+      properties:
+        resource_id:
+          description: Unique identifier for the resource using this secret.
+          type: string
+        resource_type:
+          description: Name of the resource type using the secret e.g. 'images'
+            or 'lbaas/loadbalancers'
+          type: string
+        service:
+          description: Consume service type
+          type: string
+      required:
+        - resource_id
+        - resource_type
+        - service
+      type: object
+    SecretsConsumersCreateResponse:
+      additionalProperties: false
+      properties:
+        algorithm:
+          description: Metadata provided by a user or system for informational
+            purposes.
+          type:
+            - 'null'
+            - string
+        bit_length:
+          description: 'Metadata provided by a user or system for informational purposes. '
+          type:
+            - integer
+            - 'null'
+        consumers:
+          items:
+            properties:
+              resource_id:
+                description: Unique identifier for the resource using this
+                  secret.
+                type: string
+              resource_type:
+                description: Name of the resource type using the secret e.g.
+                  'images' or 'lbaas/loadbalancers'
+                type: string
+              service:
+                description: Consume service type
+                type: string
+            required:
+              - resource_id
+              - resource_type
+              - service
+            type: object
+          type: array
+        content-types:
+          additionalProperties:
+            type: string
+          type: object
+        created:
+          format: date-time
+          type: string
+        expiration:
+          format: date-time
+          type:
+            - 'null'
+            - string
+        mode:
+          description: Metadata provided by a user or system for informational
+            purposes.
+          type:
+            - 'null'
+            - string
+        name:
+          description: The name of the secret set by the user.
+          type:
+            - 'null'
+            - string
+        secret_ref:
+          description: Reference of the new secret
+          type: string
+        secret_type:
+          description: Used to indicate the type of secret being stored.
+          enum:
+            - certificate
+            - opaque
+            - passphrase
+            - private
+            - public
+            - symmetric
+          type:
+            - 'null'
+            - string
+        status:
+          description: Secret status
+          type: string
+        updated:
+          format: date-time
+          type:
+            - 'null'
+            - string
+      type: object
+    SecretsConsumersListResponse:
+      additionalProperties: false
+      properties:
+        consumers:
+          items:
+            properties:
+              resource_id:
+                description: Unique identifier for the resource using this
+                  secret.
+                type: string
+              resource_type:
+                description: Name of the resource type using the secret e.g.
+                  'images' or 'lbaas/loadbalancers'
+                type: string
+              service:
+                description: Consume service type
+                type: string
+            required:
+              - resource_id
+              - resource_type
+              - service
+            type: object
+          type: array
+        next:
+          description: A HATEOAS URL to retrieve the next set of secrets based
+            on the offset and limit parameters. This attribute is only available
+            when the total number of secrets is greater than offset and limit
+            parameter combined.
+          type: string
+        previous:
+          description: A HATEOAS URL to retrieve the previous set of secrets
+            based on the offset and limit parameters. This attribute is only
+            available when the request offset is greater than 0.
+          type: string
+        total:
+          description: The total number of secrets available to the user.
+          type: integer
+      required:
+        - consumers
+        - total
+      type: object
+    SecretsCreateRequest:
+      properties:
+        algorithm:
+          maxLength: 255
+          type: string
+        bit_length:
+          maximum: 32767
+          minimum: 1
+          type: integer
+        expiration:
+          maxLength: 255
+          type: string
+        mode:
+          maxLength: 255
+          type: string
+        name:
+          maxLength: 255
+          type:
+            - 'null'
+            - string
+        payload:
+          type: string
+        payload_content_encoding:
+          enum:
+            - base64
+          maxLength: 255
+          type: string
+        payload_content_type:
+          maxLength: 255
+          type:
+            - 'null'
+            - string
+        secret_type:
+          enum:
+            - certificate
+            - opaque
+            - passphrase
+            - private
+            - public
+            - symmetric
+          maxLength: 80
+          type: string
+        transport_key_id:
+          type: string
+        transport_key_needed:
+          enum:
+            - 'false'
+            - 'true'
+          type: string
+      type: object
+    SecretsCreateResponse:
+      additionalProperties: false
+      properties:
+        secret_ref:
+          description: Reference of the new secret
+          type: string
+      type: object
+    SecretsListResponse:
+      additionalProperties: false
+      properties:
+        next:
+          description: A HATEOAS URL to retrieve the next set of secrets based
+            on the offset and limit parameters. This attribute is only available
+            when the total number of secrets is greater than offset and limit
+            parameter combined.
+          type: string
+        previous:
+          description: A HATEOAS URL to retrieve the previous set of secrets
+            based on the offset and limit parameters. This attribute is only
+            available when the request offset is greater than 0.
+          type: string
+        secrets:
+          description: Contains a list of secrets. The attributes in the secret
+            objects are the same as for an individual secret.
+          items:
+            additionalProperties: false
+            properties:
+              algorithm:
+                description: Metadata provided by a user or system for
+                  informational purposes.
+                type:
+                  - 'null'
+                  - string
+              bit_length:
+                description: 'Metadata provided by a user or system for informational
+                  purposes. '
+                type:
+                  - integer
+                  - 'null'
+              consumers:
+                items:
+                  properties:
+                    resource_id:
+                      description: Unique identifier for the resource using this
+                        secret.
+                      type: string
+                    resource_type:
+                      description: Name of the resource type using the secret
+                        e.g. 'images' or 'lbaas/loadbalancers'
+                      type: string
+                    service:
+                      description: Consume service type
+                      type: string
+                  required:
+                    - resource_id
+                    - resource_type
+                    - service
+                  type: object
+                type: array
+              content-types:
+                additionalProperties:
+                  type: string
+                type: object
+              created:
+                format: date-time
+                type: string
+              expiration:
+                format: date-time
+                type:
+                  - 'null'
+                  - string
+              mode:
+                description: Metadata provided by a user or system for
+                  informational purposes.
+                type:
+                  - 'null'
+                  - string
+              name:
+                description: The name of the secret set by the user.
+                type:
+                  - 'null'
+                  - string
+              secret_ref:
+                description: Reference of the new secret
+                type: string
+              secret_type:
+                description: Used to indicate the type of secret being stored.
+                enum:
+                  - certificate
+                  - opaque
+                  - passphrase
+                  - private
+                  - public
+                  - symmetric
+                type:
+                  - 'null'
+                  - string
+              status:
+                description: Secret status
+                type: string
+              updated:
+                format: date-time
+                type:
+                  - 'null'
+                  - string
+            type: object
+          type: array
+        total:
+          description: The total number of secrets available to the user.
+          type: integer
+      required:
+        - secrets
+        - total
+      type: object
+    SecretsMetadataCreateRequest:
+      additionalProperties: false
+      properties:
+        metadata:
+          additionalProperties:
+            type: string
+          type: object
+      required:
+        - metadata
+      type: object
+    SecretsMetadataCreateResponse:
+      additionalProperties: false
+      properties:
+        metadata_ref:
+          type: string
+      required:
+        - metadata_ref
+      type: object
+    SecretsMetadataListResponse:
+      additionalProperties: false
+      properties:
+        metadata:
+          additionalProperties:
+            type: string
+          type: object
+      required:
+        - metadata
+      type: object
+    SecretsMetadataReplaceRequest:
+      additionalProperties: false
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+        - key
+        - value
+      type: object
+    SecretsMetadataReplaceResponse:
+      additionalProperties: false
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+        - key
+        - value
+      type: object
+    SecretsMetadataShowResponse:
+      additionalProperties: false
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+        - key
+        - value
+      type: object
+    SecretsMetadataUpdateRequest:
+      additionalProperties: false
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+        - key
+        - value
+      type: object
+    SecretsMetadataUpdateResponse:
+      additionalProperties: false
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+        - key
+        - value
+      type: object
+    Transport_KeysCreateRequest:
+      description: Request of the transport_keys:post operation
+      type: object
+      x-openstack:
+        action-name: create
+  securitySchemes:
+    ApiKeyAuth:
+      in: header
+      name: X-Auth-Token
+      type: apiKey
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: containers
+  - name: orders
+  - name: project-quotas
+  - name: quotas
+  - name: secret-stores
+  - name: secrets
+  - name: transport_keys
+  - name: v1

@@ -74,6 +74,7 @@ openstack-cli-core.workspace = true
 openstack-cli-dns.workspace = true
 openstack-cli-identity.workspace = true
 openstack-cli-image.workspace = true
+openstack-cli-key-manager.workspace = true
 openstack-cli-load-balancer.workspace = true
 openstack-cli-network.workspace = true
 openstack-cli-object-store.workspace = true

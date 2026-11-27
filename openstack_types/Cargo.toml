@@ -18,6 +18,7 @@ default = [
   "dns",
   "identity",
   "image",
+  "key_manager",
   "load_balancer",
   "network",
   "object_store",
@@ -29,6 +30,7 @@ container_infra = ["dep:openstack-types-container-infrastructure-management"]
 dns = ["dep:openstack-types-dns"]
 identity = ["dep:openstack-types-identity"]
 image = ["dep:openstack-types-image"]
+key_manager = ["dep:openstack-types-key-manager"]
 load_balancer = ["dep:openstack-types-load-balancer"]
 network = ["dep:openstack-types-network"]
 object_store = ["dep:openstack-types-object-store"]
@@ -44,6 +46,7 @@ openstack-types-container-infrastructure-management = { path = "../types/contain
 openstack-types-dns = { path = "../types/dns/", version = "0.23", optional = true}
 openstack-types-identity = { path = "../types/identity/", version = "0.23", optional = true}
 openstack-types-image = { path = "../types/image/", version = "0.23", optional = true}
+openstack-types-key-manager = { path = "../types/key-manager/", version = "0.1", optional = true}
 openstack-types-load-balancer = { path = "../types/load-balancer/", version = "0.23", optional = true}
 openstack-types-network = { path = "../types/network/", version = "0.23", optional = true}
 openstack-types-object-store = { path = "../types/object-store/", version = "0.23", optional = true}

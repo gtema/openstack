@@ -4234,6 +4234,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-cli-key-manager"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "http",
+ "openstack-cli-core",
+ "openstack_sdk",
+ "openstack_sdk_core",
+ "openstack_types",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
 name = "openstack-cli-load-balancer"
 version = "0.14.0"
 dependencies = [
@@ -4684,6 +4699,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-sdk-key-manager"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "derive_builder",
+ "http",
+ "httpmock",
+ "openstack_sdk_core",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-test",
+]
+
+[[package]]
 name = "openstack-sdk-load-balancer"
 version = "0.23.0"
 dependencies = [
@@ -4863,6 +4894,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack-types-key-manager"
+version = "0.1.0"
+dependencies = [
+ "openstack-types-core",
+ "serde",
+ "serde_json",
+ "structable",
+]
+
+[[package]]
 name = "openstack-types-load-balancer"
 version = "0.23.0"
 dependencies = [
@@ -4922,6 +4963,7 @@ dependencies = [
  "openstack-cli-dns",
  "openstack-cli-identity",
  "openstack-cli-image",
+ "openstack-cli-key-manager",
  "openstack-cli-load-balancer",
  "openstack-cli-network",
  "openstack-cli-object-store",
@@ -4971,6 +5013,7 @@ dependencies = [
  "openstack-sdk-dns",
  "openstack-sdk-identity",
  "openstack-sdk-image",
+ "openstack-sdk-key-manager",
  "openstack-sdk-load-balancer",
  "openstack-sdk-network",
  "openstack-sdk-object-store",
@@ -5098,6 +5141,7 @@ dependencies = [
  "openstack-types-dns",
  "openstack-types-identity",
  "openstack-types-image",
+ "openstack-types-key-manager",
  "openstack-types-load-balancer",
  "openstack-types-network",
  "openstack-types-object-store",

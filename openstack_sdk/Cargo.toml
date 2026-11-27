@@ -21,6 +21,7 @@ default = [
   "dns",
   "identity",
   "image",
+  "key_manager",
   "load_balancer",
   "network",
   "object_store",
@@ -32,6 +33,7 @@ container_infra = ["dep:openstack-sdk-container-infrastructure-management"]
 dns = ["dep:openstack-sdk-dns"]
 identity = ["dep:openstack-sdk-identity"]
 image = ["dep:openstack-sdk-image"]
+key_manager = ["dep:openstack-sdk-key-manager"]
 load_balancer = ["dep:openstack-sdk-load-balancer"]
 network = ["dep:openstack-sdk-network"]
 object_store = ["dep:openstack-sdk-object-store"]
@@ -44,6 +46,7 @@ sync = ["async",
   "openstack-sdk-dns?/sync",
   "openstack-sdk-identity?/sync",
   "openstack-sdk-image?/sync",
+  "openstack-sdk-key-manager?/sync",
   "openstack-sdk-load-balancer?/sync",
   "openstack-sdk-network?/sync",
   "openstack-sdk-object-store?/sync",
@@ -56,6 +59,7 @@ async = ["openstack_sdk_core/async",
   "openstack-sdk-dns?/async",
   "openstack-sdk-identity?/async",
   "openstack-sdk-image?/async",
+  "openstack-sdk-key-manager?/async",
   "openstack-sdk-load-balancer?/async",
   "openstack-sdk-network?/async",
   "openstack-sdk-object-store?/async",
@@ -107,6 +111,7 @@ openstack-sdk-container-infrastructure-management = { path = "../sdk/container-i
 openstack-sdk-dns = { path = "../sdk/dns/", version = "^0.23", optional = true }
 openstack-sdk-identity = { path = "../sdk/identity/", version = "^0.23", optional = true }
 openstack-sdk-image = { path = "../sdk/image/", version = "^0.23", optional = true }
+openstack-sdk-key-manager = { path = "../sdk/key-manager/", version = "^0.1", optional = true }
 openstack-sdk-load-balancer = { path = "../sdk/load-balancer/", version = "^0.23", optional = true }
 openstack-sdk-network = { path = "../sdk/network/", version = "^0.23", optional = true }
 openstack-sdk-object-store = { path = "../sdk/object-store/", version = "^0.23", optional = true }
