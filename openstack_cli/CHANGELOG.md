@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.14.0...openstack_cli-v0.15.0) - 2026-11-28
+
+### Added
+
+- Bootstrap key-manager service integration ([#2180](https://github.com/gtema/openstack/pull/2180))
+- *(config)* Add contexts management commands ([#2139](https://github.com/gtema/openstack/pull/2139))
+- *(config)* Add contexts.yaml support ([#2135](https://github.com/gtema/openstack/pull/2135))
+
+### Fixed
+
+- *(sdk)* Load cacert as PEM or DER, fail loudly ([#2163](https://github.com/gtema/openstack/pull/2163))
+
+### Other
+
+- Address clippy warnings ([#2133](https://github.com/gtema/openstack/pull/2133))
+- [**breaking**] Drop RawQuery traits ([#2161](https://github.com/gtema/openstack/pull/2161))
+- [**breaking**] Replace chrono with jiff ([#2132](https://github.com/gtema/openstack/pull/2132))
+
 ## [0.14.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.13.8...openstack_cli-v0.14.0) - 2026-11-12
 
 ### Added

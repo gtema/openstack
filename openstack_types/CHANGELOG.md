@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0](https://github.com/gtema/openstack/compare/openstack_types-v0.23.0...openstack_types-v0.24.0) - 2026-11-28
+
+### Added
+
+- Bootstrap key-manager service integration ([#2180](https://github.com/gtema/openstack/pull/2180))
+- Codegenerator changes ([#2176](https://github.com/gtema/openstack/pull/2176))
+
+### Fixed
+
+- Correct nova.volume_attachment schema ([#2177](https://github.com/gtema/openstack/pull/2177))
+
+### Other
+
+- Address clippy warnings ([#2133](https://github.com/gtema/openstack/pull/2133))
+- [**breaking**] Replace chrono with jiff ([#2132](https://github.com/gtema/openstack/pull/2132))
+
 ## [0.23.0](https://github.com/gtema/openstack/compare/openstack_types-v0.22.8...openstack_types-v0.23.0) - 2026-11-12
 
 ### Added

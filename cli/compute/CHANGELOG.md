@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0](https://github.com/gtema/openstack/compare/openstack-cli-compute-v0.14.0...openstack-cli-compute-v0.15.0) - 2026-11-28
+
+### Fixed
+
+- Tui quotas missed project_name ([#2189](https://github.com/gtema/openstack/pull/2189))
+- Correct nova.volume_attachment schema ([#2177](https://github.com/gtema/openstack/pull/2177))
+
+### Other
+
+- Address clippy warnings ([#2133](https://github.com/gtema/openstack/pull/2133))
+
 ## [0.14.0](https://github.com/gtema/openstack/compare/openstack-cli-compute-v0.13.8...openstack-cli-compute-v0.14.0) - 2026-11-12
 
 ### Added
