@@ -211,6 +211,7 @@ mod tests {
                 BlockStorageQuotaSetShow {
                     project_id: "p".into(),
                     usage: Some(true),
+                    ..Default::default()
                 },
             )))
             .is_usage_probe()
@@ -218,6 +219,7 @@ mod tests {
         assert!(
             ApiRequest::from(DnsQuotaApiRequest::Get(Box::new(DnsQuotaShow {
                 project_id: "p".into(),
+                ..Default::default()
             })))
             .is_usage_probe()
         );

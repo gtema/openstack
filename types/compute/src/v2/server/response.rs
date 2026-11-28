@@ -20,7 +20,7 @@ pub mod create_a;
 pub mod create_b;
 pub mod create_backup_245;
 pub mod create_image_245;
-pub mod evacuate;
+pub mod evacuate_20;
 pub mod get_20;
 pub mod get_2100_a;
 pub mod get_2100_b;

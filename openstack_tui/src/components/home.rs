@@ -1191,6 +1191,7 @@ mod tests {
 
         let req = ApiRequest::from(DnsQuotaApiRequest::Get(Box::new(DnsQuotaShow {
             project_id: "p".into(),
+            ..Default::default()
         })));
         assert_eq!(Home::count_request(&req), None);
 
@@ -1198,6 +1199,7 @@ mod tests {
             BlockStorageQuotaSetShow {
                 project_id: "p".into(),
                 usage: Some(true),
+                ..Default::default()
             },
         )));
         assert_eq!(Home::count_request(&req), None);
