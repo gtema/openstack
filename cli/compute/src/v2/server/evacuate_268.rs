@@ -30,7 +30,6 @@ use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::evacuate_268;
-use openstack_types::compute::v2::server::response;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -126,10 +125,7 @@ impl ServerCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-
-        let data: serde_json::Value = ep.query_async(client).await?;
-
-        op.output_single::<response::evacuate::ServerResponse>(data.clone())?;
+        openstack_sdk::api::ignore(ep).query_async(client).await?;
         // Show command specific hints
         op.show_command_hint()?;
         Ok(())

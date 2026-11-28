@@ -33,12 +33,17 @@ use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 pub struct BlockStorageQuotaSetShow {
     pub project_id: String,
     #[builder(default)]
+    pub project_name: Option<String>,
+    #[builder(default)]
     pub usage: Option<bool>,
 }
 impl fmt::Display for BlockStorageQuotaSetShow {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();
-        parts.push(format!("project_id: {}", self.project_id));
+        parts.push(format!(
+            "project: {}",
+            self.project_name.clone().unwrap_or(self.project_id.clone())
+        ));
         write!(f, "{}", parts.join(","))
     }
 }

@@ -32,11 +32,16 @@ use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 #[builder(setter(strip_option))]
 pub struct DnsQuotaShow {
     pub project_id: String,
+    #[builder(default)]
+    pub project_name: Option<String>,
 }
 impl fmt::Display for DnsQuotaShow {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();
-        parts.push(format!("project_id: {}", self.project_id));
+        parts.push(format!(
+            "project: {}",
+            self.project_name.clone().unwrap_or(self.project_id.clone())
+        ));
         write!(f, "{}", parts.join(","))
     }
 }
